@@ -226,3 +226,6 @@
         private boolean isActiveHeart;
 
   Demo中还有socket服务端的测试代码，大家可以用本地IP地址对本框架进行测试，欢迎大家点评交流。
+  
+  博客地址：https://blog.csdn.net/liuxingrong666/article/details/91579548
+  
