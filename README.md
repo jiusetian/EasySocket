@@ -17,7 +17,6 @@ EasySocket特点：
 一、EasySocket的Android Studio配置
 
 所需权限
-
 <uses-permission android:name="android.permission.INTERNET"/>
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
