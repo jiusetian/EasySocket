@@ -1,5 +1,7 @@
 # EasySocket
 
+ 博客地址：https://blog.csdn.net/liuxingrong666/article/details/91579548
+
   通常在socket网络开发过程中，socket只负责信息的传输，至于通信协议和数据信息的处理需要自己去定义。所以在当前业内，普通的socket框架都只是实现TCP网络的连接、数据的传输、断开重连机制和心跳保活机制等基本功能，都没有对socket通信中传输的数据有进一步的封装处理！
 
   所以EasySocket的初衷是希望对传输的数据有进一步的处理并且封装，传统的socket框架客户端发出一个请求信息，然后服务器返回了一个应答信息，但是我们无法识别这个应答信息是对应哪个请求信息的，而EasySocket可以将每一个应答信息和请求信息一一对接，实现了socket层面的网络请求回调功能。
@@ -226,6 +228,4 @@
         private boolean isActiveHeart;
 
   Demo中还有socket服务端的测试代码，大家可以用本地IP地址对本框架进行测试，欢迎大家点评交流。
-  
-  博客地址：https://blog.csdn.net/liuxingrong666/article/details/91579548
   
