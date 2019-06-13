@@ -85,16 +85,22 @@ public abstract class SignerFactory {
 比如下面的一个SignerFactory的实现类
 
 public class SignerFactoryImpl extends SignerFactory {
+
     @Override
     public String createCallbackSgin(OriginReadData originReadData) {
+    
         try {
+	
             String data=originReadData.getBodyString();
             JSONObject jsonObject=new JSONObject(data);
             return jsonObject.getString("signer");
         } catch (JSONException e) {
+	
             e.printStackTrace();
         }
+	
         return null;
+	
     }
 }
 
