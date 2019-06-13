@@ -14,14 +14,14 @@ EasySocket的初衷是希望对传输数据的处理使得socket编程更加简�
 
     实现了socket层面传输数据的回调功能，使得每一个请求都能够对接相应的应答。
 
-一、EasySocket的Android Studio配置
+## 一、EasySocket的Android Studio配置
 
-所需权限
+### 所需权限
 
 uses-permission android:name="android.permission.INTERNET"
 uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"
 
-Gradle配置
+### Gradle配置
 
 1、在根目录的build.gradle文件中添加配置
 
@@ -40,7 +40,7 @@ dependencies {
 
 }
 
-二、EasySocket的初始化配置
+## 二、EasySocket的初始化配置
 
 一般在项目的Application中对EasySocket进行全局的初始化操作，下面是一个简单的例子
 
@@ -98,7 +98,7 @@ public class SignerFactoryImpl extends SignerFactory {
 
 其实上面的两个必须的配置完成了，再对IP和端口进行设置，最后通过buildMainConnection()创建一个socket连接，就可以愉快地使用EasySocket的功能，其他的配置框架都有默认值，当然你也可以自己定义。
 
-三、EasySocket的简单调用
+## 三、EasySocket的简单调用
 
 经过上面的配置和初始化，我们就可以直接调用EasySocket的接口进行网络通信了，比如发送一个心跳包给服务器
 
@@ -150,7 +150,7 @@ public class SignerFactoryImpl extends SignerFactory {
 
 以上演示了EasySocket的简单使用方法，当然还有其他的功能，目前是刚刚推出第一个版本v1.0.0，后期还会继续增加其他的功能和优化项目。
 
-四、EasySocket的其他配置信息说明（EasySocketOptions）
+## 四、EasySocket的其他配置信息说明（EasySocketOptions）
 
 
     /**
