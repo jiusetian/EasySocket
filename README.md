@@ -26,10 +26,14 @@ uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"
 1、在根目录的build.gradle文件中添加配置
 
 allprojects {
+
     repositories {
+    
         ...
 	maven { url 'https://jitpack.io' }
+	
     }
+    
 }
 
 2、Module的build.gradle文件中添加依赖配置
