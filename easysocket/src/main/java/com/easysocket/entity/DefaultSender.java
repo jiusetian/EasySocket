@@ -27,8 +27,8 @@ public class DefaultSender extends BaseSender {
     }
 
     @Override
-    public void setSigner(String signer) {
-        content.setSigner(signer);
+    public void setAck(String ack) {
+        content.setAck(ack);
     }
 
     @Override

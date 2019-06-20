@@ -84,7 +84,7 @@
             try {
                 String data=originReadData.getBodyString();
                 JSONObject jsonObject=new JSONObject(data);
-                return jsonObject.getString("signer");
+                return jsonObject.getString("ack");
             } catch (JSONException e) {
                 e.printStackTrace();
             }

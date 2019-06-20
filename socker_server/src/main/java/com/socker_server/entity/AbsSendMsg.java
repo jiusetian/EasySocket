@@ -14,7 +14,7 @@ public class AbsSendMsg {
     /**
      * 反馈标识
      */
-    private String signer;
+    private String ack;
 
     public String getMsgId() {
         return msgId;
@@ -24,11 +24,11 @@ public class AbsSendMsg {
         this.msgId = msgId;
     }
 
-    public String getBackSign() {
-        return signer;
+    public String getAck() {
+        return ack;
     }
 
-    public void setBackSign(String backSign) {
-        this.signer = backSign;
+    public void setAck(String ack) {
+        this.ack = ack;
     }
 }

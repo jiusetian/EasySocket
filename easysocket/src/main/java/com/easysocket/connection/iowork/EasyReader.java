@@ -62,7 +62,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
         int headerLength = headerProtocol.getHeaderLength(); //默认的包头长度是4个字节
         ByteBuffer headBuf = ByteBuffer.allocate(headerLength); //读取数据包头的缓存
         headBuf.order(socketOptions.getReadOrder());
-
+        
         //读取数据的header=====>>>
         try {
             //有余留数据

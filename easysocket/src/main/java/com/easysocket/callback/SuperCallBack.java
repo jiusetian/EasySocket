@@ -19,7 +19,7 @@ public abstract class SuperCallBack<T> implements IType<T> {
     /**
      * 生成随机字符串，用来识别服务端对客户端反馈的唯一标识
      */
-    public String signer;
+    public String ack;
     /**
      * 超时回调
      */
@@ -39,7 +39,7 @@ public abstract class SuperCallBack<T> implements IType<T> {
      */
     public SuperCallBack(BaseSender sender) {
         if (sender != null)
-            this.signer = sender.getSigner();
+            this.ack = sender.getAck();
     }
 
     /**
@@ -62,7 +62,7 @@ public abstract class SuperCallBack<T> implements IType<T> {
         @Override
         public void run() {
             if (timeoutListener != null){
-                timeoutListener.onRequstTimeout(signer); //通知
+                timeoutListener.onRequstTimeout(ack); //通知
                 onError(new RequestTimeOutException("请求超时了"));
             }
 
@@ -91,12 +91,12 @@ public abstract class SuperCallBack<T> implements IType<T> {
      *
      * @return
      */
-    public String getSigner() {
-        return signer;
+    public String getAck() {
+        return ack;
     }
 
-    public void setSigner(String sign) {
-        signer = sign;
+    public void setAck(String sign) {
+        ack = sign;
     }
 
     public abstract void onStart();

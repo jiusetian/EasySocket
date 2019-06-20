@@ -15,14 +15,14 @@ public class ServerHeartBeat {
     /**
      * 反馈标识
      */
-    private String signer;
+    private String ack;
 
     @Override
     public String toString() {
         return "ServerHeartBeat{" +
                 "from='" + from + '\'' +
                 ", msgId='" + msgId + '\'' +
-                ", backSign='" + signer + '\'' +
+                ", backSign='" + ack + '\'' +
                 '}';
     }
 
@@ -35,11 +35,11 @@ public class ServerHeartBeat {
     }
 
     public String getBackSign() {
-        return signer;
+        return ack;
     }
 
     public void setBackSign(String backSign) {
-        this.signer = backSign;
+        this.ack = backSign;
     }
 
 

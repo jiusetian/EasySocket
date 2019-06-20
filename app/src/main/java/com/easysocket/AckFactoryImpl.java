@@ -1,6 +1,6 @@
 package com.easysocket;
 
-import com.easysocket.config.SignerFactory;
+import com.easysocket.config.AckFactory;
 import com.easysocket.entity.OriginReadData;
 
 import org.json.JSONException;
@@ -9,15 +9,15 @@ import org.json.JSONObject;
 /**
  * Author：Alex
  * Date：2019/6/6
- * Note：实现signer工厂
+ * Note：实现获取ack的工厂
  */
-public class SignerFactoryImpl extends SignerFactory {
+public class AckFactoryImpl extends AckFactory {
     @Override
-    public String createCallbackSgin(OriginReadData originReadData) {
+    public String createCallbackAck(OriginReadData originReadData) {
         try {
             String data=originReadData.getBodyString();
             JSONObject jsonObject=new JSONObject(data);
-            return jsonObject.getString("signer");
+            return jsonObject.getString("ack");
         } catch (JSONException e) {
             e.printStackTrace();
         }

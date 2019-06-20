@@ -2,7 +2,7 @@ package com.easysocket.connection.iowork;
 
 import com.easysocket.callback.HeartbeatCallBack;
 import com.easysocket.callback.SuperCallBack;
-import com.easysocket.config.SignerFactory;
+import com.easysocket.config.AckFactory;
 import com.easysocket.entity.HostInfo;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.exception.NoNullExeption;
@@ -42,13 +42,13 @@ public class ResponseDispatcher implements RequestTimeoutListener {
     /**
      * 获取反馈消息sign的工厂，要想使用反馈消息的分发器，这个值就不能为null，
      */
-    private SignerFactory signerFactory;
+    private AckFactory ackFactory;
 
 
     public ResponseDispatcher(IConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
         connectionManager.subscribeSocketAction(socketActionListener); //注册
-        signerFactory = connectionManager.getOptions().getSignerFactory();
+        ackFactory = connectionManager.getOptions().getAckFactory();
     }
 
     /**
@@ -57,11 +57,11 @@ public class ResponseDispatcher implements RequestTimeoutListener {
     private SocketActionListener socketActionListener = new SocketActionListener() {
         @Override
         public void onSocketResponse(HostInfo hostInfo, OriginReadData originReadData) {
-            if (signerFactory == null) {
-                throw new NoNullExeption("SignerFactory不能为null，请根据服务器反馈消息的数据结构自定义SignerFactory");
+            if (ackFactory == null) {
+                throw new NoNullExeption("AckFactory不能为null，请根据服务器反馈消息的数据结构自定义AckFactory");
             }
 
-            String sign = signerFactory.createCallbackSgin(originReadData);
+            String sign = ackFactory.createCallbackAck(originReadData);
             //获取对应的callback
             SuperCallBack callBack = callbacks.get(sign);
             if (callBack == null) {
@@ -94,7 +94,7 @@ public class ResponseDispatcher implements RequestTimeoutListener {
      */
     public void addSocketCallback(SuperCallBack superCallBack) {
         superCallBack.setTimeoutListener(this);//设置callback超时的监听
-        callbacks.put(superCallBack.getSigner(), superCallBack);
+        callbacks.put(superCallBack.getAck(), superCallBack);
     }
 
 
@@ -114,7 +114,7 @@ public class ResponseDispatcher implements RequestTimeoutListener {
                 heartbeatCallBack = heartCallBacksHolder.get(heartCallBacksHolder.size()-1);
                 heartCallBacksHolder.remove(heartCallBacksHolder.size()-1);
             }
-            heartbeatCallBack.setSigner(sign);
+            heartbeatCallBack.setAck(sign);
             heartbeatCallBack.setCallback(callBack);
             callbacks.put(sign, heartbeatCallBack);
         } catch (Exception e) {

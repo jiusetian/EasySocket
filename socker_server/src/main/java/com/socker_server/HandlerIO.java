@@ -30,20 +30,20 @@ public class HandlerIO {
         System.out.println("receive message:"+receiver);
         AbsReceiveMsg receiveMsg=new Gson().fromJson(receiver,AbsReceiveMsg.class);
         String id = receiveMsg.getMsgId(); //消息ID
-        String sign = receiveMsg.getBackSign(); //作为本地反馈消息的唯一标识ID
+        String ack = receiveMsg.getAck(); //作为本地反馈消息的唯一标识ID
         AbsSendMsg sendMsg = null;
 
         switch (id) {
             case MsgId.HEARTBEAT: //心跳包
                 sendMsg = new ServerHeartBeat();
                 ((ServerHeartBeat) sendMsg).setFrom("server");
-                sendMsg.setBackSign(sign);
+                sendMsg.setAck(ack);
                 sendMsg.setMsgId(MsgId.HEARTBEAT);
                 break;
 
             case MsgId.MY_REQUEST:
                 sendMsg=new MyResponse();
-                sendMsg.setBackSign(sign);
+                sendMsg.setAck(ack);
                 sendMsg.setMsgId(MsgId.MY_REQUEST);
                 ((MyResponse)sendMsg).setFrom("server");
                 try {

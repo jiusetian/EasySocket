@@ -85,14 +85,14 @@ public class MainActivity extends AppCompatActivity {
 
         //socket配置
         EasySocketOptions options=new EasySocketOptions.Builder()
-                .setSignerFactory(new SignerFactoryImpl()) //设置获取请求标识signer的factory
+                .setSignerFactory(new AckFactoryImpl()) //设置获取请求标识signer的factory
                 .setActiveHeart(true) //自动启动心跳管理器
                 .setClientHeart(clientHeartBeat) //设置全局心跳对象
                 .build();
 
         //初始化EasySocket
         EasySocket.getInstance()
-                .mainIP("192.168.4.52") //自己的本地IP地址
+                .mainIP("192.168.4.52") //IP地址
                 .mainPort(9999) //端口
                 .mainOptions(options) //主连接的配置
                 .buildMainConnection(); //创建一个主socket连接

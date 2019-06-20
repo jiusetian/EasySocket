@@ -292,8 +292,8 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public void onHeartCallBack(IClientHeart clientHeart, HeartbeatCallBack.CallBack callBack) {
-        //clientHeart.setSigner(clientHeart.getSigner());
-        responseDispatcher.addHeartbeatCallBack(clientHeart.getSigner(), callBack);
+        //clientHeart.setAck(clientHeart.getAck());
+        responseDispatcher.addHeartbeatCallBack(clientHeart.getAck(), callBack);
     }
 
     @Override
@@ -312,7 +312,7 @@ public abstract class SuperConnection implements IConnectionManager {
     public synchronized IConnectionManager upObject(ISender sender) {
         //如果属于有反馈的请求，将设置一个20位随机字符串作为识别标识
         if (sender instanceof BaseSender) {
-            ((BaseSender) sender).setSigner(EUtil.getRandomChar(20));
+            ((BaseSender) sender).setAck(EUtil.getRandomChar(20));
         }
         sendBuffer(sender.parse());
         return this;

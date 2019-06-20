@@ -67,9 +67,9 @@ public class EasySocketOptions {
      */
     private EasySocketFactory socketFactory;
     /**
-     * 获取请求消息唯一标识signer的工厂
+     * 获取请求消息唯一标识ack的工厂
      */
-    private SignerFactory signerFactory;
+    private AckFactory ackFactory;
 
     /**
      * 请求超时时间，单位毫秒
@@ -152,8 +152,8 @@ public class EasySocketOptions {
          *
          * @param signFactory
          */
-        public Builder setSignerFactory(SignerFactory signFactory) {
-            socketOptions.signerFactory = signFactory;
+        public Builder setSignerFactory(AckFactory signFactory) {
+            socketOptions.ackFactory = signFactory;
             return this;
         }
 
@@ -315,7 +315,7 @@ public class EasySocketOptions {
         options.reconnectionManager = new DefaultReConnection();
         options.easySSLConfig = null;
         options.socketFactory = null;
-        options.signerFactory = null;
+        options.ackFactory = null;
         options.requestTimeout = 10 * 1000; //默认十秒
         options.isOpenRequestTimeout = true; //默认开启
         options.clientHeart = null;
@@ -379,8 +379,8 @@ public class EasySocketOptions {
         return isOpenRequestTimeout;
     }
 
-    public SignerFactory getSignerFactory() {
-        return signerFactory;
+    public AckFactory getAckFactory() {
+        return ackFactory;
     }
 
     public IClientHeart getClientHeart() {
