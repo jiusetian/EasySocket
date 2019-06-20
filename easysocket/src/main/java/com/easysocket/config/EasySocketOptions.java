@@ -148,12 +148,12 @@ public class EasySocketOptions {
         }
 
         /**
-         * 设置请求signer的工厂
+         * 设置请求ack的工厂
          *
-         * @param signFactory
+         * @param ackFactory
          */
-        public Builder setSignerFactory(AckFactory signFactory) {
-            socketOptions.ackFactory = signFactory;
+        public Builder setAckFactory(AckFactory ackFactory) {
+            socketOptions.ackFactory = ackFactory;
             return this;
         }
 

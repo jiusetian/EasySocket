@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         //socket配置
         EasySocketOptions options=new EasySocketOptions.Builder()
-                .setSignerFactory(new AckFactoryImpl()) //设置获取请求标识signer的factory
+                .setAckFactory(new AckFactoryImpl()) //设置获取请求标识signer的factory
                 .setActiveHeart(true) //自动启动心跳管理器
                 .setClientHeart(clientHeartBeat) //设置全局心跳对象
                 .build();
