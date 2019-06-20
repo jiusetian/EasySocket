@@ -9,6 +9,7 @@ import java.nio.ByteOrder;
  * Author：Alex
  * Date：2019/6/11
  * Note：默认的json格式发送内容
+ *
  */
 public class DefaultSender extends BaseSender {
 
