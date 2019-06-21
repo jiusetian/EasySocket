@@ -78,7 +78,9 @@ EasySocket的特点之一是实现心跳包的自动管理，所以要想实现�
 
 
 public abstract class AckFactory {
+
     public abstract String createCallbackAck(OriginReadData originReadData);
+
 }
 
 能够拿到所谓的回调标识ack是EasySocket实现回调功能的关键，每一个由客户端向服务器发送的信息都会携带一个随机生成的20位的字符串，我们称之为ack，所以服务器接收的每一个信息都有这样的一个ack，在发送应答信息的时候，将这个ack一起返给客户端，客户端在接收的时候通过对比ack就知道当前应答信息对应的是哪一个请求了。
