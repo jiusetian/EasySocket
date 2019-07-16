@@ -52,7 +52,7 @@ dependencies {
      * 初始化EasySocket
      */
     private void initEasySocket(){
-        //自定义的客户端心跳包数据结构
+        //客户端设置的心跳包实例，这样客户端就可以自动发送心跳包给服务端了
         ClientHeartBeat clientHeartBeat=new ClientHeartBeat();
         clientHeartBeat.setMsgId("heart_beat");
         clientHeartBeat.setFrom("client");
@@ -93,7 +93,7 @@ public class AckFactoryImpl  extends AckFactory {
     public String createCallbackAck(OriginReadData originReadData) {
 
         try {
-
+            //服务端返回的json格式数据
             String data=originReadData.getBodyString();
             JSONObject jsonObject=new JSONObject(data);
             return jsonObject.getString("ack");
@@ -123,7 +123,7 @@ public class AckFactoryImpl  extends AckFactory {
         clientHeartBeat.setMsgId("heart_beat");
         clientHeartBeat.setFrom("client");
         DefaultSender defaultSender =new DefaultSender(clientHeartBeat);
-        //链式调用方式，发送一个心跳包，同时接收对应的应答信息
+        //链式调用方式，发送一个心跳包，同时接收对应的应答信息，ServerHeartBeat是服务端心跳包
         EasySocket.getInstance().upObject(defaultSender)
                 .onCallBack(new SimpleCallBack<ServerHeartBeat>(defaultSender) {
                     @Override
