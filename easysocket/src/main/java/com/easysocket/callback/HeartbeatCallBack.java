@@ -2,7 +2,7 @@ package com.easysocket.callback;
 
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.entity.IClientHeart;
-import com.easysocket.utils.EUtil;
+import com.easysocket.utils.Util;
 import com.google.gson.Gson;
 
 /**
@@ -51,7 +51,7 @@ public class HeartbeatCallBack<T> extends SuperCallBack<T> {
     public void onSuccess(String s) {
         onCompleted();
         if (callback == null) return;
-        Class<?> clazz = (Class<?>) EUtil.findNeedClass(callback.getClass()); //获取泛型callback泛型的class类型
+        Class<?> clazz = (Class<?>) Util.findNeedClass(callback.getClass()); //获取泛型callback泛型的class类型
         if (clazz.equals(String.class)) { //泛型是字符串类型
             callback.onResponse(s);
         } else { //非string

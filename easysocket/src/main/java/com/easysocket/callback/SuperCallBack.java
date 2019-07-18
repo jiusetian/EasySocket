@@ -4,11 +4,11 @@ package com.easysocket.callback;
 import android.os.Handler;
 
 import com.easysocket.config.EasySocketOptions;
-import com.easysocket.entity.BaseSender;
+import com.easysocket.entity.CallbackSender;
 import com.easysocket.entity.exception.RequestTimeOutException;
 import com.easysocket.interfaces.callback.IType;
 import com.easysocket.interfaces.callback.RequestTimeoutListener;
-import com.easysocket.utils.EUtil;
+import com.easysocket.utils.Util;
 
 import java.lang.reflect.Type;
 
@@ -32,12 +32,12 @@ public abstract class SuperCallBack<T> implements IType<T> {
     /**
      * 执行请求超时的handler,handler一般设置为static，因为同一个线程必须使用同一个handler对象，一个线程不能有多个handler对象
      */
-    protected static Handler handler= EUtil.getHandler(true);
+    protected static Handler handler= Util.getHandler(true);
 
     /**
      * @param sender
      */
-    public SuperCallBack(BaseSender sender) {
+    public SuperCallBack(CallbackSender sender) {
         if (sender != null)
             this.ack = sender.getAck();
     }
@@ -114,7 +114,7 @@ public abstract class SuperCallBack<T> implements IType<T> {
      */
     @Override
     public Type getType() {
-        return EUtil.findNeedClass(getClass());
+        return Util.findNeedClass(getClass());
     }
 
     /**

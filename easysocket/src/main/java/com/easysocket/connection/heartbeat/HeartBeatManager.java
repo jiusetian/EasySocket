@@ -2,17 +2,17 @@ package com.easysocket.connection.heartbeat;
 
 import com.easysocket.callback.HeartbeatCallBack;
 import com.easysocket.config.EasySocketOptions;
-import com.easysocket.entity.HostInfo;
+import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.IClientHeart;
 import com.easysocket.entity.IsReconnect;
 import com.easysocket.entity.OriginReadData;
-import com.easysocket.entity.exception.NoNullExeption;
+import com.easysocket.entity.exception.NotNullException;
 import com.easysocket.interfaces.config.IOptions;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.IHeartBeatManager;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.conn.ISocketActionListener;
-import com.easysocket.utils.ELog;
+import com.easysocket.utils.LogUtil;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -63,41 +63,41 @@ public class HeartBeatManager implements IOptions, ISocketActionListener, IHeart
     private final Runnable beatTask = new Runnable() {
         @Override
         public void run() {
-            checkoutHeartbeat();
-            if (connectionManager == null) return;
             //心跳丢失次数判断
             if (socketOptions.getMaxHeartbeatLoseTimes() != -1 && loseTimes.incrementAndGet() >= socketOptions.getMaxHeartbeatLoseTimes()) {
                 connectionManager.disconnect(new IsReconnect(true));
                 resetLoseTimes();
-            } else { //发送心跳给服务器
+            } else { //发送心跳给服务器,如果启动的回调功能，这里会自动接收到服务器心跳
                 connectionManager.upObject(clientHeart)
                         .onHeartCallBack(clientHeart, new HeartbeatCallBack.CallBack<String>() {
                             @Override
                             public void onResponse(String s) {
-                                ELog.d("心跳管理器收到心跳="+s);
-                                //收到服务器心跳
-                                resetLoseTimes();//重置丢失次数
+                                LogUtil.d("自动收到心跳=" + s);
+                                //自动收到服务器心跳
+                                onReceiveHeartBeat();
                             }
                         });
             }
-
         }
     };
 
     /**
-     * 检查心跳包实例是否为null
+     * 检查自动发送心跳是否可行
      */
-    private void checkoutHeartbeat() {
+    private boolean isEnableHeartbeat() {
+        if (connectionManager == null) return false;
+        if (clientHeart == null) setClientHeart(socketOptions.getClientHeart());
         if (clientHeart == null) {
-            setClientHeart(connectionManager.getOptions().getClientHeart());
-            if (clientHeart == null)
-                throw new NoNullExeption("clientHeart不能为null,可以在EasySocketOptions中初始化clientHeart");
+            LogUtil.e(new NotNullException("clientHeart不能为null"));
+            return false;
         }
+        return true;
     }
 
 
     @Override
     public void activateHeartbeat() {
+        if (!isEnableHeartbeat()) return; //是否可行自动发送心跳
         freq = socketOptions.getHeartbeatFreq(); //心跳频率
         if (heartExecutor == null || heartExecutor.isShutdown()) {
             heartExecutor = Executors.newSingleThreadScheduledExecutor();
@@ -111,6 +111,15 @@ public class HeartBeatManager implements IOptions, ISocketActionListener, IHeart
     }
 
     @Override
+    public void startHeartbeat(IClientHeart clientHeart) {
+        setClientHeart(clientHeart);
+        socketOptions.setActiveHeart(true); //修改为启动心跳管理
+        socketOptions.setClientHeart(clientHeart);
+        resetLoseTimes();
+        activateHeartbeat();
+    }
+
+    @Override
     public void setClientHeart(IClientHeart clientHeart) {
         this.clientHeart = clientHeart;
     }
@@ -118,6 +127,11 @@ public class HeartBeatManager implements IOptions, ISocketActionListener, IHeart
     @Override
     public void resetLoseTimes() {
         loseTimes.set(-1);
+    }
+
+    @Override
+    public void onReceiveHeartBeat() {
+        resetLoseTimes();
     }
 
     //关闭心跳线程
@@ -144,24 +158,24 @@ public class HeartBeatManager implements IOptions, ISocketActionListener, IHeart
     }
 
     @Override
-    public void onSocketConnSuccess(HostInfo hostInfo) {
+    public void onSocketConnSuccess(SocketAddress socketAddress) {
         //开启心跳
-        if (connectionManager.getOptions().isActiveHeart())
+        if (socketOptions.isActiveHeart())
             activateHeartbeat();
     }
 
     @Override
-    public void onSocketConnFail(HostInfo hostInfo, IsReconnect isReconnect) {
+    public void onSocketConnFail(SocketAddress socketAddress, IsReconnect isReconnect) {
         stopHeartbeat();
     }
 
     @Override
-    public void onSocketDisconnect(HostInfo hostInfo, IsReconnect isReconnect) {
+    public void onSocketDisconnect(SocketAddress socketAddress, IsReconnect isReconnect) {
         stopHeartbeat();
     }
 
     @Override
-    public void onSocketResponse(HostInfo hostInfo, OriginReadData originReadData) {
+    public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
 
     }
 

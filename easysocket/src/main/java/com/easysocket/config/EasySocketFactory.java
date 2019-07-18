@@ -1,6 +1,6 @@
 package com.easysocket.config;
 
-import com.easysocket.entity.HostInfo;
+import com.easysocket.entity.SocketAddress;
 
 import java.net.Socket;
 
@@ -10,5 +10,5 @@ import java.net.Socket;
  * Note：socket工厂
  */
 public abstract class EasySocketFactory {
-    public abstract Socket createSocket(HostInfo info, EasySocketOptions options) throws Exception;
+    public abstract Socket createSocket(SocketAddress info, EasySocketOptions options) throws Exception;
 }

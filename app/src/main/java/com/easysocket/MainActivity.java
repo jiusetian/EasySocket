@@ -1,16 +1,18 @@
 package com.easysocket;
 
-import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.easysocket.callback.ProgressDialogCallBack;
-import com.easysocket.callback.SimpleCallBack;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.entity.DefaultSender;
-import com.easysocket.interfaces.callback.IProgressDialog;
-import com.easysocket.utils.ELog;
+import com.easysocket.entity.IsReconnect;
+import com.easysocket.entity.OriginReadData;
+import com.easysocket.entity.SocketAddress;
+import com.easysocket.interfaces.conn.ISocketActionListener;
+import com.easysocket.interfaces.conn.SocketActionListener;
+import com.easysocket.utils.LogUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,7 +21,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //初始化socket
         initEasySocket();
+
+        //监听socket相关行为
+        EasySocket.getInstance().subscribeSocketAction(socketActionListener);
 
         //发送一个心跳包
         findViewById(R.id.send_beat).setOnClickListener(new View.OnClickListener() {
@@ -29,72 +35,101 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //有进度条的请求
-        findViewById(R.id.send_progress).setOnClickListener(new View.OnClickListener() {
+        //激活自动发送心跳
+        findViewById(R.id.auto_beat).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MySender sender=new MySender();
-                sender.setFrom("android");
-                sender.setMsgId("my_request");
-                DefaultSender defaultSender =new DefaultSender(sender);
-                EasySocket.getInstance()
-                        .upObject(defaultSender)
-                        .onCallBack(new ProgressDialogCallBack<String>(progressDialog,true,true, defaultSender) {
-                            @Override
-                            public void onResponse(String s) {
-                                ELog.d("请求返回的消息="+s);
-                            }
-                        });
+                ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
+                clientHeartBeat.setMsgId("heart_beat");
+                clientHeartBeat.setFrom("client");
+                EasySocket.getInstance().getConnection().getHeartBeatManager().startHeartbeat(clientHeartBeat);
             }
         });
+
+        findViewById(R.id.act_callback).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, CallBackActivity.class));
+            }
+        });
+
     }
 
-    private IProgressDialog progressDialog=new IProgressDialog() {
+    /**
+     * socket行为监听
+     */
+    private ISocketActionListener socketActionListener = new SocketActionListener() {
+        /**
+         * socket连接成功
+         * @param socketAddress
+         */
         @Override
-        public Dialog getDialog() {
-            Dialog dialog=new Dialog(MainActivity.this);
-            dialog.setTitle("正在加载...");
-            return dialog;
+        public void onSocketConnSuccess(SocketAddress socketAddress) {
+            super.onSocketConnSuccess(socketAddress);
+            LogUtil.d("连接成功");
+        }
+
+        /**
+         * socket连接失败
+         * @param socketAddress
+         * @param isReconnect 是否需要重连
+         */
+        @Override
+        public void onSocketConnFail(SocketAddress socketAddress, IsReconnect isReconnect) {
+            super.onSocketConnFail(socketAddress, isReconnect);
+        }
+
+        /**
+         * socket断开连接
+         * @param socketAddress
+         * @param isReconnect 是否需要重连
+         */
+        @Override
+        public void onSocketDisconnect(SocketAddress socketAddress, IsReconnect isReconnect) {
+            super.onSocketDisconnect(socketAddress, isReconnect);
+        }
+
+        /**
+         * socket接收的数据
+         * @param socketAddress
+         * @param originReadData
+         */
+        @Override
+        public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
+            super.onSocketResponse(socketAddress, originReadData);
+            LogUtil.d("监听器接收的数据->" + originReadData.getBodyString());
+            //演示接收到服务端心跳
+            EasySocket.getInstance().getConnection().getHeartBeatManager().onReceiveHeartBeat();
         }
     };
+
 
     /**
      * 发送心跳包
      */
-    private void sendHeartBeat(){
-        ClientHeartBeat clientHeartBeat=new ClientHeartBeat();
+    private void sendHeartBeat() {
+        ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
         clientHeartBeat.setMsgId("heart_beat");
         clientHeartBeat.setFrom("client");
-        DefaultSender defaultSender =new DefaultSender(clientHeartBeat);
-        EasySocket.getInstance().upObject(defaultSender)
-                .onCallBack(new SimpleCallBack<ServerHeartBeat>(defaultSender) {
-                    @Override
-                    public void onResponse(ServerHeartBeat serverHeartBeat) {
-                        ELog.d("心跳包请求反馈："+serverHeartBeat.toString());
-                    }
-                });
+        DefaultSender defaultSender = new DefaultSender(clientHeartBeat);
+        //发送
+        EasySocket.getInstance().upObject(defaultSender);
     }
 
     /**
      * 初始化EasySocket
      */
-    private void initEasySocket(){
-        ClientHeartBeat clientHeartBeat=new ClientHeartBeat();
-        clientHeartBeat.setMsgId("heart_beat");
-        clientHeartBeat.setFrom("client");
+    private void initEasySocket() {
 
-        //socket配置
-        EasySocketOptions options=new EasySocketOptions.Builder()
-                .setAckFactory(new AckFactoryImpl()) //设置获取请求标识signer的factory
-                .setActiveHeart(true) //自动启动心跳管理器
-                .setClientHeart(clientHeartBeat) //设置全局心跳对象
+        //socket配置为默认值
+        EasySocketOptions options = new EasySocketOptions.Builder()
                 .build();
 
         //初始化EasySocket
         EasySocket.getInstance()
-                .mainIP("192.168.4.52") //IP地址
-                .mainPort(9999) //端口
-                .mainOptions(options) //主连接的配置
-                .buildMainConnection(); //创建一个主socket连接
+                .ip("192.168.4.52") //IP地址
+                .port(9999) //端口
+                .options(options) //连接的配置
+                .buildConnection(); //创建一个socket连接
     }
 }

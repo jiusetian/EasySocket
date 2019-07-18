@@ -2,14 +2,14 @@ package com.easysocket.connection.iowork;
 
 import com.easysocket.callback.HeartbeatCallBack;
 import com.easysocket.callback.SuperCallBack;
-import com.easysocket.config.AckFactory;
-import com.easysocket.entity.HostInfo;
+import com.easysocket.config.EasySocketOptions;
 import com.easysocket.entity.OriginReadData;
-import com.easysocket.entity.exception.NoNullExeption;
+import com.easysocket.entity.SocketAddress;
+import com.easysocket.entity.exception.NotNullException;
 import com.easysocket.interfaces.callback.RequestTimeoutListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.SocketActionListener;
-import com.easysocket.utils.ELog;
+import com.easysocket.utils.LogUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Author：Alex
  * Date：2019/6/4
- * Note：反馈消息的分发器
+ * Note：智能的反馈消息分发器
  */
 public class ResponseDispatcher implements RequestTimeoutListener {
     /**
@@ -39,16 +39,22 @@ public class ResponseDispatcher implements RequestTimeoutListener {
      * 连接管理
      */
     IConnectionManager connectionManager;
-    /**
-     * 获取反馈消息sign的工厂，要想使用反馈消息的分发器，这个值就不能为null，
-     */
-    private AckFactory ackFactory;
+
+    private EasySocketOptions socketOptions;
 
 
     public ResponseDispatcher(IConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
         connectionManager.subscribeSocketAction(socketActionListener); //注册
-        ackFactory = connectionManager.getOptions().getAckFactory();
+        socketOptions=connectionManager.getOptions();
+    }
+
+    /**
+     * 设置socketoptions
+     * @param socketOptions
+     */
+    public void setSocketOptions(EasySocketOptions socketOptions){
+        this.socketOptions=socketOptions;
     }
 
     /**
@@ -56,15 +62,13 @@ public class ResponseDispatcher implements RequestTimeoutListener {
      */
     private SocketActionListener socketActionListener = new SocketActionListener() {
         @Override
-        public void onSocketResponse(HostInfo hostInfo, OriginReadData originReadData) {
-            if (ackFactory == null) {
-                throw new NoNullExeption("AckFactory不能为null，请根据服务器反馈消息的数据结构自定义AckFactory");
-            }
-
-            String sign = ackFactory.createCallbackAck(originReadData);
+        public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
+            if (!isEnableDispatch()) return;
+            String sign = socketOptions.getAckFactory().createCallbackAck(originReadData);
             //获取对应的callback
             SuperCallBack callBack = callbacks.get(sign);
             if (callBack == null) {
+                LogUtil.d("没有回调函数");
                 return;
             }
             //回调
@@ -77,6 +81,17 @@ public class ResponseDispatcher implements RequestTimeoutListener {
         }
 
     };
+
+    //response是否为可分发的
+    private boolean isEnableDispatch() {
+        //如果智能分发是关闭的，那么停止分发
+        if (!socketOptions.isActiveResponseDispatch()) return false;
+        if (socketOptions.getAckFactory() == null) {
+            LogUtil.e(new NotNullException("AckFactory不能为null，请根据服务器反馈消息的数据结构自定义AckFactory"));
+            return false;
+        }
+        return true;
+    }
 
     /**
      * 缓存心跳包的回调
@@ -111,8 +126,8 @@ public class ResponseDispatcher implements RequestTimeoutListener {
                 heartbeatCallBack = new HeartbeatCallBack();
                 heartbeatCallBack.setTimeoutListener(this);
             } else { //取缓存并移除
-                heartbeatCallBack = heartCallBacksHolder.get(heartCallBacksHolder.size()-1);
-                heartCallBacksHolder.remove(heartCallBacksHolder.size()-1);
+                heartbeatCallBack = heartCallBacksHolder.get(heartCallBacksHolder.size() - 1);
+                heartCallBacksHolder.remove(heartCallBacksHolder.size() - 1);
             }
             heartbeatCallBack.setAck(sign);
             heartbeatCallBack.setCallback(callBack);
@@ -127,7 +142,7 @@ public class ResponseDispatcher implements RequestTimeoutListener {
      */
     @Override
     public void onRequstTimeout(String sign) {
-        ELog.d(sign+"请求超时了");
+        LogUtil.d(sign + "请求超时了");
         //移除超时的callback
         if (callbacks.get(sign) instanceof HeartbeatCallBack) {
             cacheHeartbeatCallback((HeartbeatCallBack) callbacks.get(sign));

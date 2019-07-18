@@ -10,7 +10,7 @@ import java.util.Random;
 /**
  * Created by LXR ON 2018/8/30.
  */
-public class EUtil {
+public class Util {
 
     /**
      * 普通类反射获取泛型方式，获取需要实际解析的类型

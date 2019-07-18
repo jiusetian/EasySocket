@@ -1,6 +1,6 @@
 package com.easysocket.interfaces.config;
 
-import com.easysocket.entity.HostInfo;
+import com.easysocket.entity.SocketAddress;
 import com.easysocket.interfaces.conn.IConnectionManager;
 
 /**
@@ -9,5 +9,5 @@ import com.easysocket.interfaces.conn.IConnectionManager;
  * Note：
  */
 public interface IConnectionSwitchListener {
-    void onSwitchConnectionInfo(IConnectionManager manager, HostInfo oldInfo, HostInfo newInfo);
+    void onSwitchConnectionInfo(IConnectionManager manager, SocketAddress oldAddress, SocketAddress newAddress);
 }

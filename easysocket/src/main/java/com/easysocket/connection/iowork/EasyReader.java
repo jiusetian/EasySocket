@@ -10,7 +10,7 @@ import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.io.IReader;
 import com.easysocket.interfaces.io.IReaderProtocol;
-import com.easysocket.utils.ELog;
+import com.easysocket.utils.LogUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -151,7 +151,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
                 throw new SocketReadExeption("读取失败，读取到的数据长度小于0，可能是读取的过程中跟socket跟服务器断开了连接");
             }
             //将读取到一个完整数据发布出去
-            ELog.d("接收的数据=" + originalData.getBodyString());
+            LogUtil.d("接收的数据=" + originalData.getBodyString());
             actionDispatch.dispatchAction(IOAction.ACTION_READ_COMPLETE, originalData);
         } catch (Exception e) {
             e.printStackTrace();

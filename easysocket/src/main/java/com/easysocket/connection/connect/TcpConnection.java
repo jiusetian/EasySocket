@@ -2,9 +2,9 @@ package com.easysocket.connection.connect;
 
 import com.easysocket.config.DefaultX509ProtocolTrustManager;
 import com.easysocket.config.SocketSSLConfig;
-import com.easysocket.entity.HostInfo;
-import com.easysocket.utils.ELog;
-import com.easysocket.utils.EUtil;
+import com.easysocket.entity.SocketAddress;
+import com.easysocket.utils.LogUtil;
+import com.easysocket.utils.Util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,8 +28,8 @@ public class TcpConnection extends SuperConnection {
      */
     private Socket socket;
 
-    public TcpConnection(HostInfo hostInfo) {
-        super(hostInfo);
+    public TcpConnection(SocketAddress socketAddress) {
+        super(socketAddress);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class TcpConnection extends SuperConnection {
         }
 
         //进行socket连接
-        socket.connect(new InetSocketAddress(hostInfo.getIp(), hostInfo.getPort()), socketOptions.getConnectTimeout() );
+        socket.connect(new InetSocketAddress(socketAddress.getIp(), socketAddress.getPort()), socketOptions.getConnectTimeout() );
         //关闭Nagle算法,无论TCP数据报大小,立即发送
         socket.setTcpNoDelay(true);
         //连接已经打开
@@ -65,7 +65,7 @@ public class TcpConnection extends SuperConnection {
     private synchronized Socket getSocketByConfig() throws Exception {
         //自定义socket操作
         if (socketOptions.getSocketFactory() != null) {
-            return socketOptions.getSocketFactory().createSocket(hostInfo, socketOptions);
+            return socketOptions.getSocketFactory().createSocket(socketAddress, socketOptions);
         }
 
         //默认操作
@@ -77,7 +77,7 @@ public class TcpConnection extends SuperConnection {
         SSLSocketFactory factory = config.getCustomSSLFactory();
         if (factory == null) {
             String protocol = "SSL";
-            if (!EUtil.isStringEmpty(config.getProtocol())) {
+            if (!Util.isStringEmpty(config.getProtocol())) {
                 protocol = config.getProtocol();
             }
 
@@ -95,7 +95,7 @@ public class TcpConnection extends SuperConnection {
                 if (socketOptions.isDebug()) {
                     e.printStackTrace();
                 }
-                ELog.e(e.getMessage());
+                LogUtil.e(e.getMessage());
                 return new Socket();
             }
 
@@ -106,7 +106,7 @@ public class TcpConnection extends SuperConnection {
                 if (socketOptions.isDebug()) {
                     e.printStackTrace();
                 }
-                ELog.e(e.getMessage());
+                LogUtil.e(e.getMessage());
                 return new Socket();
             }
         }

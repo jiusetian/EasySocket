@@ -1,13 +1,15 @@
 package com.easysocket.utils;
 
+import android.util.Log;
+
 /**
  * Created by lzw on 15/7/14.
  */
-public class ELog {
+public class LogUtil {
     public static final String LOGTAG = "easysocket";
     public static boolean debugEnabled = true;
 
-    public ELog() {
+    public LogUtil() {
     }
 
     private static String getDebugInfo() {
@@ -30,6 +32,12 @@ public class ELog {
     public static void i(String... s) {
         if (debugEnabled) {
             i(LOGTAG, getDebugInfo() + getLogInfoByArray(s));
+        }
+    }
+
+    public static void e(Throwable tr) {
+        if (debugEnabled) {
+            Log.e(LOGTAG, getDebugInfo() ,tr);
         }
     }
 

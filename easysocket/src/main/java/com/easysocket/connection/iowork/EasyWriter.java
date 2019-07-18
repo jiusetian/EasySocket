@@ -5,7 +5,7 @@ import com.easysocket.connection.action.SocketStatus;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.io.IWriter;
-import com.easysocket.utils.ELog;
+import com.easysocket.utils.LogUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -86,7 +86,7 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
     @Override
     public void write(byte[] sendBytes) {
         if (sendBytes != null) {
-            ELog.d("发送的数据="+new String(sendBytes, Charset.forName("utf-8")));
+            LogUtil.d("发送的数据="+new String(sendBytes, Charset.forName("utf-8")));
             try {
                 int packageSize = socketOptions.getMaxWriteBytes(); //每次发送的数据包的大小
                 int remainingCount = sendBytes.length;

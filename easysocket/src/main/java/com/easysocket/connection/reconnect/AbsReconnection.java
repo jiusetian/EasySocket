@@ -1,6 +1,6 @@
 package com.easysocket.connection.reconnect;
 
-import com.easysocket.entity.HostInfo;
+import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.interfaces.conn.ISocketActionListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
@@ -40,7 +40,7 @@ public abstract class AbsReconnection implements ISocketActionListener, IReconnL
     }
 
     @Override
-    public void onSocketResponse(HostInfo hostInfo, OriginReadData originReadData) {
+    public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
         //donothing
     }
 }

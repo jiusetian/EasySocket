@@ -10,17 +10,17 @@ import com.easysocket.connection.action.SocketStatus;
 import com.easysocket.connection.heartbeat.HeartBeatManager;
 import com.easysocket.connection.iowork.IOManager;
 import com.easysocket.connection.reconnect.AbsReconnection;
-import com.easysocket.entity.BaseSender;
-import com.easysocket.entity.HostInfo;
+import com.easysocket.entity.CallbackSender;
+import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.IClientHeart;
 import com.easysocket.entity.ISender;
 import com.easysocket.entity.IsReconnect;
-import com.easysocket.entity.exception.NoNullExeption;
+import com.easysocket.entity.exception.NotNullException;
 import com.easysocket.interfaces.config.IConnectionSwitchListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
-import com.easysocket.utils.ELog;
-import com.easysocket.utils.EUtil;
+import com.easysocket.utils.LogUtil;
+import com.easysocket.utils.Util;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,7 +43,7 @@ public abstract class SuperConnection implements IConnectionManager {
     /**
      * 连接信息
      */
-    protected HostInfo hostInfo;
+    protected SocketAddress socketAddress;
     /**
      * 连接分发器
      */
@@ -73,9 +73,9 @@ public abstract class SuperConnection implements IConnectionManager {
      */
     private IConnectionSwitchListener connectionSwitchListener;
 
-    public SuperConnection(HostInfo hostInfo) {
-        this.hostInfo = hostInfo;
-        actionDispatch = new SocketActionDispatcher(this, hostInfo);
+    public SuperConnection(SocketAddress socketAddress) {
+        this.socketAddress = socketAddress;
+        actionDispatch = new SocketActionDispatcher(this, socketAddress);
     }
 
     @Override
@@ -100,6 +100,9 @@ public abstract class SuperConnection implements IConnectionManager {
         if (heartBeatManager != null)
             heartBeatManager.setOptions(socketOptions);
 
+        if (responseDispatcher != null)
+            responseDispatcher.setSocketOptions(socketOptions);
+
         //更改了重连器
         if (reconnection != null && !reconnection.equals(socketOptions.getReconnectionManager())) {
             reconnection.detach();
@@ -116,14 +119,15 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public synchronized void connect() {
-        ELog.d("开始socket连接");
+        LogUtil.d("开始socket连接");
         //检查当前连接状态
         if (connectionStatus.get() != SocketStatus.SOCKET_DISCONNECTED) {
+            LogUtil.d("socket已经连接");
             return;
         }
         connectionStatus.set(SocketStatus.SOCKET_CONNECTING);
-        if (hostInfo == null) {
-            throw new NoNullExeption("连接参数为空，请检查是否设置了连接IP和port");
+        if (socketAddress == null) {
+            throw new NotNullException("连接参数为空，请检查是否设置了连接IP和port");
         }
         //初始化心跳管理器
         if (heartBeatManager == null)
@@ -137,7 +141,7 @@ public abstract class SuperConnection implements IConnectionManager {
             reconnection.attach(this);
 
         //开启线程
-        connectThread = new ConnectThread("connect thread for" + hostInfo);
+        connectThread = new ConnectThread("connect thread for" + socketAddress);
         connectThread.setDaemon(true);
         connectThread.start();
     }
@@ -150,7 +154,7 @@ public abstract class SuperConnection implements IConnectionManager {
         connectionStatus.set(SocketStatus.SOCKET_DISCONNECTIONG);
 
         //开启断开连接线程
-        String info = hostInfo.getIp() + " : " + hostInfo.getPort();
+        String info = socketAddress.getIp() + " : " + socketAddress.getPort();
         Thread disconnThread = new DisconnectThread(isReconnect, "disconn thread：" + info);
         disconnThread.setDaemon(true);
         disconnThread.start();
@@ -204,7 +208,7 @@ public abstract class SuperConnection implements IConnectionManager {
             } catch (Exception e) {
                 //连接异常
                 e.printStackTrace();
-                ELog.d("连接失败");
+                LogUtil.d("连接失败");
                 connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED);
                 actionDispatch.dispatchAction(SocketAction.ACTION_CONN_FAIL, new IsReconnect(true)); //第二个参数是指需要重连
 
@@ -216,7 +220,7 @@ public abstract class SuperConnection implements IConnectionManager {
      * 连接打开成功
      */
     protected void onConnectionOpened() {
-        ELog.d("连接成功");
+        LogUtil.d("连接成功");
         //连接成功
         actionDispatch.dispatchAction(SocketAction.ACTION_CONN_SUCCESS);
         connectionStatus.set(SocketStatus.SOCKET_CONNECTED);
@@ -231,14 +235,14 @@ public abstract class SuperConnection implements IConnectionManager {
     }
 
     @Override
-    public synchronized void switchHost(HostInfo hostInfo) {
-        if (hostInfo != null) {
-            HostInfo oldHost = this.hostInfo;
-            this.hostInfo = hostInfo;
+    public synchronized void switchHost(SocketAddress socketAddress) {
+        if (socketAddress != null) {
+            SocketAddress oldAddress = this.socketAddress;
+            this.socketAddress = socketAddress;
             if (actionDispatch != null)
-                actionDispatch.setHostInfo(hostInfo);
+                actionDispatch.setSocketAddress(socketAddress);
             if (connectionSwitchListener != null) {
-                connectionSwitchListener.onSwitchConnectionInfo(this, oldHost, hostInfo);
+                connectionSwitchListener.onSwitchConnectionInfo(this, oldAddress, socketAddress);
             }
         }
 
@@ -311,10 +315,15 @@ public abstract class SuperConnection implements IConnectionManager {
     @Override
     public synchronized IConnectionManager upObject(ISender sender) {
         //如果属于有反馈的请求，将设置一个20位随机字符串作为识别标识
-        if (sender instanceof BaseSender) {
-            ((BaseSender) sender).setAck(EUtil.getRandomChar(20));
+        if (sender instanceof CallbackSender) {
+            ((CallbackSender) sender).setAck(Util.getRandomChar(20));
         }
         sendBuffer(sender.parse());
         return this;
+    }
+
+    @Override
+    public HeartBeatManager getHeartBeatManager() {
+        return heartBeatManager;
     }
 }

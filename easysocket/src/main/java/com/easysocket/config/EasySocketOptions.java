@@ -67,7 +67,7 @@ public class EasySocketOptions {
      */
     private EasySocketFactory socketFactory;
     /**
-     * 获取请求消息唯一标识ack的工厂
+     * 获取请求消息唯一标识ack的工厂，默认为null
      */
     private AckFactory ackFactory;
 
@@ -84,23 +84,43 @@ public class EasySocketOptions {
      */
     private IClientHeart clientHeart;
     /**
-     * 是否开启心跳功能，默认开启
+     * 是否开启心跳功能，默认关闭
      */
     private boolean isActiveHeart;
+    /**
+     * 是否启动socket的智能分发功能，即回调功能，默认关闭
+     */
+    private boolean isActiveResponseDispatch;
+
 
     public boolean isDebug() {
         return isDebug;
     }
 
+    /**
+     * 静态内部类
+     */
     public static class Builder {
         EasySocketOptions socketOptions;
 
+        //首先获得一个默认的配置
         public Builder() {
             this(getDefaultOptions());
         }
 
         public Builder(EasySocketOptions defaultOptions) {
             socketOptions = defaultOptions;
+        }
+
+        /**
+         * 设置是否启动回调功能，默认是关闭的
+         *
+         * @param activeResponseDispatch
+         * @return
+         */
+        public Builder setActiveResponseDispatch(boolean activeResponseDispatch) {
+            socketOptions.isActiveResponseDispatch = activeResponseDispatch;
+            return this;
         }
 
         /**
@@ -319,7 +339,8 @@ public class EasySocketOptions {
         options.requestTimeout = 10 * 1000; //默认十秒
         options.isOpenRequestTimeout = true; //默认开启
         options.clientHeart = null;
-        options.isActiveHeart = true; //默认开启心跳包检测连接状态
+        options.isActiveHeart = false; //默认开启心跳包检测连接状态
+        options.isActiveResponseDispatch = false; //默认关闭回调功能
         return options;
     }
 
@@ -389,6 +410,88 @@ public class EasySocketOptions {
 
     public boolean isActiveHeart() {
         return isActiveHeart;
+    }
+
+    public boolean isActiveResponseDispatch() {
+        return isActiveResponseDispatch;
+    }
+
+    /** 各种set方法*/
+
+    public static void setIsDebug(boolean isDebug) {
+        EasySocketOptions.isDebug = isDebug;
+    }
+
+    public void setWriteOrder(ByteOrder writeOrder) {
+        this.writeOrder = writeOrder;
+    }
+
+    public void setReadOrder(ByteOrder readOrder) {
+        this.readOrder = readOrder;
+    }
+
+    public void setReaderProtocol(IReaderProtocol readerProtocol) {
+        this.readerProtocol = readerProtocol;
+    }
+
+    public void setMaxWriteBytes(int maxWriteBytes) {
+        this.maxWriteBytes = maxWriteBytes;
+    }
+
+    public void setMaxReadBytes(int maxReadBytes) {
+        this.maxReadBytes = maxReadBytes;
+    }
+
+    public void setHeartbeatFreq(long heartbeatFreq) {
+        this.heartbeatFreq = heartbeatFreq;
+    }
+
+    public void setMaxHeartbeatLoseTimes(int maxHeartbeatLoseTimes) {
+        this.maxHeartbeatLoseTimes = maxHeartbeatLoseTimes;
+    }
+
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public void setMaxResponseDataMb(int maxResponseDataMb) {
+        this.maxResponseDataMb = maxResponseDataMb;
+    }
+
+    public void setReconnectionManager(AbsReconnection reconnectionManager) {
+        this.reconnectionManager = reconnectionManager;
+    }
+
+    public void setEasySSLConfig(SocketSSLConfig easySSLConfig) {
+        this.easySSLConfig = easySSLConfig;
+    }
+
+    public void setSocketFactory(EasySocketFactory socketFactory) {
+        this.socketFactory = socketFactory;
+    }
+
+    public void setAckFactory(AckFactory ackFactory) {
+        this.ackFactory = ackFactory;
+    }
+
+    public void setRequestTimeout(long requestTimeout) {
+        this.requestTimeout = requestTimeout;
+    }
+
+    public void setOpenRequestTimeout(boolean openRequestTimeout) {
+        isOpenRequestTimeout = openRequestTimeout;
+    }
+
+    public void setClientHeart(IClientHeart clientHeart) {
+        this.clientHeart = clientHeart;
+    }
+
+    public void setActiveHeart(boolean activeHeart) {
+        isActiveHeart = activeHeart;
+    }
+
+    public void setActiveResponseDispatch(boolean activeResponseDispatch) {
+        isActiveResponseDispatch = activeResponseDispatch;
     }
 
 }

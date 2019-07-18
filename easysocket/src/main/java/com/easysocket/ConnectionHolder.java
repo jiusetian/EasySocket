@@ -3,7 +3,7 @@ package com.easysocket;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.connect.SuperConnection;
 import com.easysocket.connection.connect.TcpConnection;
-import com.easysocket.entity.HostInfo;
+import com.easysocket.entity.SocketAddress;
 import com.easysocket.interfaces.config.IConnectionSwitchListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
 
@@ -34,10 +34,10 @@ public class ConnectionHolder {
 
     /**
      * 移除某个连接缓存
-     * @param hostInfo
+     * @param socketAddress
      */
-    public void removeConnection(HostInfo hostInfo){
-        mConnectionManagerMap.remove(createKey(hostInfo));
+    public void removeConnection(SocketAddress socketAddress){
+        mConnectionManagerMap.remove(createKey(socketAddress));
     }
 
     /**
@@ -45,7 +45,7 @@ public class ConnectionHolder {
      * @param info
      * @return
      */
-    public IConnectionManager getConnection(HostInfo info) {
+    public IConnectionManager getConnection(SocketAddress info) {
 
         IConnectionManager manager = mConnectionManagerMap.get(createKey(info));
         if (manager == null) {
@@ -61,7 +61,7 @@ public class ConnectionHolder {
      * @param socketOptions
      * @return
      */
-    public IConnectionManager getConnection(HostInfo info, EasySocketOptions socketOptions) {
+    public IConnectionManager getConnection(SocketAddress info, EasySocketOptions socketOptions) {
         IConnectionManager manager = mConnectionManagerMap.get(createKey(info));
         if (manager != null) { //有缓存
             manager.setOptions(socketOptions);
@@ -78,17 +78,17 @@ public class ConnectionHolder {
      * @param socketOptions
      * @return
      */
-    private IConnectionManager createNewManagerAndCache(HostInfo info, EasySocketOptions socketOptions) {
+    private IConnectionManager createNewManagerAndCache(SocketAddress info, EasySocketOptions socketOptions) {
         SuperConnection manager = new TcpConnection(info); //创建连接管理器
         manager.setOptions(socketOptions); //设置参数
         //连接信息切换监听
         manager.setOnConnectionSwitchListener(new IConnectionSwitchListener() {
             @Override
-            public void onSwitchConnectionInfo(IConnectionManager manager, HostInfo oldInfo,
-                                               HostInfo newInfo) {
+            public void onSwitchConnectionInfo(IConnectionManager manager, SocketAddress oldAddress,
+                                               SocketAddress newAddress) {
                 synchronized (mConnectionManagerMap) {
-                    mConnectionManagerMap.remove(createKey(oldInfo));
-                    mConnectionManagerMap.put(createKey(newInfo), manager);
+                    mConnectionManagerMap.remove(createKey(oldAddress));
+                    mConnectionManagerMap.put(createKey(newAddress), manager);
                 }
             }
         });
@@ -100,11 +100,11 @@ public class ConnectionHolder {
 
     /**
      * 生成保存连接的map的对应key值
-     * @param hostInfo
+     * @param socketAddress
      * @return
      */
-    private String createKey(HostInfo hostInfo){
-        return hostInfo.getIp()+":"+hostInfo.getPort();
+    private String createKey(SocketAddress socketAddress){
+        return socketAddress.getIp()+":"+ socketAddress.getPort();
     }
 
 

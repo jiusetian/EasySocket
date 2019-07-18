@@ -1,8 +1,8 @@
 package com.easysocket.connection.reconnect;
 
-import com.easysocket.entity.HostInfo;
+import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.IsReconnect;
-import com.easysocket.utils.ELog;
+import com.easysocket.utils.LogUtil;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -40,7 +40,7 @@ public class DefaultReConnection extends AbsReconnection {
     private final Runnable RcConnTask = new Runnable() {
         @Override
         public void run() {
-            ELog.d("执行重连任务");
+            LogUtil.d("执行重连任务");
             if (isDetach) {
                 shutDown();
                 return;
@@ -83,25 +83,25 @@ public class DefaultReConnection extends AbsReconnection {
     }
 
     @Override
-    public void onSocketConnSuccess(HostInfo hostInfo) {
+    public void onSocketConnSuccess(SocketAddress socketAddress) {
         shutDown();
     }
 
     @Override
-    public void onSocketConnFail(HostInfo hostInfo, IsReconnect isReconnect) {
+    public void onSocketConnFail(SocketAddress socketAddress, IsReconnect isReconnect) {
         if (!isReconnect.booleanValue()) {
             shutDown();
             return;
         }
         connectionFailedTimes++;
         //如果大于最大连接次数，则可使用备用host,然后轮流切换两个host
-        if (connectionFailedTimes > MAX_CONNECTION_FAILED_TIMES && hostInfo.getBackupInfo() != null) {
+        if (connectionFailedTimes > MAX_CONNECTION_FAILED_TIMES && socketAddress.getBackupAddress() != null) {
             connectionFailedTimes = 0; //归零
-            HostInfo backupHost = hostInfo.getBackupInfo();
-            HostInfo bbHost = new HostInfo(hostInfo.getIp(), hostInfo.getPort());
-            backupHost.setBackupInfo(bbHost);
+            SocketAddress backupAddress = socketAddress.getBackupAddress();
+            SocketAddress bbAddress = new SocketAddress(socketAddress.getIp(), socketAddress.getPort());
+            backupAddress.setBackupAddress(bbAddress);
             if (connectionManager.isConnectViable()) {
-                connectionManager.switchHost(backupHost);
+                connectionManager.switchHost(backupAddress);
                 reconnect();
             }
         } else {
@@ -111,7 +111,7 @@ public class DefaultReConnection extends AbsReconnection {
     }
 
     @Override
-    public void onSocketDisconnect(HostInfo hostInfo, IsReconnect isReconnect) {
+    public void onSocketDisconnect(SocketAddress socketAddress, IsReconnect isReconnect) {
         if (!isReconnect.booleanValue()) {
             shutDown();
             return;

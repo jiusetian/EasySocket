@@ -14,6 +14,12 @@ public interface IHeartBeatManager {
     void activateHeartbeat();
 
     /**
+     * 开始心跳
+     * @param clientHeart
+     */
+    void startHeartbeat(IClientHeart clientHeart);
+
+    /**
      * 停止心跳
      */
     void stopHeartbeat();
@@ -28,4 +34,9 @@ public interface IHeartBeatManager {
      * @param clientHeart
      */
     void setClientHeart(IClientHeart clientHeart);
+
+    /**
+     * 接收到心跳
+     */
+    void onReceiveHeartBeat();
 }

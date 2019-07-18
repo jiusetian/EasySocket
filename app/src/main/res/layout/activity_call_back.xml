@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
     android:gravity="center"
     android:orientation="vertical"
-    >
+    tools:context=".CallBackActivity">
 
     <Button
         android:id="@+id/send_beat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="发送一个心跳包"
+        android:text="发送一个心跳"
+        />
+
+
+    <Button
+        android:id="@+id/activate_beat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="激活心跳"
         />
 
     <Button
-        android:id="@+id/auto_beat"
+        android:id="@+id/send_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="激活自动发送心跳"
-        />
-
-    <Button
-        android:id="@+id/act_callback"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="跳转到有回调功能的activity"
+        android:text="有进度的请求"
         />
 
 </LinearLayout>

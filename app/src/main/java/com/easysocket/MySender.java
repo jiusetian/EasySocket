@@ -1,13 +1,13 @@
 package com.easysocket;
 
-import com.easysocket.entity.BaseSender;
+import com.easysocket.entity.CallbackSender;
 
 /**
  * Author：Alex
  * Date：2019/6/11
  * Note：
  */
-public class MySender extends BaseSender {
+public class MySender extends CallbackSender {
 
     private String msgId;
     private String from;

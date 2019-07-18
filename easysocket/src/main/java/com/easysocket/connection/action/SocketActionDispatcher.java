@@ -1,6 +1,6 @@
 package com.easysocket.connection.action;
 
-import com.easysocket.entity.HostInfo;
+import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.IsReconnect;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
@@ -27,7 +27,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
     /**
      * 连接地址
      */
-    private HostInfo hostInfo;
+    private SocketAddress socketAddress;
     /**
      * 连接器
      */
@@ -46,16 +46,16 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
      */
     private static final LinkedBlockingQueue<ActionBean> actions = new LinkedBlockingQueue();
 
-    public SocketActionDispatcher(IConnectionManager connectionManager, HostInfo hostInfo) {
-        this.hostInfo = hostInfo;
+    public SocketActionDispatcher(IConnectionManager connectionManager, SocketAddress socketAddress) {
+        this.socketAddress = socketAddress;
         this.connectionManager = connectionManager;
         //开启线程处理回调信息
         actionThread=new DispatchThread();
         actionThread.start();
     }
 
-    public void setHostInfo(HostInfo info){
-        hostInfo=info;
+    public void setSocketAddress(SocketAddress info){
+        socketAddress =info;
     }
 
     @Override
@@ -142,19 +142,19 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
     private void dispatchActionToListener(String action, Serializable content, ISocketActionListener actionListener) {
         switch (action) {
             case ACTION_CONN_SUCCESS: //连接成功
-                actionListener.onSocketConnSuccess(hostInfo);
+                actionListener.onSocketConnSuccess(socketAddress);
                 break;
 
             case ACTION_CONN_FAIL: //连接失败
-                actionListener.onSocketConnFail(hostInfo, (IsReconnect) content);
+                actionListener.onSocketConnFail(socketAddress, (IsReconnect) content);
                 break;
 
             case ACTION_DISCONNECTION: //连接断开
-                actionListener.onSocketDisconnect(hostInfo, (IsReconnect) content);
+                actionListener.onSocketDisconnect(socketAddress, (IsReconnect) content);
                 break;
 
             case ACTION_READ_COMPLETE: //读取完成
-                actionListener.onSocketResponse(hostInfo, (OriginReadData) content);
+                actionListener.onSocketResponse(socketAddress, (OriginReadData) content);
                 break;
         }
     }

@@ -5,6 +5,6 @@ package com.easysocket.entity;
  * Date：2019/6/3
  * Note：客户端心跳包的抽象类
  */
-public abstract class IClientHeart extends BaseSender {
+public abstract class IClientHeart extends CallbackSender {
 
 }

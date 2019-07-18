@@ -11,24 +11,25 @@ import java.nio.ByteOrder;
  * Note：默认的json格式发送内容
  *
  */
-public class DefaultSender extends BaseSender {
+public class DefaultSender extends CallbackSender {
 
     /**
      * 要发送的内容
      */
-    private BaseSender content;
+    private CallbackSender content;
 
     /**
      * 通过DefaultSender可以将要发送的内容按照默认的协议解析成字节流
      *
      * @param content 要发送的内容
      */
-    public DefaultSender(BaseSender content) {
+    public DefaultSender(CallbackSender content) {
         this.content = content;
     }
 
     @Override
     public void setAck(String ack) {
+        super.setAck(ack);
         content.setAck(ack);
     }
 

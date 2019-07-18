@@ -1,6 +1,6 @@
 package com.easysocket.interfaces.conn;
 
-import com.easysocket.entity.HostInfo;
+import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.IsReconnect;
 import com.easysocket.interfaces.callback.ICallBack;
 import com.easysocket.interfaces.config.IOptions;
@@ -40,9 +40,9 @@ public interface IConnectionManager extends ISubscribeSocketAction, IOptions<ICo
 
     /**
      * 切换host
-     * @param hostInfo
+     * @param socketAddress
      */
-    void switchHost(HostInfo hostInfo);
+    void switchHost(SocketAddress socketAddress);
 
     /**
      * 获取输入流
@@ -55,6 +55,12 @@ public interface IConnectionManager extends ISubscribeSocketAction, IOptions<ICo
      * @return
      */
     OutputStream getOutStream();
+
+    /**
+     * 获取心跳管理器
+     * @return
+     */
+    IHeartBeatManager getHeartBeatManager();
 
 
 }

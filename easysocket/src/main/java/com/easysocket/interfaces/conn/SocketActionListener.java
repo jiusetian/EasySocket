@@ -1,6 +1,6 @@
 package com.easysocket.interfaces.conn;
 
-import com.easysocket.entity.HostInfo;
+import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.IsReconnect;
 import com.easysocket.entity.OriginReadData;
 
@@ -12,37 +12,37 @@ import com.easysocket.entity.OriginReadData;
 public abstract class SocketActionListener implements ISocketActionListener{
     /**
      * socket连接成功
-     * @param hostInfo
+     * @param socketAddress
      */
     @Override
-    public void onSocketConnSuccess(HostInfo hostInfo) {
+    public void onSocketConnSuccess(SocketAddress socketAddress) {
 
     }
     /**
      * socket连接失败
-     * @param hostInfo
+     * @param socketAddress
      * @param isReconnect 是否需要重连
      */
     @Override
-    public void onSocketConnFail(HostInfo hostInfo, IsReconnect isReconnect) {
+    public void onSocketConnFail(SocketAddress socketAddress, IsReconnect isReconnect) {
 
     }
     /**
      * 断开socket连接
-     * @param hostInfo
+     * @param socketAddress
      * @param isReconnect 是否需要重连
      */
     @Override
-    public void onSocketDisconnect(HostInfo hostInfo, IsReconnect isReconnect) {
+    public void onSocketDisconnect(SocketAddress socketAddress, IsReconnect isReconnect) {
 
     }
     /**
      * socket读数据反馈
-     * @param hostInfo
+     * @param socketAddress
      * @param originReadData
      */
     @Override
-    public void onSocketResponse(HostInfo hostInfo, OriginReadData originReadData) {
+    public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
 
     }
 }
