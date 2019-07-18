@@ -47,8 +47,8 @@ dependencies {
 }
 
 ### 二、EasySocket的简单配置
-
-      一般在项目的Application中对EasySocket进行全局化配置，下面是一个最简单的配置
+       
+一般在项目的Application中对EasySocket进行全局化配置，下面是一个最简单的配置
 
         /**
          * 初始化EasySocket
@@ -67,9 +67,9 @@ dependencies {
                     .buildConnection(); //创建一个socket连接
         }
 
-        Socket的相关参数都使用了默认值，主要设置了IP和端口，这种配置是不具备回调功能和智能心跳的，但也满足了socket的基本需求，来看看框架的简单使用
+Socket的相关参数都使用了默认值，主要设置了IP和端口，这种配置是不具备回调功能和智能心跳的，但也满足了socket的基本需求，来看看框架的简单使用
 
-        首先 定义一个socket行为的监听器，如下
+首先 定义一个socket行为的监听器，如下
 
         /**
          * socket行为监听
@@ -138,7 +138,6 @@ dependencies {
         }
 
 执行结果如下：
-
 
 可以看到确实监听到了服务器返回的心跳
 
