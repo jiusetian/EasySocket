@@ -8,11 +8,11 @@ EasySocket的初衷是希望通过对传输数据的处理使得socket编程更�
 
 ### EasySocket特点：
 
-   1、消息结构使用（包头+包体）的协议，其中包体存储我们要发送的数据实体，而包头则存储包体的数据长度，这种结构方便数据的读取，解决了TCP通信中断包、粘包等问题；
+   1、消息结构使用（包头+包体）的协议，其中包体存储要发送的数据实体，而包头则存储包体的数据长度，这种结构方式方便于数据的解析，解决了TCP通信中断包、粘包等问题；
 
    2、智能的心跳包保活机制，自动发送和接收心跳包，实时检测socket连接状态，同时有断开重连机制解决socket的连接问题；
 
-   3、实现了socket层面传输数据的回调功能，使得每一个请求都能够找到相应的应答。
+   3、实现了socket层面传输数据的回调功能，使得每一个请求信息和它的应答信息能够实现无缝对接。
 
 ### 一、EasySocket的Android Studio配置
 
@@ -52,7 +52,7 @@ dependencies {
      * 初始化EasySocket
      */
     private void initEasySocket(){
-        //客户端设置的心跳包实例，这样客户端就可以自动发送心跳包给服务端了
+        //设置心跳包实例，这样客户端就可以自动发送心跳包给服务端了
         ClientHeartBeat clientHeartBeat=new ClientHeartBeat();
         clientHeartBeat.setMsgId("heart_beat");
         clientHeartBeat.setFrom("client");
@@ -72,7 +72,7 @@ dependencies {
                 .buildMainConnection(); //创建一个主socket连接
     }
 
-EasySocket的特点之一是实现心跳包的自动管理，所以要想实现心跳包的自动发送和接收，就需要在初始化的时候设置一个给服务器发送的客户端心跳包实例。
+EasySocket的特点之一是实现心跳包的自动管理，所以要想实现心跳包的自动发送和接收，就需要在初始化的时候设置一个给服务器发送的心跳包实例。
 
 还有上面AckFactoryImpl是本项目的关键，这是一个获取回调标识ack的工厂类，需要使用者自己定义，其中它的抽象类是这样的
 
@@ -83,7 +83,7 @@ public abstract class AckFactory {
 
 }
 
-能够拿到所谓的回调标识ack是EasySocket实现回调功能的关键，每一个由客户端向服务器发送的信息都会携带一个随机生成的20位的字符串，我们称之为ack，所以服务器接收的每一个信息都有这样的一个ack，在发送应答信息的时候，将这个ack一起返给客户端，客户端在接收的时候通过对比ack就知道当前应答信息对应的是哪一个请求了。
+能够拿到所谓的回调标识ack是EasySocket实现回调功能的关键，每一个由客户端向服务器发送的信息都会携带一个随机生成的20位的字符串，我们称之为ack，所以服务器接收的每一个信息都有这样的一个ack，在返回应答信息的时候，将这个ack一起返给客户端，客户端在接收的时候通过对比ack就知道当前应答信息对应的是哪一个请求了。
 
 比如下面的一个AckFactory的实现类
 
@@ -109,7 +109,7 @@ public class AckFactoryImpl  extends AckFactory {
 
 当然这个抽象工厂类是根据自己的实际情况去实现，其中回调方法createCallbackAck的参数OriginReadData是服务器返回的数据，只要保证能获取到唯一的ack标识就可以了。
 
-其实上面的两个必须的配置完成了，再进行IP和端口的设置，最后通过buildMainConnection()创建一个socket连接，就可以愉快地使用EasySocket了，其他的配置都有默认值，当然你也可以自己去定义。
+上面的两个必须的配置完成以后，再进行IP和端口的设置，最后通过buildMainConnection()创建一个socket连接，就可以愉快地使用EasySocket了，其他的配置都有默认值，当然你也可以自己去定义。
 
 ### 三、EasySocket的简单调用
 
@@ -133,7 +133,7 @@ public class AckFactoryImpl  extends AckFactory {
                 });
     }
 
-只需要定义好要发送的心跳包实例，然后通过EasySocket类upObject发送给服务器，而在onCallBack方法回调中就可以获得此次请求的应答信息，是不是很Easy。
+只需要定义好要发送的心跳包实例，然后通过EasySocket类upObject发送给服务器，而在onCallBack回调方法中就可以获得此次请求的应答信息，是不是很Easy。
 
 此外我们还封装了一个带进度框的请求，非常实用，实用方法如下：
 
