@@ -138,9 +138,8 @@ Socket的相关参数都使用了默认值，主要设置了IP和端口，这种
 
 执行结果如下：
 
-	发送的数据=������C{"from":"client","msgId":"heart_beat","ack":"HXG1LVLZL1DIMGWULTOT"} 
+	发送的数据->{"from":"client","msgId":"heart_beat","ack":"HXG1LVLZL1DIMGWULTOT"} 
 
-	接收的数据={"from":"server","msgId":"heart_beat","ack":"HXG1LVLZL1DIMGWULTOT"} 
 
 	监听器接收的数据->{"from":"server","msgId":"heart_beat","ack":"HXG1LVLZL1DIMGWULTOT"} 
 
@@ -231,11 +230,7 @@ EasySocket的主要特点是具备数据回调功能和智能心跳管理，但�
     
 执行结果如下：
 
-	发送的数据=������C{"from":"client","msgId":"heart_beat","ack":"CCA4W7KXDDNDLYO84SFJ"} 
-
-	接收的数据={"from":"server","msgId":"heart_beat","ack":"CCA4W7KXDDNDLYO84SFJ"} 
-
-	监听器接收的数据->{"from":"server","msgId":"heart_beat","ack":"CCA4W7KXDDNDLYO84SFJ"} 
+	发送的数据->{"from":"client","msgId":"heart_beat","ack":"CCA4W7KXDDNDLYO84SFJ"} 
 
 	心跳包请求反馈：ServerHeartBeat{from='server', msgId='heart_beat', backSign='CCA4W7KXDDNDLYO84SFJ'}
 
