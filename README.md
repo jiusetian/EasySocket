@@ -137,9 +137,10 @@ Socket的相关参数都使用了默认值，主要设置了IP和端口，这种
     }
 
 执行结果如下：
-发送的数据=������C{"from":"client","msgId":"heart_beat","ack":"YKNEJC8CONXK5YI577B8"} 
-接收的数据={"from":"srver","msgId":"heart_beat","ack":"YKNEJC8CONXK5YI577B8"} 
-监听器接收的数据->{"from":"server","msgId":"heart_beat","ack":"YKNEJC8CONXK5YI577B8"}
+
+2019-10-19 17:56:50.320 1403-1422/com.easysocket I/System.out: easysocket：com.easysocket.connection.iowork.EasyWriter write():89 发送的数据=������C{"from":"client","msgId":"heart_beat","ack":"HXG1LVLZL1DIMGWULTOT"} 
+2019-10-19 17:56:50.334 1403-1423/com.easysocket I/System.out: easysocket：com.easysocket.connection.iowork.EasyReader read():154 接收的数据={"from":"server","msgId":"heart_beat","ack":"HXG1LVLZL1DIMGWULTOT"} 
+2019-10-19 17:56:50.335 1403-1420/com.easysocket I/System.out: easysocket：com.easysocket.MainActivity$4 onSocketResponse():99 监听器接收的数据->{"from":"server","msgId":"heart_beat","ack":"HXG1LVLZL1DIMGWULTOT"} 
 
 可以看到确实监听到了服务器返回的心跳
 
