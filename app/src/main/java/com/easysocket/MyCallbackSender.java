@@ -1,13 +1,13 @@
 package com.easysocket;
 
-import com.easysocket.entity.CallbackSender;
+import com.easysocket.entity.sender.SuperCallbackSender;
 
 /**
  * Author：Alex
  * Date：2019/6/11
- * Note：
+ * Note：继承SuperCallbackSender代表这是一个有回调的消息
  */
-public class MySender extends CallbackSender {
+public class MyCallbackSender extends SuperCallbackSender {
 
     private String msgId;
     private String from;
@@ -28,8 +28,4 @@ public class MySender extends CallbackSender {
         this.from = from;
     }
 
-    @Override
-    public byte[] parse() {
-        return new byte[0];
-    }
 }

@@ -2,7 +2,7 @@ package com.easysocket.interfaces.callback;
 
 import com.easysocket.callback.HeartbeatCallBack;
 import com.easysocket.callback.SuperCallBack;
-import com.easysocket.entity.IClientHeart;
+import com.easysocket.entity.sender.SuperClientHeart;
 
 /**
  * Author：Alex
@@ -21,6 +21,6 @@ public interface ICallBack {
      * @param clientHeart
      * @param callBack
      */
-    void onHeartCallBack(IClientHeart clientHeart, HeartbeatCallBack.CallBack callBack);
+    void onHeartCallBack(SuperClientHeart clientHeart, HeartbeatCallBack.CallBack callBack);
 
 }

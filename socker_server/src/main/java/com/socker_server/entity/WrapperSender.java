@@ -10,10 +10,10 @@ import java.nio.charset.Charset;
  * Date：2019/6/6
  * Note：
  */
-public class DefaultSender implements Serializable {
+public class WrapperSender implements Serializable {
     private String content;
 
-    public DefaultSender(String content){
+    public WrapperSender(String content){
         this.content=content;
     }
 

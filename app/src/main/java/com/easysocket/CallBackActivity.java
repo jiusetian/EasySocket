@@ -8,7 +8,6 @@ import android.view.View;
 import com.easysocket.callback.ProgressDialogCallBack;
 import com.easysocket.callback.SimpleCallBack;
 import com.easysocket.config.EasySocketOptions;
-import com.easysocket.entity.DefaultSender;
 import com.easysocket.interfaces.callback.IProgressDialog;
 import com.easysocket.utils.LogUtil;
 
@@ -47,13 +46,12 @@ public class CallBackActivity extends AppCompatActivity {
         findViewById(R.id.send_progress).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MySender sender = new MySender();
+                MyCallbackSender sender = new MyCallbackSender();
                 sender.setFrom("android");
                 sender.setMsgId("my_request");
-                DefaultSender defaultSender = new DefaultSender(sender);
                 EasySocket.getInstance()
-                        .upObject(defaultSender)
-                        .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, defaultSender) {
+                        .upObject(sender)
+                        .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender) {
                             @Override
                             public void onResponse(String s) {
                                 LogUtil.d("请求返回的消息=" + s);
@@ -79,9 +77,8 @@ public class CallBackActivity extends AppCompatActivity {
         ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
         clientHeartBeat.setMsgId("heart_beat");
         clientHeartBeat.setFrom("client");
-        DefaultSender defaultSender = new DefaultSender(clientHeartBeat);
-        EasySocket.getInstance().upObject(defaultSender)
-                .onCallBack(new SimpleCallBack<ServerHeartBeat>(defaultSender) {
+        EasySocket.getInstance().upObject(clientHeartBeat)
+                .onCallBack(new SimpleCallBack<ServerHeartBeat>(clientHeartBeat) {
                     @Override
                     public void onResponse(ServerHeartBeat serverHeartBeat) {
                         LogUtil.d("心跳包请求反馈：" + serverHeartBeat.toString());
@@ -108,7 +105,7 @@ public class CallBackActivity extends AppCompatActivity {
 
         //初始化EasySocket
         EasySocket.getInstance()
-                .ip("192.168.4.52") //IP地址
+                .ip("192.168.3.9") //IP地址
                 .port(9999) //端口
                 .options(options) //连接的配置
                 .buildConnection(); //创建一个socket连接

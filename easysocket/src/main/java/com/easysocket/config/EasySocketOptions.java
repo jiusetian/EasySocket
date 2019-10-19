@@ -2,7 +2,7 @@ package com.easysocket.config;
 
 import com.easysocket.connection.reconnect.AbsReconnection;
 import com.easysocket.connection.reconnect.DefaultReConnection;
-import com.easysocket.entity.IClientHeart;
+import com.easysocket.entity.sender.SuperClientHeart;
 import com.easysocket.interfaces.io.IReaderProtocol;
 
 import java.nio.ByteOrder;
@@ -82,7 +82,7 @@ public class EasySocketOptions {
     /**
      * 客户端心跳包
      */
-    private IClientHeart clientHeart;
+    private SuperClientHeart clientHeart;
     /**
      * 是否开启心跳功能，默认关闭
      */
@@ -140,7 +140,7 @@ public class EasySocketOptions {
          * @param clientHeart
          * @return
          */
-        public Builder setClientHeart(IClientHeart clientHeart) {
+        public Builder setClientHeart(SuperClientHeart clientHeart) {
             socketOptions.clientHeart = clientHeart;
             return this;
         }
@@ -404,7 +404,7 @@ public class EasySocketOptions {
         return ackFactory;
     }
 
-    public IClientHeart getClientHeart() {
+    public SuperClientHeart getClientHeart() {
         return clientHeart;
     }
 
@@ -482,7 +482,7 @@ public class EasySocketOptions {
         isOpenRequestTimeout = openRequestTimeout;
     }
 
-    public void setClientHeart(IClientHeart clientHeart) {
+    public void setClientHeart(SuperClientHeart clientHeart) {
         this.clientHeart = clientHeart;
     }
 

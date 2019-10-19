@@ -1,6 +1,5 @@
 package com.easysocket.connection.connect;
 
-import com.easysocket.connection.iowork.ResponseDispatcher;
 import com.easysocket.callback.HeartbeatCallBack;
 import com.easysocket.callback.SuperCallBack;
 import com.easysocket.config.EasySocketOptions;
@@ -9,13 +8,14 @@ import com.easysocket.connection.action.SocketActionDispatcher;
 import com.easysocket.connection.action.SocketStatus;
 import com.easysocket.connection.heartbeat.HeartBeatManager;
 import com.easysocket.connection.iowork.IOManager;
+import com.easysocket.connection.iowork.ResponseDispatcher;
 import com.easysocket.connection.reconnect.AbsReconnection;
-import com.easysocket.entity.CallbackSender;
-import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.IClientHeart;
-import com.easysocket.entity.ISender;
 import com.easysocket.entity.IsReconnect;
+import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.exception.NotNullException;
+import com.easysocket.entity.sender.ISender;
+import com.easysocket.entity.sender.SuperCallbackSender;
+import com.easysocket.entity.sender.SuperClientHeart;
 import com.easysocket.interfaces.config.IConnectionSwitchListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
@@ -295,7 +295,7 @@ public abstract class SuperConnection implements IConnectionManager {
     }
 
     @Override
-    public void onHeartCallBack(IClientHeart clientHeart, HeartbeatCallBack.CallBack callBack) {
+    public void onHeartCallBack(SuperClientHeart clientHeart, HeartbeatCallBack.CallBack callBack) {
         //clientHeart.setAck(clientHeart.getAck());
         responseDispatcher.addHeartbeatCallBack(clientHeart.getAck(), callBack);
     }
@@ -315,8 +315,8 @@ public abstract class SuperConnection implements IConnectionManager {
     @Override
     public synchronized IConnectionManager upObject(ISender sender) {
         //如果属于有反馈的请求，将设置一个20位随机字符串作为识别标识
-        if (sender instanceof CallbackSender) {
-            ((CallbackSender) sender).setAck(Util.getRandomChar(20));
+        if (sender instanceof SuperCallbackSender) {
+            ((SuperCallbackSender) sender).setAck(Util.getRandomChar(20));
         }
         sendBuffer(sender.parse());
         return this;

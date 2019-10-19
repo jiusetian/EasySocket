@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.socker_server.entity.AbsReceiveMsg;
 import com.socker_server.entity.AbsSendMsg;
 import com.socker_server.entity.MsgId;
-import com.socker_server.entity.DefaultSender;
+import com.socker_server.entity.WrapperSender;
 import com.socker_server.entity.MyResponse;
 import com.socker_server.entity.ServerHeartBeat;
 import com.socker_server.iowork.IWriter;
@@ -58,7 +58,7 @@ public class HandlerIO {
         if (sendMsg == null) return;
         String backStr = new Gson().toJson(sendMsg);
         System.out.println("send message:"+backStr);
-        DefaultSender packet=new DefaultSender(backStr);
+        WrapperSender packet=new WrapperSender(backStr);
         easyWriter.offer(packet.parse());
     }
 

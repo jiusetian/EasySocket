@@ -1,7 +1,7 @@
 package com.easysocket.callback;
 
 import com.easysocket.config.EasySocketOptions;
-import com.easysocket.entity.IClientHeart;
+import com.easysocket.entity.sender.SuperClientHeart;
 import com.easysocket.utils.Util;
 import com.google.gson.Gson;
 
@@ -23,7 +23,7 @@ public class HeartbeatCallBack<T> extends SuperCallBack<T> {
      * @param
      * @param
      */
-    private HeartbeatCallBack(IClientHeart clientHeart) {
+    private HeartbeatCallBack(SuperClientHeart clientHeart) {
         super(clientHeart);
     }
 

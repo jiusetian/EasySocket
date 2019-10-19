@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.easysocket.config.EasySocketOptions;
-import com.easysocket.entity.DefaultSender;
 import com.easysocket.entity.IsReconnect;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
@@ -111,9 +110,8 @@ public class MainActivity extends AppCompatActivity {
         ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
         clientHeartBeat.setMsgId("heart_beat");
         clientHeartBeat.setFrom("client");
-        DefaultSender defaultSender = new DefaultSender(clientHeartBeat);
         //发送
-        EasySocket.getInstance().upObject(defaultSender);
+        EasySocket.getInstance().upObject(clientHeartBeat);
     }
 
     /**
@@ -127,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
         //初始化EasySocket
         EasySocket.getInstance()
-                .ip("192.168.4.52") //IP地址
+                .ip("192.168.3.9") //IP地址
                 .port(9999) //端口
                 .options(options) //连接的配置
                 .buildConnection(); //创建一个socket连接

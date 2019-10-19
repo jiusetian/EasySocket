@@ -1,4 +1,4 @@
-package com.easysocket.entity;
+package com.easysocket.entity.sender;
 
 import java.io.Serializable;
 

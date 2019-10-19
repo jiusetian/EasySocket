@@ -1,12 +1,12 @@
 package com.easysocket;
 
 import com.easysocket.config.EasySocketOptions;
-import com.easysocket.entity.CallbackSender;
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.IClientHeart;
-import com.easysocket.entity.ISender;
 import com.easysocket.entity.exception.InitialExeption;
 import com.easysocket.entity.exception.NotNullException;
+import com.easysocket.entity.sender.ISender;
+import com.easysocket.entity.sender.SuperCallbackSender;
+import com.easysocket.entity.sender.SuperClientHeart;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
 
@@ -22,19 +22,19 @@ public class EasySocket {
 
     private volatile static EasySocket singleton = null; //加了volatile更加安全
     /**
-     * 主连接的Ip
+     * 连接的Ip
      */
     private String ip = null;
     /**
-     * 主连接的端口
+     * 连接的端口
      */
     private int port = -1;
     /**
-     * 主连接的参数
+     * 连接的参数
      */
     private EasySocketOptions options;
     /**
-     * 主连接器
+     * 连接器
      */
     private IConnectionManager connection;
 
@@ -74,7 +74,7 @@ public class EasySocket {
     }
 
     /**
-     * 设置主连接的参数
+     * 设置连接的参数
      */
     public EasySocket options(EasySocketOptions socketOptions) {
         options = socketOptions;
@@ -82,7 +82,15 @@ public class EasySocket {
     }
 
     /**
-     * 建立一个socket主连接
+     * 获取配置参数
+     * @return
+     */
+    public EasySocketOptions getOptions() {
+        return options == null ? EasySocketOptions.getDefaultOptions() : options;
+    }
+
+    /**
+     * 建立一个socket连接
      *
      * @return
      */
@@ -97,7 +105,7 @@ public class EasySocket {
 
 
     /**
-     * 向服务器发送一个对象，默认是发送给主连接
+     * 向服务器发送一个对象
      *
      * @param sender
      */
@@ -107,7 +115,7 @@ public class EasySocket {
     }
 
     /**
-     * 发送一个string，默认是发送给主连接
+     * 发送一个string
      *
      * @param str
      */
@@ -139,16 +147,17 @@ public class EasySocket {
 
     /**
      * 开启心跳管理器
+     *
      * @param clientHeart
      * @return
      */
-    public EasySocket startHeartBeat(IClientHeart clientHeart) {
+    public EasySocket startHeartBeat(SuperClientHeart clientHeart) {
         getConnection().getHeartBeatManager().startHeartbeat(clientHeart);
         return this;
     }
 
     /**
-     * 发送至主连接
+     * 发送
      *
      * @param
      */
@@ -161,7 +170,7 @@ public class EasySocket {
     }
 
     /**
-     * 获取主连接
+     * 获取连接
      *
      * @return
      */
@@ -194,7 +203,7 @@ public class EasySocket {
      * @param socketAddress
      * @param socketOptions
      */
-    public IConnectionManager upToSpecifyConnection(CallbackSender sender, SocketAddress socketAddress, EasySocketOptions socketOptions) {
+    public IConnectionManager upToSpecifyConnection(SuperCallbackSender sender, SocketAddress socketAddress, EasySocketOptions socketOptions) {
         EasySocketOptions options = socketOptions == null ? EasySocketOptions.getDefaultOptions() : socketOptions;
         IConnectionManager connectionManager = connectionHolder.getConnection(socketAddress, options);
         if (connectionManager.isConnectViable())
@@ -209,7 +218,7 @@ public class EasySocket {
      * @param sender
      * @param socketAddress
      */
-    public IConnectionManager upToSpecifyConnection(CallbackSender sender, SocketAddress socketAddress) {
+    public IConnectionManager upToSpecifyConnection(SuperCallbackSender sender, SocketAddress socketAddress) {
         return upToSpecifyConnection(sender, socketAddress, null);
     }
 

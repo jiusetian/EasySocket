@@ -132,9 +132,9 @@ Socket的相关参数都使用了默认值，主要设置了IP和端口，这种
             ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
             clientHeartBeat.setMsgId("heart_beat");
             clientHeartBeat.setFrom("client");
-            DefaultSender defaultSender = new DefaultSender(clientHeartBeat);
+            DefaultSender wrapperSender = new DefaultSender(clientHeartBeat);
             //发送
-            EasySocket.getInstance().upObject(defaultSender);
+            EasySocket.getInstance().upObject(wrapperSender);
         }
 
 执行结果如下：
@@ -213,10 +213,10 @@ EasySocket的主要特点是具备数据回调功能和智能心跳管理，但�
             ClientHeartBeat clientHeartBeat=new ClientHeartBeat();
             clientHeartBeat.setMsgId("heart_beat");
             clientHeartBeat.setFrom("client");
-            DefaultSender defaultSender =new DefaultSender(clientHeartBeat);
+            DefaultSender wrapperSender =new DefaultSender(clientHeartBeat);
             //链式调用方式，发送一个心跳包，同时接收对应的应答信息，ServerHeartBeat是服务端心跳包
-            EasySocket.getInstance().upObject(defaultSender)
-                    .onCallBack(new SimpleCallBack<ServerHeartBeat>(defaultSender) {
+            EasySocket.getInstance().upObject(wrapperSender)
+                    .onCallBack(new SimpleCallBack<ServerHeartBeat>(wrapperSender) {
                         @Override
                         public void onResponse(ServerHeartBeat serverHeartBeat) {
                             ELog.d("心跳包请求反馈："+serverHeartBeat.toString());
@@ -231,10 +231,10 @@ EasySocket的主要特点是具备数据回调功能和智能心跳管理，但�
                     MySender sender=new MySender();
                     sender.setFrom("android");
                     sender.setMsgId("my_request");
-                    DefaultSender defaultSender =new DefaultSender(sender);
+                    DefaultSender wrapperSender =new DefaultSender(sender);
                     EasySocket.getInstance()
-                            .upObject(defaultSender)
-                            .onCallBack(new ProgressDialogCallBack<String>(progressDialog,true,true, defaultSender) {
+                            .upObject(wrapperSender)
+                            .onCallBack(new ProgressDialogCallBack<String>(progressDialog,true,true, wrapperSender) {
                                 @Override
                                 public void onResponse(String s) {
                                     ELog.d("请求返回的消息="+s);

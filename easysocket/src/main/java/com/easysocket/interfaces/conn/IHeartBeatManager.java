@@ -1,6 +1,6 @@
 package com.easysocket.interfaces.conn;
 
-import com.easysocket.entity.IClientHeart;
+import com.easysocket.entity.sender.SuperClientHeart;
 
 /**
  * Author：Alex
@@ -17,7 +17,7 @@ public interface IHeartBeatManager {
      * 开始心跳
      * @param clientHeart
      */
-    void startHeartbeat(IClientHeart clientHeart);
+    void startHeartbeat(SuperClientHeart clientHeart);
 
     /**
      * 停止心跳
@@ -33,7 +33,7 @@ public interface IHeartBeatManager {
      * 设置客户端心跳包entity
      * @param clientHeart
      */
-    void setClientHeart(IClientHeart clientHeart);
+    void setClientHeart(SuperClientHeart clientHeart);
 
     /**
      * 接收到心跳

@@ -1,18 +1,13 @@
 package com.easysocket;
 
-import com.google.gson.Gson;
-import com.easysocket.entity.IClientHeart;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.charset.Charset;
+import com.easysocket.entity.sender.SuperClientHeart;
 
 /**
  * Author：Alex
  * Date：2019/6/6
  * Note：客户端心跳
  */
-public class ClientHeartBeat extends IClientHeart {
+public class ClientHeartBeat extends SuperClientHeart {
     private String msgId;
     private String from;
 
@@ -40,13 +35,4 @@ public class ClientHeartBeat extends IClientHeart {
                 '}';
     }
 
-    @Override
-    public byte[] parse() {
-        byte[] body = new Gson().toJson(this).getBytes(Charset.defaultCharset());
-        ByteBuffer bb = ByteBuffer.allocate(4 + body.length);
-        bb.order(ByteOrder.BIG_ENDIAN);
-        bb.putInt(body.length);
-        bb.put(body);
-        return bb.array();
-    }
 }
