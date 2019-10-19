@@ -2,19 +2,19 @@
 
  博客地址：https://blog.csdn.net/liuxingrong666/article/details/91579548
 
-一般来说，socket用于保持TCP长连接进行数据的传输，至于通信协议和数据信息的处理需要自己去实现。而普通的socket框架通常实现的是socket连接、数据传输、断开重连和心跳保活等基本功能，并没有对传输的数据有做进一步的处理！
-
 EasySocket的初衷是希望通过对传输数据的处理使得socket编程更加简单、方便，传统的socket框架客户端发出一个请求信息，然后服务器返回一个应答信息，但是我们无法识别这个应答信息是对应哪个请求的，而EasySocket可以将每一个请求信息和应答信息实现一一对接，从而在socket层面实现了请求回调的功能。
 
 ### EasySocket特点：
 
    1、采用链式调用一键发送数据，根据自己的需求配置参数，简单易用，灵活性高
+   
+   2、EasySocket分为简单使用和高级使用，简单使用是实现socket的普通功能，包括TCP的连接和断开、数据的发送和接收、心跳机制等等，高级使用实现了socket请求的回调功能和智能心跳机制
 
-   2、消息结构使用（包头+包体）的协议，其中包体存储要发送的数据实体，而包头则存储包体的数据长度，这种结构方式方便于数据的解析，解决了TCP通信中断包、粘包等问题；
+   3、消息结构使用（包头+包体）的协议，其中包体存储要发送的数据实体，而包头则存储包体的数据长度，这种结构方式方便于数据的解析，解决了TCP通信中断包、粘包等问题；
 
-   3、智能的心跳包保活机制，自动发送和接收心跳包，实时检测socket连接状态，同时有断开重连机制解决socket的连接问题；
+   4、智能的心跳包保活机制，自动发送和接收心跳包，实时检测socket连接状态，断开自动重连机制；
 
-   4、Socket层面的数据传输回调功能，使得每一个请求信息和应答信息实现无缝对接。
+   5、Socket层面的数据传输回调功能，使得每一个请求信息和应答信息实现无缝对接。
 
 ### 一、EasySocket的Android Studio配置
 
@@ -125,19 +125,21 @@ Socket的相关参数都使用了默认值，主要设置了IP和端口，这种
 
  演示发送一个数据包，测试是不是能监听到返回的数据
 
-        /**
-         * 发送心跳包
-         */
-        private void sendHeartBeat() {
-            ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
-            clientHeartBeat.setMsgId("heart_beat");
-            clientHeartBeat.setFrom("client");
-            DefaultSender wrapperSender = new DefaultSender(clientHeartBeat);
-            //发送
-            EasySocket.getInstance().upObject(wrapperSender);
-        }
+     /**
+     * 发送心跳包
+     */
+    private void sendHeartBeat() {
+        ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
+        clientHeartBeat.setMsgId("heart_beat");
+        clientHeartBeat.setFrom("client");
+        //发送
+        EasySocket.getInstance().upObject(clientHeartBeat);
+    }
 
 执行结果如下：
+发送的数据=������C{"from":"client","msgId":"heart_beat","ack":"YKNEJC8CONXK5YI577B8"} 
+接收的数据={"from":"srver","msgId":"heart_beat","ack":"YKNEJC8CONXK5YI577B8"} 
+监听器接收的数据->{"from":"server","msgId":"heart_beat","ack":"YKNEJC8CONXK5YI577B8"}
 
 可以看到确实监听到了服务器返回的心跳
 
@@ -206,51 +208,55 @@ EasySocket的主要特点是具备数据回调功能和智能心跳管理，但�
 
 经过上面的高级配置，心跳包实现了自动发送和接收，还有可以使用EasySocket的回调功能了，比如发送一个心跳包给服务器，然后服务端返回一个应答信息 ServerHeartBeat
 
-        /**
-         * 发送心跳包
-         */
-        private void sendHeartBeat(){
-            ClientHeartBeat clientHeartBeat=new ClientHeartBeat();
-            clientHeartBeat.setMsgId("heart_beat");
-            clientHeartBeat.setFrom("client");
-            DefaultSender wrapperSender =new DefaultSender(clientHeartBeat);
-            //链式调用方式，发送一个心跳包，同时接收对应的应答信息，ServerHeartBeat是服务端心跳包
-            EasySocket.getInstance().upObject(wrapperSender)
-                    .onCallBack(new SimpleCallBack<ServerHeartBeat>(wrapperSender) {
-                        @Override
-                        public void onResponse(ServerHeartBeat serverHeartBeat) {
-                            ELog.d("心跳包请求反馈："+serverHeartBeat.toString());
-                        }
-                    });
-        }
+    /**
+     * 发送心跳包，应答消息会在下面的onResponse方法中回调
+     */
+    private void sendHeartBeat(){
+        ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
+        clientHeartBeat.setMsgId("heart_beat");
+        clientHeartBeat.setFrom("client");
+        EasySocket.getInstance().upObject(clientHeartBeat)
+                .onCallBack(new SimpleCallBack<ServerHeartBeat>(clientHeartBeat) {
+                    @Override
+                    public void onResponse(ServerHeartBeat serverHeartBeat) {
+                        LogUtil.d("心跳包请求反馈：" + serverHeartBeat.toString());
+                    }
+                });
+ 
+    }
+    
+执行结果如下：
+发送的数据=������C{"from":"client","msgId":"heart_beat","ack":"CCA4W7KXDDNDLYO84SFJ"} 
+接收的数据={"from":"server","msgId":"heart_beat","ack":"CCA4W7KXDDNDLYO84SFJ"} 
+监听器接收的数据->{"from":"server","msgId":"heart_beat","ack":"CCA4W7KXDDNDLYO84SFJ"} 
+心跳包请求反馈：ServerHeartBeat{from='server', msgId='heart_beat', backSign='CCA4W7KXDDNDLYO84SFJ'}
 
 只需要定义好要发送的数据包实例，然后通过EasySocket类upObject发送给服务器，而在onCallBack回调方法中就可以获得此次请求的应答信息，是不是很Easy。
 
 此外还封装了一个带进度框的请求，非常实用，使用方法如下：
 
-                    MySender sender=new MySender();
-                    sender.setFrom("android");
-                    sender.setMsgId("my_request");
-                    DefaultSender wrapperSender =new DefaultSender(sender);
-                    EasySocket.getInstance()
-                            .upObject(wrapperSender)
-                            .onCallBack(new ProgressDialogCallBack<String>(progressDialog,true,true, wrapperSender) {
-                                @Override
-                                public void onResponse(String s) {
-                                    ELog.d("请求返回的消息="+s);
-                                }
-                            });
-                
-     
-        //接口实现类，返回一个Dialog
-        private IProgressDialog progressDialog=new IProgressDialog() {
-            @Override
-            public Dialog getDialog() {
-                Dialog dialog=new Dialog(MainActivity.this);
-                dialog.setTitle("正在加载...");
-                return dialog;
-            }
-        };
+                MyCallbackSender sender = new MyCallbackSender();
+                sender.setFrom("android");
+                sender.setMsgId("my_request");
+                EasySocket.getInstance()
+                        .upObject(sender)
+                        .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender) {
+                            @Override
+                            public void onResponse(String s) {
+                                LogUtil.d("请求返回的消息=" + s);
+                            }
+                        });
+            
+ 
+    //接口实现类，返回一个Dialog
+    private IProgressDialog progressDialog=new IProgressDialog() {
+        @Override
+        public Dialog getDialog() {
+            Dialog dialog=new Dialog(MainActivity.this);
+            dialog.setTitle("正在加载...");
+            return dialog;
+        }
+    };
 
 以上演示了EasySocket的使用方法，欢迎start，项目地址：https://github.com/jiusetian/EasySocket
 
