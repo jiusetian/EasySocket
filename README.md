@@ -137,12 +137,13 @@ Socket的相关参数都使用了默认值，主要设置了IP和端口，这种
     }
 
 执行结果如下：
-
+-----------------------------------------------------
 发送的数据=������C{"from":"client","msgId":"heart_beat","ack":"HXG1LVLZL1DIMGWULTOT"} 
 
 接收的数据={"from":"server","msgId":"heart_beat","ack":"HXG1LVLZL1DIMGWULTOT"} 
 
 监听器接收的数据->{"from":"server","msgId":"heart_beat","ack":"HXG1LVLZL1DIMGWULTOT"} 
+-----------------------------------------------------
 
 可以看到确实监听到了服务器返回的心跳
 
