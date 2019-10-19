@@ -231,13 +231,13 @@ EasySocket的主要特点是具备数据回调功能和智能心跳管理，但�
     
 执行结果如下：
 
-发送的数据=������C{"from":"client","msgId":"heart_beat","ack":"CCA4W7KXDDNDLYO84SFJ"} 
+	发送的数据=������C{"from":"client","msgId":"heart_beat","ack":"CCA4W7KXDDNDLYO84SFJ"} 
 
-接收的数据={"from":"server","msgId":"heart_beat","ack":"CCA4W7KXDDNDLYO84SFJ"} 
+	接收的数据={"from":"server","msgId":"heart_beat","ack":"CCA4W7KXDDNDLYO84SFJ"} 
 
-监听器接收的数据->{"from":"server","msgId":"heart_beat","ack":"CCA4W7KXDDNDLYO84SFJ"} 
+	监听器接收的数据->{"from":"server","msgId":"heart_beat","ack":"CCA4W7KXDDNDLYO84SFJ"} 
 
-心跳包请求反馈：ServerHeartBeat{from='server', msgId='heart_beat', backSign='CCA4W7KXDDNDLYO84SFJ'}
+	心跳包请求反馈：ServerHeartBeat{from='server', msgId='heart_beat', backSign='CCA4W7KXDDNDLYO84SFJ'}
 
 只需要定义好要发送的数据包实例，然后通过EasySocket类upObject发送给服务器，而在onCallBack回调方法中就可以获得此次请求的应答信息，是不是很Easy。
 
