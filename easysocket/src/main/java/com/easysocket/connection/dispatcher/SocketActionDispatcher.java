@@ -1,4 +1,4 @@
-package com.easysocket.connection.action;
+package com.easysocket.connection.dispatcher;
 
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.IsReconnect;

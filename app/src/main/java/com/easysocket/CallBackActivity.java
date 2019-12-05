@@ -97,7 +97,7 @@ public class CallBackActivity extends AppCompatActivity {
 
         //socket配置
         EasySocketOptions options = new EasySocketOptions.Builder()
-                .setAckFactory(new AckFactoryImpl()) //设置获取请求标识signer的factory
+                .setCallbackSingerFactory(new CallbackSingerFactoryImpl()) //设置获取请求标识signer的factory
                 .setActiveHeart(true) //启动心跳管理器
                 .setActiveResponseDispatch(true) //启动消息的回调管理
                 .setClientHeart(clientHeartBeat) //设置全局心跳对象

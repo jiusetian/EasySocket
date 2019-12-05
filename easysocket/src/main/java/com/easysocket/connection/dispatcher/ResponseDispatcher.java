@@ -1,4 +1,4 @@
-package com.easysocket.connection.iowork;
+package com.easysocket.connection.dispatcher;
 
 import com.easysocket.callback.HeartbeatCallBack;
 import com.easysocket.callback.SuperCallBack;
@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Author：Alex
  * Date：2019/6/4
- * Note：智能的反馈消息分发器
+ * Note：反馈消息分发器
  */
 public class ResponseDispatcher implements RequestTimeoutListener {
     /**
@@ -45,7 +45,8 @@ public class ResponseDispatcher implements RequestTimeoutListener {
 
     public ResponseDispatcher(IConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
-        connectionManager.subscribeSocketAction(socketActionListener); //注册
+        //注册监听
+        connectionManager.subscribeSocketAction(socketActionListener);
         socketOptions=connectionManager.getOptions();
     }
 
@@ -64,7 +65,7 @@ public class ResponseDispatcher implements RequestTimeoutListener {
         @Override
         public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
             if (!isEnableDispatch()) return;
-            String sign = socketOptions.getAckFactory().createCallbackAck(originReadData);
+            String sign = socketOptions.getCallbackSingerFactory().getCallbackSinger(originReadData);
             //获取对应的callback
             SuperCallBack callBack = callbacks.get(sign);
             if (callBack == null) {
@@ -84,10 +85,11 @@ public class ResponseDispatcher implements RequestTimeoutListener {
 
     //response是否为可分发的
     private boolean isEnableDispatch() {
-        //如果智能分发是关闭的，那么停止分发
+        //是否开启消息的分发
         if (!socketOptions.isActiveResponseDispatch()) return false;
-        if (socketOptions.getAckFactory() == null) {
-            LogUtil.e(new NotNullException("AckFactory不能为null，请根据服务器反馈消息的数据结构自定义AckFactory"));
+        //如果要实现消息的回调功能，则需要定义如何从回调消息中去获取回调标识singer
+        if (socketOptions.getCallbackSingerFactory() == null) {
+            LogUtil.e(new NotNullException("CallbackSingerFactory不能为null，请根据服务器反馈消息的数据结构自定义CallbackSingerFactory"));
             return false;
         }
         return true;
@@ -109,7 +111,7 @@ public class ResponseDispatcher implements RequestTimeoutListener {
      */
     public void addSocketCallback(SuperCallBack superCallBack) {
         superCallBack.setTimeoutListener(this);//设置callback超时的监听
-        callbacks.put(superCallBack.getAck(), superCallBack);
+        callbacks.put(superCallBack.getSinger(), superCallBack);
     }
 
 
@@ -129,7 +131,7 @@ public class ResponseDispatcher implements RequestTimeoutListener {
                 heartbeatCallBack = heartCallBacksHolder.get(heartCallBacksHolder.size() - 1);
                 heartCallBacksHolder.remove(heartCallBacksHolder.size() - 1);
             }
-            heartbeatCallBack.setAck(sign);
+            heartbeatCallBack.setSinger(sign);
             heartbeatCallBack.setCallback(callBack);
             callbacks.put(sign, heartbeatCallBack);
         } catch (Exception e) {

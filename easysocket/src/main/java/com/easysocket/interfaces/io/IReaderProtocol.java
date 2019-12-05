@@ -6,6 +6,7 @@ import java.nio.ByteOrder;
  * 包头数据格式
  */
 public interface IReaderProtocol {
+
     /**
      * 获取包头的长度
      */

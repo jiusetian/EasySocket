@@ -14,4 +14,5 @@ public interface ISender extends Serializable {
      * @return
      */
     byte[] parse();
+
 }

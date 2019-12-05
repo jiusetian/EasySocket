@@ -138,10 +138,10 @@ Socket的相关参数都使用了默认值，主要设置了IP和端口，这种
 
 执行结果如下：
 
-	发送的数据->{"from":"client","msgId":"heart_beat","ack":"HXG1LVLZL1DIMGWULTOT"} 
+	发送的数据->{"from":"client","msgId":"heart_beat","singer":"HXG1LVLZL1DIMGWULTOT"} 
 
 
-	监听器接收的数据->{"from":"server","msgId":"heart_beat","ack":"HXG1LVLZL1DIMGWULTOT"} 
+	监听器接收的数据->{"from":"server","msgId":"heart_beat","singer":"HXG1LVLZL1DIMGWULTOT"} 
 
 
 可以看到确实监听到了服务器返回的心跳
@@ -197,7 +197,7 @@ EasySocket的主要特点是具备数据回调功能和智能心跳管理，但�
                 String data=originReadData.getBodyString();
                 JSONObject jsonObject=new JSONObject(data);
                 //获取当前返回消息的ack标识
-                return jsonObject.getString("ack");
+                return jsonObject.getString("singer");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -230,7 +230,7 @@ EasySocket的主要特点是具备数据回调功能和智能心跳管理，但�
     
 执行结果如下：
 
-	发送的数据->{"from":"client","msgId":"heart_beat","ack":"CCA4W7KXDDNDLYO84SFJ"} 
+	发送的数据->{"from":"client","msgId":"heart_beat","singer":"CCA4W7KXDDNDLYO84SFJ"} 
 
 	心跳包请求反馈：ServerHeartBeat{from='server', msgId='heart_beat', backSign='CCA4W7KXDDNDLYO84SFJ'}
 
@@ -321,7 +321,7 @@ EasySocket的主要特点是具备数据回调功能和智能心跳管理，但�
         /**
          * 获取请求消息唯一标识ack的工厂
          */
-        private AckFactory ackFactory;
+        private AckFactory callbackSingerFactory;
      
         /**
          * 请求超时时间，单位毫秒

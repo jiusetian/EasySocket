@@ -4,11 +4,11 @@ import com.easysocket.callback.HeartbeatCallBack;
 import com.easysocket.callback.SuperCallBack;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.action.SocketAction;
-import com.easysocket.connection.action.SocketActionDispatcher;
+import com.easysocket.connection.dispatcher.SocketActionDispatcher;
 import com.easysocket.connection.action.SocketStatus;
 import com.easysocket.connection.heartbeat.HeartBeatManager;
 import com.easysocket.connection.iowork.IOManager;
-import com.easysocket.connection.iowork.ResponseDispatcher;
+import com.easysocket.connection.dispatcher.ResponseDispatcher;
 import com.easysocket.connection.reconnect.AbsReconnection;
 import com.easysocket.entity.IsReconnect;
 import com.easysocket.entity.SocketAddress;
@@ -296,8 +296,8 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public void onHeartCallBack(SuperClientHeart clientHeart, HeartbeatCallBack.CallBack callBack) {
-        //clientHeart.setAck(clientHeart.getAck());
-        responseDispatcher.addHeartbeatCallBack(clientHeart.getAck(), callBack);
+        //clientHeart.setSinger(clientHeart.getSinger());
+        responseDispatcher.addHeartbeatCallBack(clientHeart.getSinger(), callBack);
     }
 
     @Override
@@ -316,7 +316,7 @@ public abstract class SuperConnection implements IConnectionManager {
     public synchronized IConnectionManager upObject(ISender sender) {
         //如果属于有反馈的请求，将设置一个20位随机字符串作为识别标识
         if (sender instanceof SuperCallbackSender) {
-            ((SuperCallbackSender) sender).setAck(Util.getRandomChar(20));
+            ((SuperCallbackSender) sender).setSinger(Util.getRandomChar(20));
         }
         sendBuffer(sender.parse());
         return this;

@@ -67,9 +67,9 @@ public class EasySocketOptions {
      */
     private EasySocketFactory socketFactory;
     /**
-     * 获取请求消息唯一标识ack的工厂，默认为null
+     * 获取请求消息唯一标识singer的工厂，默认为null
      */
-    private AckFactory ackFactory;
+    private CallbackSingerFactory callbackSingerFactory;
 
     /**
      * 请求超时时间，单位毫秒
@@ -170,10 +170,10 @@ public class EasySocketOptions {
         /**
          * 设置请求ack的工厂
          *
-         * @param ackFactory
+         * @param callbackSingerFactory
          */
-        public Builder setAckFactory(AckFactory ackFactory) {
-            socketOptions.ackFactory = ackFactory;
+        public Builder setCallbackSingerFactory(CallbackSingerFactory callbackSingerFactory) {
+            socketOptions.callbackSingerFactory = callbackSingerFactory;
             return this;
         }
 
@@ -335,7 +335,7 @@ public class EasySocketOptions {
         options.reconnectionManager = new DefaultReConnection();
         options.easySSLConfig = null;
         options.socketFactory = null;
-        options.ackFactory = null;
+        options.callbackSingerFactory = null;
         options.requestTimeout = 10 * 1000; //默认十秒
         options.isOpenRequestTimeout = true; //默认开启
         options.clientHeart = null;
@@ -400,8 +400,8 @@ public class EasySocketOptions {
         return isOpenRequestTimeout;
     }
 
-    public AckFactory getAckFactory() {
-        return ackFactory;
+    public CallbackSingerFactory getCallbackSingerFactory() {
+        return callbackSingerFactory;
     }
 
     public SuperClientHeart getClientHeart() {
@@ -470,8 +470,8 @@ public class EasySocketOptions {
         this.socketFactory = socketFactory;
     }
 
-    public void setAckFactory(AckFactory ackFactory) {
-        this.ackFactory = ackFactory;
+    public void setCallbackSingerFactory(CallbackSingerFactory callbackSingerFactory) {
+        this.callbackSingerFactory = callbackSingerFactory;
     }
 
     public void setRequestTimeout(long requestTimeout) {

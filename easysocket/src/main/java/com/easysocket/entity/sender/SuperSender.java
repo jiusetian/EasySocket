@@ -17,7 +17,7 @@ public class SuperSender implements ISender {
     @Override
     public final byte[] parse() {
         byte[] body = new Gson().toJson(this).getBytes(Charset.defaultCharset());
-        final int headerLength = EasySocket.getInstance().getOptions().getReaderProtocol().getHeaderLength();
+        int headerLength = EasySocket.getInstance().getOptions().getReaderProtocol().getHeaderLength();
         ByteBuffer bb = ByteBuffer.allocate(headerLength + body.length);
         bb.order(ByteOrder.BIG_ENDIAN);
         bb.putInt(body.length);

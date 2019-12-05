@@ -14,7 +14,7 @@ public class AbsSendMsg {
     /**
      * 反馈标识
      */
-    private String ack;
+    private String singer;
 
     public String getMsgId() {
         return msgId;
@@ -24,11 +24,11 @@ public class AbsSendMsg {
         this.msgId = msgId;
     }
 
-    public String getAck() {
-        return ack;
+    public String getSinger() {
+        return singer;
     }
 
-    public void setAck(String ack) {
-        this.ack = ack;
+    public void setSinger(String singer) {
+        this.singer = singer;
     }
 }
