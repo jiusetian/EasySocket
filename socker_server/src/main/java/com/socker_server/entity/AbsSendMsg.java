@@ -12,7 +12,7 @@ public class AbsSendMsg {
      */
     private String msgId;
     /**
-     * 反馈标识
+     * 回调标识
      */
     private String singer;
 

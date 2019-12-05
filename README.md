@@ -165,7 +165,7 @@ EasySocket的主要特点是具备数据回调功能和智能心跳管理，但�
                     .setActiveHeart(true) //启动心跳管理器
                     .setClientHeart(clientHeartBeat) //设置全局心跳对象
                     .setActiveResponseDispatch(true) //启动消息的回调管理
-                    .setAckFactory(new AckFactoryImpl()) //设置获取请求标识ack的factory
+                    .setCallbackSingerFactory(new CallbackSingerFactoryImpl())  //设置获取请求回调标识singer的factory
                     .build();
      
             //初始化EasySocket
@@ -179,24 +179,24 @@ EasySocket的主要特点是具备数据回调功能和智能心跳管理，但�
 
 要想实现心跳包的自动发送和接收，需要在初始化的时候启动心跳管理器，并且设置一个心跳包实例。
 
-上面AckFactoryImpl是高级配置的关键，这是一个获取回调标识ack的工厂类，需要使用者自己定义，其中它的抽象类是这样的
+上面CallbackSingerFactoryImpl是高级配置的关键，这是一个获取回调标识singer的工厂类，需要使用者自己定义，其中它的抽象类是这样的
 
-    public abstract class AckFactory {
-        public abstract String createCallbackAck(OriginReadData originReadData);
+    public abstract class CallbackSingerFactory  {
+        public abstract String getCallbackSinger(OriginReadData originReadData);
     }
 
-能够拿到所谓的回调标识ack是EasySocket实现回调功能的关键，每一个由客户端向服务器发送的信息都会携带一个随机生成的20位的字符串，我们称之为ack，所以服务器接收的每一个信息都有这样的一个ack，在返回应答信息的时候，将这个ack一起返给客户端，客户端在接收的时候通过对比ack就知道当前应答信息对应的是哪一个请求了。
+能够拿到所谓的回调标识singer是EasySocket实现回调功能的关键，每一个由客户端向服务器发送的信息都会携带一个随机生成的20位的字符串，所以服务器接收的每一个信息都有这样的一个singer，在返回应答信息的时候，将singer一起返给客户端，客户端在接收的时候通过对比singer就知道当前应答信息对应的是哪一个请求了。
 
-比如下面的一个AckFactory的实现类
+比如下面的一个CallbackSingerFactory的实现类
 
-    public class AckFactoryImpl extends AckFactory {
+    public class CallbackSingerFactoryImpl extends CallbackSingerFactory {
         @Override
-        public String createCallbackAck(OriginReadData originReadData) {
+        public String getCallbackSinger(OriginReadData originReadData) {
             try {
                 //服务端返回的json格式的数据
                 String data=originReadData.getBodyString();
                 JSONObject jsonObject=new JSONObject(data);
-                //获取当前返回消息的ack标识
+                //获取当前回调消息的singer
                 return jsonObject.getString("singer");
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -205,7 +205,7 @@ EasySocket的主要特点是具备数据回调功能和智能心跳管理，但�
         }
     }
 
-当然这个抽象工厂类是根据自己的实际情况去实现，其中回调方法createCallbackAck的参数OriginReadData是服务器返回的数据，只要保证能获取到唯一的ack标识就可以了。
+当然这个抽象工厂类是根据自己的实际情况去实现，其中回调方法createCallbackAck的参数OriginReadData是服务器返回的数据，只要保证能获取到唯一的singer标识就可以了。
 
 ### 四、EasySocket的回调功能演示
 
@@ -232,7 +232,7 @@ EasySocket的主要特点是具备数据回调功能和智能心跳管理，但�
 
 	发送的数据->{"from":"client","msgId":"heart_beat","singer":"CCA4W7KXDDNDLYO84SFJ"} 
 
-	心跳包请求反馈：ServerHeartBeat{from='server', msgId='heart_beat', backSign='CCA4W7KXDDNDLYO84SFJ'}
+	心跳包请求反馈：ServerHeartBeat{from='server', msgId='heart_beat', singer='CCA4W7KXDDNDLYO84SFJ'}
 
 只需要定义好要发送的数据包实例，然后通过EasySocket类upObject发送给服务器，而在onCallBack回调方法中就可以获得此次请求的应答信息，是不是很Easy。
 
@@ -319,9 +319,9 @@ EasySocket的主要特点是具备数据回调功能和智能心跳管理，但�
          */
         private EasySocketFactory socketFactory;
         /**
-         * 获取请求消息唯一标识ack的工厂
+         * 获取请求消息唯一标识singer的工厂
          */
-        private AckFactory callbackSingerFactory;
+        private CallbackSingerFactory callbackSingerFactory;
      
         /**
          * 请求超时时间，单位毫秒
