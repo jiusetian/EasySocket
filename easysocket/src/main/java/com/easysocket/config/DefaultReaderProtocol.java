@@ -13,7 +13,7 @@ import java.nio.ByteOrder;
 public class DefaultReaderProtocol implements IReaderProtocol {
     @Override
     public int getHeaderLength() {
-        return 4; //保存包体长度的包头的长度
+        return 4; //包头的长度，用来保存body的长度值
     }
 
     @Override
