@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * 发送一个没有回调的消息，即没有回调标识singer的消息
+     * 发送一个的消息，
      */
     private void sendMessage() {
         TestMsg testMsg =new TestMsg();

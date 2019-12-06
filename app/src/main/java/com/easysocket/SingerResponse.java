@@ -20,6 +20,7 @@ public class SingerResponse extends BaseSingerResponse {
         return "SingerResponse{" +
                 "from='" + from + '\'' +
                 ", msgId='" + msgId + '\'' +
+                ", singer='" + singer + '\'' +
                 '}';
     }
 
