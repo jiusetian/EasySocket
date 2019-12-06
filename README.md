@@ -134,7 +134,7 @@ dependencies {
         EasySocket.getInstance().upObject(testMsg);
     }
     
-如果是只是测试的话，可以将IP地址设置为本地IP，然后在Android studio中启动项目的测试服务器软件，选择java test 运行就可以了
+如果是只是测试的话，可以将IP地址设置为本地IP，然后在Android studio中启动项目的服务器测试软件，选择java test 运行就可以了
 
 执行结果如下：
 
