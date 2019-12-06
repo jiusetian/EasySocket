@@ -6,7 +6,7 @@ import com.easysocket.config.EasySocketOptions;
 import com.easysocket.entity.NeedReconnect;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.sender.SuperClientHeart;
+import com.easysocket.entity.basemsg.BaseClientHeart;
 import com.easysocket.interfaces.config.IOptions;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.IHeartBeatManager;
@@ -36,7 +36,7 @@ public class HeartBeatManager implements IOptions, ISocketActionListener, IHeart
     /**
      * 客户端心跳包
      */
-    private SuperClientHeart clientHeart;
+    private BaseClientHeart clientHeart;
     /**
      * 心跳包发送线程管理器
      */
@@ -94,7 +94,7 @@ public class HeartBeatManager implements IOptions, ISocketActionListener, IHeart
             return false;
         }
         //是否开启消息的分发
-        if (!socketOptions.isActiveResponseDispatch()) return false;
+        if (!socketOptions.isEnableCallback()) return false;
         //如果要实现消息的回调功能，则需要定义如何从回调消息中去获取回调标识singer
         if (socketOptions.getCallbackSingerFactory() == null) {
             LogUtil.e("CallbackSingerFactory不能为null，请根据服务器反馈消息的数据结构自定义CallbackSingerFactory");
@@ -126,7 +126,7 @@ public class HeartBeatManager implements IOptions, ISocketActionListener, IHeart
     }
 
     @Override
-    public void startHeartbeat(SuperClientHeart clientHeart) {
+    public void startHeartbeat(BaseClientHeart clientHeart) {
         setClientHeart(clientHeart);
         socketOptions.setActiveHeart(true); //修改为启动心跳管理
         socketOptions.setClientHeart(clientHeart);
@@ -135,7 +135,7 @@ public class HeartBeatManager implements IOptions, ISocketActionListener, IHeart
     }
 
     @Override
-    public void setClientHeart(SuperClientHeart clientHeart) {
+    public void setClientHeart(BaseClientHeart clientHeart) {
         this.clientHeart = clientHeart;
     }
 

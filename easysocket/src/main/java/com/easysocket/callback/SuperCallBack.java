@@ -5,7 +5,7 @@ import android.os.Handler;
 
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.entity.exception.RequestTimeOutException;
-import com.easysocket.entity.sender.SuperCallbackSender;
+import com.easysocket.entity.basemsg.BaseSingerSender;
 import com.easysocket.interfaces.callback.IType;
 import com.easysocket.interfaces.callback.RequestTimeoutListener;
 import com.easysocket.utils.Util;
@@ -37,7 +37,7 @@ public abstract class SuperCallBack<T> implements IType<T> {
     /**
      * @param sender
      */
-    public SuperCallBack(SuperCallbackSender sender) {
+    public SuperCallBack(BaseSingerSender sender) {
         if (sender != null)
             this.singer = sender.getSinger();
     }

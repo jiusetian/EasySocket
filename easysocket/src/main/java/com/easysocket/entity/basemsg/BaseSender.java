@@ -1,4 +1,4 @@
-package com.easysocket.entity.sender;
+package com.easysocket.entity.basemsg;
 
 import com.easysocket.EasySocket;
 import com.google.gson.Gson;
@@ -12,7 +12,7 @@ import java.nio.charset.Charset;
  * Date：2019/10/19
  * Note：消息的父类
  */
-public class SuperSender implements ISender {
+public class BaseSender implements ISender {
 
     @Override
     public final byte[] parse() {

@@ -1,28 +1,25 @@
 package com.easysocket;
 
+import com.easysocket.entity.basemsg.BaseSingerResponse;
+
 /**
  * Author：Alex
- * Date：2019/6/6
- * Note：
+ * Date：2019/12/7
+ * Note：带有回调标识singer的响应消息
  */
-public class ServerHeartBeat {
+public class SingerResponse extends BaseSingerResponse {
 
     private String from;
     /**
      * 消息ID
      */
     private String msgId;
-    /**
-     * 反馈标识
-     */
-    private String singer;
 
     @Override
     public String toString() {
-        return "ServerHeartBeat{" +
+        return "SingerResponse{" +
                 "from='" + from + '\'' +
                 ", msgId='" + msgId + '\'' +
-                ", singer='" + singer + '\'' +
                 '}';
     }
 
@@ -32,14 +29,6 @@ public class ServerHeartBeat {
 
     public void setMsgId(String msgId) {
         this.msgId = msgId;
-    }
-
-    public String getCallbackSigner() {
-        return singer;
-    }
-
-    public void setCallbackSigner(String singer) {
-        this.singer = singer;
     }
 
 

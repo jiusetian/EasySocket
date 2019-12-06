@@ -1,6 +1,6 @@
 package com.easysocket.interfaces.conn;
 
-import com.easysocket.entity.sender.ISender;
+import com.easysocket.entity.basemsg.ISender;
 
 /**
  * Author：Alex

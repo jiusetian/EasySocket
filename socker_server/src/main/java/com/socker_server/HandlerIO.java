@@ -1,12 +1,13 @@
 package com.socker_server;
 
 import com.google.gson.Gson;
-import com.socker_server.entity.AbsReceiveMsg;
-import com.socker_server.entity.AbsSendMsg;
 import com.socker_server.entity.MsgId;
-import com.socker_server.entity.WrapperSender;
-import com.socker_server.entity.MyResponse;
 import com.socker_server.entity.ServerHeartBeat;
+import com.socker_server.entity.SingerResponse;
+import com.socker_server.entity.WrapperSender;
+import com.socker_server.entity.message.ServerMsg;
+import com.socker_server.entity.message.ServerTestMsg;
+import com.socker_server.entity.message.SingerClientMsg;
 import com.socker_server.iowork.IWriter;
 
 /**
@@ -28,24 +29,36 @@ public class HandlerIO {
      */
     public void handReceiveMsg(String receiver) {
         System.out.println("receive message:"+receiver);
-        AbsReceiveMsg receiveMsg=new Gson().fromJson(receiver,AbsReceiveMsg.class);
-        String id = receiveMsg.getMsgId(); //消息ID
-        String ack = receiveMsg.getSinger(); //作为本地反馈消息的唯一标识ID
-        AbsSendMsg sendMsg = null;
+        SingerClientMsg clientMsg =new Gson().fromJson(receiver, SingerClientMsg.class);
+        String id = clientMsg.getMsgId(); //消息ID
+        String singer=clientMsg.getSinger(); //作为当前消息的返回的唯一标识ID
+        ServerMsg serverMsg = null;
 
         switch (id) {
-            case MsgId.HEARTBEAT: //心跳包
-                sendMsg = new ServerHeartBeat();
-                ((ServerHeartBeat) sendMsg).setFrom("server");
-                sendMsg.setSinger(ack);
-                sendMsg.setMsgId(MsgId.HEARTBEAT);
+            case MsgId.SINGER_MSG: //带有singer的回调消息
+                serverMsg =new SingerResponse();
+                ((SingerResponse) serverMsg).setSinger(singer);
+                serverMsg.setMsgId(MsgId.SINGER_MSG);
+                ((SingerResponse) serverMsg).setFrom("server");
                 break;
 
-            case MsgId.MY_REQUEST:
-                sendMsg=new MyResponse();
-                sendMsg.setSinger(ack);
-                sendMsg.setMsgId(MsgId.MY_REQUEST);
-                ((MyResponse)sendMsg).setFrom("server");
+            case MsgId.NO_SINGER_MSG: //测试消息，不带singer
+                serverMsg=new ServerTestMsg();
+                serverMsg.setMsgId(MsgId.NO_SINGER_MSG);
+                ((ServerTestMsg) serverMsg).setFrom("server");
+                break;
+            case MsgId.HEARTBEAT: //心跳包，带有singer
+                serverMsg = new ServerHeartBeat();
+                ((ServerHeartBeat) serverMsg).setFrom("server");
+                ((ServerHeartBeat) serverMsg).setSinger(singer);
+                serverMsg.setMsgId(MsgId.HEARTBEAT);
+                break;
+
+            case MsgId.DELAY_MSG: //延时消息
+                serverMsg =new SingerResponse();
+                ((SingerResponse) serverMsg).setSinger(singer);
+                serverMsg.setMsgId(MsgId.DELAY_MSG);
+                ((SingerResponse) serverMsg).setFrom("server");
                 try {
                     Thread.sleep(1000*10);
                 } catch (InterruptedException e) {
@@ -55,8 +68,8 @@ public class HandlerIO {
 
         }
 
-        if (sendMsg == null) return;
-        String backStr = new Gson().toJson(sendMsg);
+        if (serverMsg == null) return;
+        String backStr = new Gson().toJson(serverMsg);
         System.out.println("send message:"+backStr);
         WrapperSender packet=new WrapperSender(backStr);
         easyWriter.offer(packet.parse());

@@ -12,8 +12,8 @@ import com.easysocket.connection.reconnect.AbsReconnection;
 import com.easysocket.entity.NeedReconnect;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.exception.NotNullException;
-import com.easysocket.entity.sender.ISender;
-import com.easysocket.entity.sender.SuperCallbackSender;
+import com.easysocket.entity.basemsg.ISender;
+import com.easysocket.entity.basemsg.BaseSingerSender;
 import com.easysocket.interfaces.config.IConnectionSwitchListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
@@ -308,8 +308,8 @@ public abstract class SuperConnection implements IConnectionManager {
     @Override
     public synchronized IConnectionManager upObject(ISender sender) {
         //如果属于有反馈的请求，将设置一个20位随机字符串作为识别标识
-        if (sender instanceof SuperCallbackSender) {
-            ((SuperCallbackSender) sender).setSinger(Util.getRandomChar(20));
+        if (sender instanceof BaseSingerSender) {
+            ((BaseSingerSender) sender).setSinger(Util.getRandomChar(20));
         }
         sendBuffer(sender.parse());
         return this;

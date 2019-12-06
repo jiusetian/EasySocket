@@ -5,9 +5,9 @@ import com.easysocket.entity.NeedReconnect;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.exception.InitialExeption;
 import com.easysocket.entity.exception.NotNullException;
-import com.easysocket.entity.sender.ISender;
-import com.easysocket.entity.sender.SuperCallbackSender;
-import com.easysocket.entity.sender.SuperClientHeart;
+import com.easysocket.entity.basemsg.ISender;
+import com.easysocket.entity.basemsg.BaseSingerSender;
+import com.easysocket.entity.basemsg.BaseClientHeart;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
 
@@ -115,7 +115,7 @@ public class EasySocket {
     }
 
     /**
-     * 向服务器发送一个对象
+     * 发送一个对象
      *
      * @param sender
      */
@@ -135,7 +135,7 @@ public class EasySocket {
     }
 
     /**
-     * 发送一个byte数组
+     * 发送byte数组
      *
      * @param bytes
      * @return
@@ -161,23 +161,11 @@ public class EasySocket {
      * @param clientHeart
      * @return
      */
-    public EasySocket startHeartBeat(SuperClientHeart clientHeart) {
+    public EasySocket startHeartBeat(BaseClientHeart clientHeart) {
         getConnection().getHeartBeatManager().startHeartbeat(clientHeart);
         return this;
     }
 
-    /**
-     * 发送
-     *
-     * @param
-     */
-    private void upToConnection(byte[] Sender) {
-        if (connection == null) {
-            testInit();
-            throw new NotNullException("请先创建一个socket主连接");
-        }
-        connection.upBytes(Sender);
-    }
 
     /**
      * 获取连接
@@ -213,7 +201,7 @@ public class EasySocket {
      * @param socketAddress
      * @param socketOptions
      */
-    public IConnectionManager upToSpecifyConnection(SuperCallbackSender sender, SocketAddress socketAddress, EasySocketOptions socketOptions) {
+    public IConnectionManager upToSpecifyConnection(BaseSingerSender sender, SocketAddress socketAddress, EasySocketOptions socketOptions) {
         EasySocketOptions options = socketOptions == null ? EasySocketOptions.getDefaultOptions() : socketOptions;
         IConnectionManager connectionManager = connectionHolder.getConnection(socketAddress, options);
         if (connectionManager.isConnectViable())
@@ -228,7 +216,7 @@ public class EasySocket {
      * @param sender
      * @param socketAddress
      */
-    public IConnectionManager upToSpecifyConnection(SuperCallbackSender sender, SocketAddress socketAddress) {
+    public IConnectionManager upToSpecifyConnection(BaseSingerSender sender, SocketAddress socketAddress) {
         return upToSpecifyConnection(sender, socketAddress, null);
     }
 
@@ -237,10 +225,10 @@ public class EasySocket {
      */
     public void testInit() {
         if (ip == null) {
-            throw new InitialExeption("没有初始化主连接的IP，请设置一个socket的IP，比如在application中进行初始化");
+            throw new InitialExeption("没有初始化连接的IP，请设置一个socket的IP，比如在application中进行初始化");
         }
         if (port == -1) {
-            throw new InitialExeption("没有初始化主连接的端口port，请设置一个socket的端口，比如在application中进行初始化");
+            throw new InitialExeption("没有初始化连接的端口port，请设置一个socket的端口，比如在application中进行初始化");
         }
     }
 }

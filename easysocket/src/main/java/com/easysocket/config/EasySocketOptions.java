@@ -2,7 +2,7 @@ package com.easysocket.config;
 
 import com.easysocket.connection.reconnect.AbsReconnection;
 import com.easysocket.connection.reconnect.DefaultReConnection;
-import com.easysocket.entity.sender.SuperClientHeart;
+import com.easysocket.entity.basemsg.BaseClientHeart;
 import com.easysocket.interfaces.io.IReaderProtocol;
 
 import java.nio.ByteOrder;
@@ -67,7 +67,7 @@ public class EasySocketOptions {
      */
     private EasySocketFactory socketFactory;
     /**
-     * 获取请求消息唯一标识singer的工厂，默认为null
+     * 获取请求消息唯一标识singer的工厂，默认为DefaultCallbackSingerFactory
      */
     private CallbackSingerFactory callbackSingerFactory;
 
@@ -82,15 +82,15 @@ public class EasySocketOptions {
     /**
      * 客户端心跳包
      */
-    private SuperClientHeart clientHeart;
+    private BaseClientHeart clientHeart;
     /**
      * 是否开启心跳功能，默认关闭
      */
     private boolean isActiveHeart;
     /**
-     * 是否启动socket的智能分发功能，即回调功能，默认关闭
+     * 是否启动socket的回调功能，默认关闭
      */
-    private boolean isActiveResponseDispatch;
+    private boolean isEnableCallback;
 
 
     public boolean isDebug() {
@@ -115,11 +115,11 @@ public class EasySocketOptions {
         /**
          * 设置是否启动回调功能，默认是关闭的
          *
-         * @param activeResponseDispatch
+         * @param isEnableCallback
          * @return
          */
-        public Builder setActiveResponseDispatch(boolean activeResponseDispatch) {
-            socketOptions.isActiveResponseDispatch = activeResponseDispatch;
+        public Builder setEnableCallback(boolean isEnableCallback) {
+            socketOptions.isEnableCallback = isEnableCallback;
             return this;
         }
 
@@ -140,7 +140,7 @@ public class EasySocketOptions {
          * @param clientHeart
          * @return
          */
-        public Builder setClientHeart(SuperClientHeart clientHeart) {
+        public Builder setClientHeart(BaseClientHeart clientHeart) {
             socketOptions.clientHeart = clientHeart;
             return this;
         }
@@ -335,12 +335,12 @@ public class EasySocketOptions {
         options.reconnectionManager = new DefaultReConnection();
         options.easySSLConfig = null;
         options.socketFactory = null;
-        options.callbackSingerFactory = null;
+        options.callbackSingerFactory = new DefaultCallbackSingerFactory();
         options.requestTimeout = 10 * 1000; //默认十秒
         options.isOpenRequestTimeout = true; //默认开启
         options.clientHeart = null;
         options.isActiveHeart = false; //默认关闭心跳包检测
-        options.isActiveResponseDispatch = false; //默认关闭回调功能
+        options.isEnableCallback = false; //默认关闭回调功能
         return options;
     }
 
@@ -404,7 +404,7 @@ public class EasySocketOptions {
         return callbackSingerFactory;
     }
 
-    public SuperClientHeart getClientHeart() {
+    public BaseClientHeart getClientHeart() {
         return clientHeart;
     }
 
@@ -412,8 +412,8 @@ public class EasySocketOptions {
         return isActiveHeart;
     }
 
-    public boolean isActiveResponseDispatch() {
-        return isActiveResponseDispatch;
+    public boolean isEnableCallback() {
+        return isEnableCallback;
     }
 
     /** 各种set方法*/
@@ -482,7 +482,7 @@ public class EasySocketOptions {
         isOpenRequestTimeout = openRequestTimeout;
     }
 
-    public void setClientHeart(SuperClientHeart clientHeart) {
+    public void setClientHeart(BaseClientHeart clientHeart) {
         this.clientHeart = clientHeart;
     }
 
@@ -490,8 +490,8 @@ public class EasySocketOptions {
         isActiveHeart = activeHeart;
     }
 
-    public void setActiveResponseDispatch(boolean activeResponseDispatch) {
-        isActiveResponseDispatch = activeResponseDispatch;
+    public void setEnableCallback(boolean enableCallback) {
+        isEnableCallback = enableCallback;
     }
 
 }

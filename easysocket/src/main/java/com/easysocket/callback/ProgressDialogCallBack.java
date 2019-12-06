@@ -5,7 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 
 import com.easysocket.entity.exception.RequestCancelException;
-import com.easysocket.entity.sender.SuperCallbackSender;
+import com.easysocket.entity.basemsg.BaseSingerSender;
 import com.easysocket.interfaces.callback.IProgressDialog;
 import com.easysocket.interfaces.callback.ProgressCancelListener;
 import com.google.gson.Gson;
@@ -24,7 +24,7 @@ public abstract class ProgressDialogCallBack<T> extends SuperCallBack<T> impleme
      *
      * @param
      */
-    public ProgressDialogCallBack(IProgressDialog progressDialog, SuperCallbackSender sender) {
+    public ProgressDialogCallBack(IProgressDialog progressDialog, BaseSingerSender sender) {
         super(sender);
         this.progressDialog = progressDialog;
         init(false);
@@ -40,7 +40,7 @@ public abstract class ProgressDialogCallBack<T> extends SuperCallBack<T> impleme
      * @param
      */
     public ProgressDialogCallBack(IProgressDialog progressDialog, boolean isShowProgress,
-                                  boolean isCancel, SuperCallbackSender sender) {
+                                  boolean isCancel, BaseSingerSender sender) {
         super(sender);
         this.progressDialog = progressDialog;
         this.isShowProgress = isShowProgress;

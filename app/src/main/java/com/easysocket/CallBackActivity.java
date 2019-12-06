@@ -23,32 +23,22 @@ public class CallBackActivity extends AppCompatActivity {
         EasySocket.getInstance().destroyConnection();
         initCallbackSocket();
 
-        //发送一个心跳包
+        //发送有回调的消息
         findViewById(R.id.send_beat).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendHeartBeat();
+                sendSingerMsg();
             }
         });
 
-        //激活心跳
-        findViewById(R.id.activate_beat).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
-                clientHeartBeat.setMsgId("heart_beat");
-                clientHeartBeat.setFrom("client");
-                EasySocket.getInstance().startHeartBeat(clientHeartBeat);
-            }
-        });
 
         //有进度条的请求
         findViewById(R.id.send_progress).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyCallbackSender sender = new MyCallbackSender();
+                SingerSender sender = new SingerSender();
                 sender.setFrom("android");
-                sender.setMsgId("my_request");
+                sender.setMsgId("delay_msg");
                 EasySocket.getInstance()
                         .upObject(sender)
                         .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender) {
@@ -71,36 +61,37 @@ public class CallBackActivity extends AppCompatActivity {
     };
 
     /**
-     * 发送心跳包
+     * 发送一个有回调的消息
      */
-    private void sendHeartBeat() {
-        ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
-        clientHeartBeat.setMsgId("heart_beat");
-        clientHeartBeat.setFrom("client");
-        EasySocket.getInstance().upObject(clientHeartBeat)
-                .onCallBack(new SimpleCallBack<ServerHeartBeat>(clientHeartBeat) {
+    private void sendSingerMsg() {
+
+        SingerSender sender=new SingerSender();
+        sender.setMsgId("singer_msg");
+        sender.setFrom("android");
+        EasySocket.getInstance().upObject(sender)
+                .onCallBack(new SimpleCallBack<SingerResponse>(sender) {
                     @Override
-                    public void onResponse(ServerHeartBeat serverHeartBeat) {
-                        LogUtil.d("心跳包请求反馈：" + serverHeartBeat.toString());
+                    public void onResponse(SingerResponse response) {
+                        LogUtil.d("回调消息="+response.toString());
                     }
                 });
+
     }
 
     /**
      * 初始化具有回调功能的socket
      */
     private void initCallbackSocket() {
-        //心跳包实例
+        //心跳实例
         ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
         clientHeartBeat.setMsgId("heart_beat");
         clientHeartBeat.setFrom("client");
 
         //socket配置
         EasySocketOptions options = new EasySocketOptions.Builder()
-                .setCallbackSingerFactory(new CallbackSingerFactoryImpl()) //设置获取请求标识signer的factory
-                .setActiveHeart(true) //启动心跳管理器
-                .setActiveResponseDispatch(true) //启动消息的回调管理
-                .setClientHeart(clientHeartBeat) //设置全局心跳对象
+                .setActiveHeart(true) //启动心跳检测功能
+                .setEnableCallback(true) //启动消息的回调功能
+                .setClientHeart(clientHeartBeat) //设置心跳对象
                 .build();
 
         //初始化EasySocket

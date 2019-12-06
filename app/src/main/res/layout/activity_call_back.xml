@@ -12,16 +12,10 @@
         android:id="@+id/send_beat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="发送一个心跳"
+        android:text="发送一个回调消息"
         />
 
 
-    <Button
-        android:id="@+id/activate_beat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="激活心跳"
-        />
 
     <Button
         android:id="@+id/send_progress"

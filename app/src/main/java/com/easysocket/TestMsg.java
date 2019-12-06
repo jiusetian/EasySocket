@@ -1,13 +1,14 @@
 package com.easysocket;
 
-import com.easysocket.entity.basemsg.BaseClientHeart;
+import com.easysocket.entity.basemsg.BaseSender;
 
 /**
  * Author：Alex
- * Date：2019/6/6
- * Note：客户端心跳
+ * Date：2019/12/6
+ * Note：不带回调标识singer的消息
  */
-public class ClientHeartBeat extends BaseClientHeart {
+public class TestMsg extends BaseSender {
+
     private String msgId;
     private String from;
 
@@ -29,10 +30,9 @@ public class ClientHeartBeat extends BaseClientHeart {
 
     @Override
     public String toString() {
-        return "ClientHeartBeat{" +
+        return "TestMessage{" +
                 "msgId='" + msgId + '\'' +
                 ", from='" + from + '\'' +
                 '}';
     }
-
 }

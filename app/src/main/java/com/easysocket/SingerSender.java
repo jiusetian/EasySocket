@@ -1,13 +1,13 @@
 package com.easysocket;
 
-import com.easysocket.entity.sender.SuperCallbackSender;
+import com.easysocket.entity.basemsg.BaseSingerSender;
 
 /**
  * Author：Alex
  * Date：2019/6/11
- * Note：继承SuperCallbackSender代表这是一个有回调的消息
+ * Note：带有回调标识singer的发送消息
  */
-public class MyCallbackSender extends SuperCallbackSender {
+public class SingerSender extends BaseSingerSender {
 
     private String msgId;
     private String from;

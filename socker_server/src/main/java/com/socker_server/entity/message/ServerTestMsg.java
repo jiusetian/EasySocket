@@ -1,13 +1,11 @@
-package com.socker_server.entity;
-
-import com.socker_server.entity.message.SingerServerMsg;
+package com.socker_server.entity.message;
 
 /**
  * Author：Alex
- * Date：2019/6/6
- * Note：
+ * Date：2019/12/6
+ * Note：服务器返回的测试消息
  */
-public class ServerHeartBeat extends SingerServerMsg {
+public class ServerTestMsg extends ServerMsg{
 
     private String from;
 

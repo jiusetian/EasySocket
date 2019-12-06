@@ -23,28 +23,19 @@ public class MainActivity extends AppCompatActivity {
         //初始化socket
         initEasySocket();
 
-        //监听socket相关行为
+        //监听socket行为
         EasySocket.getInstance().subscribeSocketAction(socketActionListener);
 
-        //发送一个心跳包
+        //发送一个消息
         findViewById(R.id.send_beat).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendHeartBeat();
+                sendMessage();
             }
         });
 
-        //激活自动发送心跳
-        findViewById(R.id.auto_beat).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
-                clientHeartBeat.setMsgId("heart_beat");
-                clientHeartBeat.setFrom("client");
-                EasySocket.getInstance().getConnection().getHeartBeatManager().startHeartbeat(clientHeartBeat);
-            }
-        });
 
+        //跳转到具有回调功能的act
         findViewById(R.id.act_callback).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,22 +94,20 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
             super.onSocketResponse(socketAddress, originReadData);
-            LogUtil.d("监听器接收的数据->" + originReadData.getBodyString());
-            //演示接收到服务端心跳
-            EasySocket.getInstance().getConnection().getHeartBeatManager().onReceiveHeartBeat();
+            LogUtil.d("socket接收的数据->" + originReadData.getBodyString());
         }
     };
 
 
     /**
-     * 发送心跳包
+     * 发送一个没有回调的消息，即没有回调标识singer的消息
      */
-    private void sendHeartBeat() {
-        ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
-        clientHeartBeat.setMsgId("heart_beat");
-        clientHeartBeat.setFrom("client");
+    private void sendMessage() {
+        TestMsg testMsg =new TestMsg();
+        testMsg.setMsgId("no_singer_msg");
+        testMsg.setFrom("android");
         //发送
-        EasySocket.getInstance().upObject(clientHeartBeat);
+        EasySocket.getInstance().upObject(testMsg);
     }
 
     /**
