@@ -1,7 +1,7 @@
 package com.easysocket.connection.dispatcher;
 
+import com.easysocket.entity.NeedReconnect;
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.IsReconnect;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.conn.ISocketActionListener;
@@ -146,11 +146,11 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                 break;
 
             case ACTION_CONN_FAIL: //连接失败
-                actionListener.onSocketConnFail(socketAddress, (IsReconnect) content);
+                actionListener.onSocketConnFail(socketAddress, (NeedReconnect) content);
                 break;
 
             case ACTION_DISCONNECTION: //连接断开
-                actionListener.onSocketDisconnect(socketAddress, (IsReconnect) content);
+                actionListener.onSocketDisconnect(socketAddress, (NeedReconnect) content);
                 break;
 
             case ACTION_READ_COMPLETE: //读取完成

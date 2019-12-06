@@ -88,21 +88,21 @@ Socket的相关参数都使用了默认值，主要设置了IP和端口，这种
             /**
              * socket连接失败
              * @param socketAddress
-             * @param isReconnect 是否需要重连
+             * @param needReconnect 是否需要重连
              */
             @Override
-            public void onSocketConnFail(SocketAddress socketAddress, IsReconnect isReconnect) {
-                super.onSocketConnFail(socketAddress, isReconnect);
+            public void onSocketConnFail(SocketAddress socketAddress, IsReconnect needReconnect) {
+                super.onSocketConnFail(socketAddress, needReconnect);
             }
      
             /**
              * socket断开连接
              * @param socketAddress
-             * @param isReconnect 是否需要重连
+             * @param needReconnect 是否需要重连
              */
             @Override
-            public void onSocketDisconnect(SocketAddress socketAddress, IsReconnect isReconnect) {
-                super.onSocketDisconnect(socketAddress, isReconnect);
+            public void onSocketDisconnect(SocketAddress socketAddress, IsReconnect needReconnect) {
+                super.onSocketDisconnect(socketAddress, needReconnect);
             }
      
             /**

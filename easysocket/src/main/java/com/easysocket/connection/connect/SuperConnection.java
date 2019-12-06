@@ -1,21 +1,19 @@
 package com.easysocket.connection.connect;
 
-import com.easysocket.callback.HeartbeatCallBack;
 import com.easysocket.callback.SuperCallBack;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.action.SocketAction;
-import com.easysocket.connection.dispatcher.SocketActionDispatcher;
 import com.easysocket.connection.action.SocketStatus;
+import com.easysocket.connection.dispatcher.ResponseDispatcher;
+import com.easysocket.connection.dispatcher.SocketActionDispatcher;
 import com.easysocket.connection.heartbeat.HeartBeatManager;
 import com.easysocket.connection.iowork.IOManager;
-import com.easysocket.connection.dispatcher.ResponseDispatcher;
 import com.easysocket.connection.reconnect.AbsReconnection;
-import com.easysocket.entity.IsReconnect;
+import com.easysocket.entity.NeedReconnect;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.exception.NotNullException;
 import com.easysocket.entity.sender.ISender;
 import com.easysocket.entity.sender.SuperCallbackSender;
-import com.easysocket.entity.sender.SuperClientHeart;
 import com.easysocket.interfaces.config.IConnectionSwitchListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
@@ -147,7 +145,7 @@ public abstract class SuperConnection implements IConnectionManager {
     }
 
     @Override
-    public synchronized void disconnect(IsReconnect isReconnect) {
+    public synchronized void disconnect(NeedReconnect needReconnect) {
         if (connectionStatus.get() == SocketStatus.SOCKET_DISCONNECTIONG) {
             return;
         }
@@ -155,7 +153,7 @@ public abstract class SuperConnection implements IConnectionManager {
 
         //开启断开连接线程
         String info = socketAddress.getIp() + " : " + socketAddress.getPort();
-        Thread disconnThread = new DisconnectThread(isReconnect, "disconn thread：" + info);
+        Thread disconnThread = new DisconnectThread(needReconnect, "disconn thread：" + info);
         disconnThread.setDaemon(true);
         disconnThread.start();
     }
@@ -164,11 +162,11 @@ public abstract class SuperConnection implements IConnectionManager {
      * 断开连接线程
      */
     private class DisconnectThread extends Thread {
-        IsReconnect isReconnect; //是否需要重连
+        NeedReconnect needReconnect; //是否需要重连
 
-        public DisconnectThread(IsReconnect isReconnect, String name) {
+        public DisconnectThread(NeedReconnect needReconnect, String name) {
             super(name);
-            this.isReconnect = isReconnect;
+            this.needReconnect = needReconnect;
         }
 
         @Override
@@ -187,7 +185,7 @@ public abstract class SuperConnection implements IConnectionManager {
                 e.printStackTrace();
             } finally {
                 connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED);
-                actionDispatch.dispatchAction(SocketAction.ACTION_DISCONNECTION, isReconnect);
+                actionDispatch.dispatchAction(SocketAction.ACTION_DISCONNECTION, needReconnect);
             }
         }
     }
@@ -210,7 +208,7 @@ public abstract class SuperConnection implements IConnectionManager {
                 e.printStackTrace();
                 LogUtil.d("连接失败");
                 connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED);
-                actionDispatch.dispatchAction(SocketAction.ACTION_CONN_FAIL, new IsReconnect(true)); //第二个参数是指需要重连
+                actionDispatch.dispatchAction(SocketAction.ACTION_CONN_FAIL, new NeedReconnect(true)); //第二个参数是指需要重连
 
             }
         }
@@ -294,11 +292,6 @@ public abstract class SuperConnection implements IConnectionManager {
         responseDispatcher.addSocketCallback(callBack);
     }
 
-    @Override
-    public void onHeartCallBack(SuperClientHeart clientHeart, HeartbeatCallBack.CallBack callBack) {
-        //clientHeart.setSinger(clientHeart.getSinger());
-        responseDispatcher.addHeartbeatCallBack(clientHeart.getSinger(), callBack);
-    }
 
     @Override
     public synchronized IConnectionManager upBytes(byte[] bytes) {

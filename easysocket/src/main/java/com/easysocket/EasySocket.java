@@ -1,6 +1,7 @@
 package com.easysocket;
 
 import com.easysocket.config.EasySocketOptions;
+import com.easysocket.entity.NeedReconnect;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.exception.InitialExeption;
 import com.easysocket.entity.exception.NotNullException;
@@ -100,9 +101,18 @@ public class EasySocket {
         connection = connectionHolder.getConnection(socketAddress,
                 options == null ? EasySocketOptions.getDefaultOptions() : options);
         connection.connect(); //进行连接
+
         return this;
     }
 
+    /**
+     * 销毁socket连接
+     * @return
+     */
+    public EasySocket destroyConnection(){
+        getConnection().disconnect(new NeedReconnect(false));
+        return this;
+    }
 
     /**
      * 向服务器发送一个对象

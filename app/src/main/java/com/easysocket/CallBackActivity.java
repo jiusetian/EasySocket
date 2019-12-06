@@ -20,7 +20,7 @@ public class CallBackActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call_back);
-
+        EasySocket.getInstance().destroyConnection();
         initCallbackSocket();
 
         //发送一个心跳包

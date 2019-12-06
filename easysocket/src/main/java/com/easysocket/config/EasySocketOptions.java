@@ -339,7 +339,7 @@ public class EasySocketOptions {
         options.requestTimeout = 10 * 1000; //默认十秒
         options.isOpenRequestTimeout = true; //默认开启
         options.clientHeart = null;
-        options.isActiveHeart = false; //默认开启心跳包检测连接状态
+        options.isActiveHeart = false; //默认关闭心跳包检测
         options.isActiveResponseDispatch = false; //默认关闭回调功能
         return options;
     }

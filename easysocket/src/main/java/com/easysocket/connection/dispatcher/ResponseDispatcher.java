@@ -1,6 +1,5 @@
 package com.easysocket.connection.dispatcher;
 
-import com.easysocket.callback.HeartbeatCallBack;
 import com.easysocket.callback.SuperCallBack;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.entity.OriginReadData;
@@ -11,9 +10,7 @@ import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.SocketActionListener;
 import com.easysocket.utils.LogUtil;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,10 +23,7 @@ public class ResponseDispatcher implements RequestTimeoutListener {
      * 保存回调实例的map,key为每个请求对象的callbackSign
      */
     private Map<String, SuperCallBack> callbacks = new HashMap<>();
-    /**
-     * 心跳包回调器的缓存
-     */
-    private List<HeartbeatCallBack> heartCallBacksHolder = new ArrayList<>(HEART_CALLBACK_HOLDER_SIZE);
+
     /**
      * 心跳包缓存的大小
      */
@@ -45,9 +39,9 @@ public class ResponseDispatcher implements RequestTimeoutListener {
 
     public ResponseDispatcher(IConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
+        socketOptions=connectionManager.getOptions();
         //注册监听
         connectionManager.subscribeSocketAction(socketActionListener);
-        socketOptions=connectionManager.getOptions();
     }
 
     /**
@@ -74,10 +68,6 @@ public class ResponseDispatcher implements RequestTimeoutListener {
             }
             //回调
             callBack.onSuccess(originReadData.getBodyString());
-            //如果是心跳包的回调，那么缓存
-            if (callBack instanceof HeartbeatCallBack) {
-                cacheHeartbeatCallback((HeartbeatCallBack) callBack);
-            }
             callbacks.remove(sign); //移除完成任务的callback
         }
 
@@ -95,14 +85,6 @@ public class ResponseDispatcher implements RequestTimeoutListener {
         return true;
     }
 
-    /**
-     * 缓存心跳包的回调
-     */
-    private void cacheHeartbeatCallback(HeartbeatCallBack heartbeatCallBack) {
-        if (heartCallBacksHolder.size() < HEART_CALLBACK_HOLDER_SIZE) { //可以缓存
-            heartCallBacksHolder.add(heartbeatCallBack);
-        }
-    }
 
     /**
      * 添加回调实例
@@ -116,39 +98,11 @@ public class ResponseDispatcher implements RequestTimeoutListener {
 
 
     /**
-     * 添加心跳包的callback
-     *
-     * @param sign
-     * @param callBack
-     */
-    public void addHeartbeatCallBack(String sign, HeartbeatCallBack.CallBack callBack) {
-        try {
-            HeartbeatCallBack heartbeatCallBack;
-            if (heartCallBacksHolder.size() == 0) { //没有缓存
-                heartbeatCallBack = new HeartbeatCallBack();
-                heartbeatCallBack.setTimeoutListener(this);
-            } else { //取缓存并移除
-                heartbeatCallBack = heartCallBacksHolder.get(heartCallBacksHolder.size() - 1);
-                heartCallBacksHolder.remove(heartCallBacksHolder.size() - 1);
-            }
-            heartbeatCallBack.setSinger(sign);
-            heartbeatCallBack.setCallback(callBack);
-            callbacks.put(sign, heartbeatCallBack);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * @param sign 某个请求超时了
      */
     @Override
     public void onRequstTimeout(String sign) {
         LogUtil.d(sign + "请求超时了");
-        //移除超时的callback
-        if (callbacks.get(sign) instanceof HeartbeatCallBack) {
-            cacheHeartbeatCallback((HeartbeatCallBack) callbacks.get(sign));
-        }
         callbacks.remove(sign);
     }
 }

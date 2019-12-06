@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.easysocket.config.EasySocketOptions;
-import com.easysocket.entity.IsReconnect;
+import com.easysocket.entity.NeedReconnect;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.interfaces.conn.ISocketActionListener;
@@ -54,6 +54,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //EasySocket.getInstance().destroyConnection();
+    }
+
+
     /**
      * socket行为监听
      */
@@ -71,21 +78,21 @@ public class MainActivity extends AppCompatActivity {
         /**
          * socket连接失败
          * @param socketAddress
-         * @param isReconnect 是否需要重连
+         * @param needReconnect 是否需要重连
          */
         @Override
-        public void onSocketConnFail(SocketAddress socketAddress, IsReconnect isReconnect) {
-            super.onSocketConnFail(socketAddress, isReconnect);
+        public void onSocketConnFail(SocketAddress socketAddress, NeedReconnect needReconnect) {
+            super.onSocketConnFail(socketAddress, needReconnect);
         }
 
         /**
          * socket断开连接
          * @param socketAddress
-         * @param isReconnect 是否需要重连
+         * @param needReconnect 是否需要重连
          */
         @Override
-        public void onSocketDisconnect(SocketAddress socketAddress, IsReconnect isReconnect) {
-            super.onSocketDisconnect(socketAddress, isReconnect);
+        public void onSocketDisconnect(SocketAddress socketAddress, NeedReconnect needReconnect) {
+            super.onSocketDisconnect(socketAddress, needReconnect);
         }
 
         /**
