@@ -1,7 +1,7 @@
 package com.easysocket.callback;
 
 
-import com.easysocket.entity.basemsg.BaseSingerSender;
+import com.easysocket.entity.basemsg.BaseCallbackSender;
 import com.google.gson.Gson;
 
 /**
@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 public abstract class SimpleCallBack<T> extends SuperCallBack<T> {
 
 
-    public SimpleCallBack(BaseSingerSender sender) {
+    public SimpleCallBack(BaseCallbackSender sender) {
         super(sender);
         onStart();
     }

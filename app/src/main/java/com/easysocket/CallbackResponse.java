@@ -1,13 +1,13 @@
 package com.easysocket;
 
-import com.easysocket.entity.basemsg.BaseSingerResponse;
+import com.easysocket.entity.basemsg.BaseCallbackResponse;
 
 /**
  * Author：Alex
  * Date：2019/12/7
  * Note：带有回调标识singer的响应消息
  */
-public class SingerResponse extends BaseSingerResponse {
+public class CallbackResponse extends BaseCallbackResponse {
 
     private String from;
     /**

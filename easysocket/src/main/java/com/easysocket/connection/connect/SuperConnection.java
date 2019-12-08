@@ -6,14 +6,14 @@ import com.easysocket.connection.action.SocketAction;
 import com.easysocket.connection.action.SocketStatus;
 import com.easysocket.connection.dispatcher.ResponseDispatcher;
 import com.easysocket.connection.dispatcher.SocketActionDispatcher;
-import com.easysocket.connection.heartbeat.HeartBeatManager;
+import com.easysocket.connection.heartbeat.HeartManager;
 import com.easysocket.connection.iowork.IOManager;
 import com.easysocket.connection.reconnect.AbsReconnection;
 import com.easysocket.entity.NeedReconnect;
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.exception.NotNullException;
+import com.easysocket.entity.basemsg.BaseCallbackSender;
 import com.easysocket.entity.basemsg.ISender;
-import com.easysocket.entity.basemsg.BaseSingerSender;
+import com.easysocket.entity.exception.NotNullException;
 import com.easysocket.interfaces.config.IConnectionSwitchListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
@@ -57,7 +57,7 @@ public abstract class SuperConnection implements IConnectionManager {
     /**
      * 心跳管理
      */
-    private HeartBeatManager heartBeatManager;
+    private HeartManager heartManager;
     /**
      * 配置信息
      */
@@ -95,8 +95,8 @@ public abstract class SuperConnection implements IConnectionManager {
         if (ioManager != null)
             ioManager.setOptions(socketOptions);
 
-        if (heartBeatManager != null)
-            heartBeatManager.setOptions(socketOptions);
+        if (heartManager != null)
+            heartManager.setOptions(socketOptions);
 
         if (responseDispatcher != null)
             responseDispatcher.setSocketOptions(socketOptions);
@@ -128,8 +128,8 @@ public abstract class SuperConnection implements IConnectionManager {
             throw new NotNullException("连接参数为空，请检查是否设置了连接IP和port");
         }
         //初始化心跳管理器
-        if (heartBeatManager == null)
-            heartBeatManager = new HeartBeatManager(this, actionDispatch);
+        if (heartManager == null)
+            heartManager = new HeartManager(this, actionDispatch);
 
         //重连管理器相关
         if (reconnection != null)
@@ -307,16 +307,21 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public synchronized IConnectionManager upObject(ISender sender) {
-        //如果属于有反馈的请求，将设置一个20位随机字符串作为识别标识
-        if (sender instanceof BaseSingerSender) {
-            ((BaseSingerSender) sender).setSinger(Util.getRandomChar(20));
-        }
         sendBuffer(sender.parse());
         return this;
     }
 
     @Override
-    public HeartBeatManager getHeartBeatManager() {
-        return heartBeatManager;
+    public synchronized IConnectionManager upCallbackMessage(BaseCallbackSender sender){
+        //设置一个20位随机字符串作为识别标识
+        sender.setSinger(Util.getRandomChar(20));
+        sendBuffer(sender.parse());
+        return this;
+    }
+
+
+    @Override
+    public HeartManager getHeartManager() {
+        return heartManager;
     }
 }

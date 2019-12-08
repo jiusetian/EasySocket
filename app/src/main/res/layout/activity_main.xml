@@ -11,17 +11,32 @@
     >
 
     <Button
-        android:id="@+id/send_beat"
+        android:id="@+id/send_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="发送消息"
         />
 
     <Button
-        android:id="@+id/act_callback"
+        android:id="@+id/start_heart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="跳转到有回调功能的activity"
+        android:text="启动心跳检测"
         />
+
+    <Button
+        android:id="@+id/callback_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="发送有回调的消息"
+        />
+
+    <Button
+        android:id="@+id/progress_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="有进度条的请求"
+        />
+
 
 </LinearLayout>

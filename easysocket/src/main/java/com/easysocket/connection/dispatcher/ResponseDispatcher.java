@@ -4,7 +4,6 @@ import com.easysocket.callback.SuperCallBack;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.exception.NotNullException;
 import com.easysocket.interfaces.callback.RequestTimeoutListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.SocketActionListener;
@@ -58,12 +57,12 @@ public class ResponseDispatcher implements RequestTimeoutListener {
     private SocketActionListener socketActionListener = new SocketActionListener() {
         @Override
         public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
-            if (!isEnableCallback()) return;
+            if (callbacks.size()==0) return; //没有回调
             String sign = socketOptions.getCallbackSingerFactory().getCallbackSinger(originReadData);
             //获取对应的callback
             SuperCallBack callBack = callbacks.get(sign);
             if (callBack == null) {
-                //LogUtil.d("没有回调函数");
+                //LogUtil.d("没有对应的回调函数");
                 return;
             }
             //回调
@@ -72,19 +71,6 @@ public class ResponseDispatcher implements RequestTimeoutListener {
         }
 
     };
-
-    //response是否为回调消息
-    private boolean isEnableCallback() {
-        //是否开启消息的分发
-        if (!socketOptions.isEnableCallback()) return false;
-        //如果要实现消息的回调功能，则需要定义如何从回调消息中去获取回调标识singer
-        if (socketOptions.getCallbackSingerFactory() == null) {
-            LogUtil.e(new NotNullException("CallbackSingerFactory不能为null，请根据服务器反馈消息的数据结构自定义CallbackSingerFactory"));
-            return false;
-        }
-        return true;
-    }
-
 
     /**
      * 添加回调实例

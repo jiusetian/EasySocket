@@ -60,7 +60,7 @@ public interface IConnectionManager extends ISubscribeSocketAction, IOptions<ICo
      * 获取心跳管理器
      * @return
      */
-    IHeartBeatManager getHeartBeatManager();
+    IHeartManager getHeartManager();
 
 
 }

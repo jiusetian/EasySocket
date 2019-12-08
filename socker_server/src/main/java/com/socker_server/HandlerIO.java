@@ -47,10 +47,9 @@ public class HandlerIO {
                 serverMsg.setMsgId(MsgId.NO_SINGER_MSG);
                 ((ServerTestMsg) serverMsg).setFrom("server");
                 break;
-            case MsgId.HEARTBEAT: //心跳包，带有singer
+            case MsgId.HEARTBEAT: //心跳包
                 serverMsg = new ServerHeartBeat();
                 ((ServerHeartBeat) serverMsg).setFrom("server");
-                ((ServerHeartBeat) serverMsg).setSinger(singer);
                 serverMsg.setMsgId(MsgId.HEARTBEAT);
                 break;
 
@@ -60,7 +59,7 @@ public class HandlerIO {
                 serverMsg.setMsgId(MsgId.DELAY_MSG);
                 ((SingerResponse) serverMsg).setFrom("server");
                 try {
-                    Thread.sleep(1000*10);
+                    Thread.sleep(1000*5);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

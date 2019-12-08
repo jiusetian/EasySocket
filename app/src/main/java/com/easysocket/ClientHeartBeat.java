@@ -1,13 +1,13 @@
 package com.easysocket;
 
-import com.easysocket.entity.basemsg.BaseClientHeart;
+import com.easysocket.entity.basemsg.BaseSender;
 
 /**
  * Author：Alex
  * Date：2019/6/6
  * Note：客户端心跳
  */
-public class ClientHeartBeat extends BaseClientHeart {
+public class ClientHeartBeat extends BaseSender {
     private String msgId;
     private String from;
 

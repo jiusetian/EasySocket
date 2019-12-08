@@ -1,13 +1,14 @@
 package com.easysocket;
 
 import com.easysocket.config.EasySocketOptions;
+import com.easysocket.connection.heartbeat.HeartManager;
 import com.easysocket.entity.NeedReconnect;
 import com.easysocket.entity.SocketAddress;
+import com.easysocket.entity.basemsg.BaseSender;
+import com.easysocket.entity.basemsg.BaseCallbackSender;
+import com.easysocket.entity.basemsg.ISender;
 import com.easysocket.entity.exception.InitialExeption;
 import com.easysocket.entity.exception.NotNullException;
-import com.easysocket.entity.basemsg.ISender;
-import com.easysocket.entity.basemsg.BaseSingerSender;
-import com.easysocket.entity.basemsg.BaseClientHeart;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
 
@@ -125,6 +126,16 @@ public class EasySocket {
     }
 
     /**
+     * 发送一个有回调的消息
+     * @param sender
+     * @return
+     */
+    public IConnectionManager upCallbackMessage(BaseCallbackSender sender){
+        getConnection().upCallbackMessage(sender);
+        return connection;
+    }
+
+    /**
      * 发送一个string
      *
      * @param str
@@ -161,8 +172,8 @@ public class EasySocket {
      * @param clientHeart
      * @return
      */
-    public EasySocket startHeartBeat(BaseClientHeart clientHeart) {
-        getConnection().getHeartBeatManager().startHeartbeat(clientHeart);
+    public EasySocket startHeartBeat(BaseSender clientHeart, HeartManager.HeartbeatListener listener) {
+        getConnection().getHeartManager().startHeartbeat(clientHeart,listener);
         return this;
     }
 
@@ -201,7 +212,7 @@ public class EasySocket {
      * @param socketAddress
      * @param socketOptions
      */
-    public IConnectionManager upToSpecifyConnection(BaseSingerSender sender, SocketAddress socketAddress, EasySocketOptions socketOptions) {
+    public IConnectionManager upToSpecifyConnection(BaseCallbackSender sender, SocketAddress socketAddress, EasySocketOptions socketOptions) {
         EasySocketOptions options = socketOptions == null ? EasySocketOptions.getDefaultOptions() : socketOptions;
         IConnectionManager connectionManager = connectionHolder.getConnection(socketAddress, options);
         if (connectionManager.isConnectViable())
@@ -216,7 +227,7 @@ public class EasySocket {
      * @param sender
      * @param socketAddress
      */
-    public IConnectionManager upToSpecifyConnection(BaseSingerSender sender, SocketAddress socketAddress) {
+    public IConnectionManager upToSpecifyConnection(BaseCallbackSender sender, SocketAddress socketAddress) {
         return upToSpecifyConnection(sender, socketAddress, null);
     }
 
