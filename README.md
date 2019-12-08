@@ -8,11 +8,11 @@ EasySocket的初衷是希望通过对传输数据的处理使得socket编程更�
 
    1、采用链式调用一键发送数据，根据自己的需求配置参数，简单易用，灵活性高
    
-   2、EasySocket分为简单使用和高级使用，简单使用是实现socket的普通功能，包括TCP的连接和断开、数据的发送和接收、心跳机制等等，高级使用实现了socket请求的回调功能和心跳自动检测
-
+   2、EasySocket不单实现了包括TCP的连接和断开、数据的发送和接收、心跳保活机制等功能，还实现了socket层面的请求回调功能
+   
    3、消息结构使用（包头+包体）的协议，其中包体存储要发送的数据实体，而包头则存储包体的数据长度，这种结构方式方便于数据的解析，解决了TCP通信中断包、粘包等问题；
 
-   4、Socket层面的数据传输回调功能，使得每一个请求信息和应答信息实现无缝对接。
+   4、EasySocket只需简单的配置即可启动心跳检测功能
 
 ### 一、EasySocket的Android Studio配置
 
@@ -44,11 +44,11 @@ dependencies {
 
 }
 
-### 二、EasySocket的简单配置
+### 二、EasySocket的简单使用
        
 一般在项目的Application中对EasySocket进行全局化配置，下面是一个最简单的配置
 
-          /**
+    /**
      * 初始化EasySocket
      */
     private void initEasySocket() {
@@ -61,11 +61,13 @@ dependencies {
         EasySocket.getInstance()
                 .ip("192.168.4.52") //IP地址，测试的时候可以使用本地IP地址
                 .port(9999) //端口
-                .options(options) //连接的配置
-                .buildConnection(); //创建一个socket连接
+                .options(options); //连接的配置
+ 
+        //创建一个socket连接
+        EasySocket.getInstance().buildConnection();
     }
 
-其他的配置参数都使用了默认值，这里主要设置了IP和端口，这种配置是不具备回调功能和智能心跳检查功能的，但也满足了socket开发的基本需求，来看看框架的简单使用
+这里主要设置了IP和端口，其他的配置参数都使用了默认值，来看看框架的简单使用
 
 定义一个socket行为的监听器，如下
 
@@ -111,7 +113,7 @@ dependencies {
         @Override
         public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
             super.onSocketResponse(socketAddress, originReadData);
-            LogUtil.d("socket接收的数据->" + originReadData.getBodyString());
+            LogUtil.d("socket监听器收到数据=" + originReadData.getBodyString());
  
         }
     };
@@ -141,88 +143,88 @@ dependencies {
 	发送的数据={"from":"android","msgId":"no_singer_msg"} 
 
 
-	socket接收的数据->{"from":"server","msgId":"no_singer_msg"}
+	socket监听器收到数据={"from":"server","msgId":"no_singer_msg"} 
 
 
 可以看到注册的监听器监收到了服务器的响应消息
 
 
-### 三、EasySocket的高级使用
+### 三、EasySocket启动心跳机制
 
-EasySocket的区别于其他Socket框架的主要特点是具备数据回调功能和智能心跳检测，但这两个功能默认是关闭的，需要自己手动配置，看例子如下
+Socket的连接监听一般用心跳包去检测，EasySocket启动心跳机制非常简单， 下面是实例代码
 
-       /**
-     * 初始化具有回调功能的socket
-     */
-    private void initCallbackSocket() {
+ 
+    //启动心跳检测功能
+    private void startHeartbeat() {
         //心跳实例
         ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
         clientHeartBeat.setMsgId("heart_beat");
         clientHeartBeat.setFrom("client");
- 
-        //socket配置
-        EasySocketOptions options = new EasySocketOptions.Builder()
-                .setActiveHeart(true) //启动心跳检测功能
-                .setEnableCallback(true) //启动消息的回调功能
-                .setClientHeart(clientHeartBeat) //设置心跳对象
-                .build();
- 
-        //初始化EasySocket
-        EasySocket.getInstance()
-                .ip("192.168.3.9") //IP地址
-                .port(9999) //端口
-                .options(options) //连接的配置
-                .buildConnection(); //创建一个socket连接
- 
+        EasySocket.getInstance().startHeartBeat(clientHeartBeat, new HeartManager.HeartbeatListener() {
+            @Override
+            public boolean isServerHeartbeat(OriginReadData originReadData) {
+                String msg = originReadData.getBodyString();
+                try {
+                    JSONObject jsonObject = new JSONObject(msg);
+                    if ("heart_beat".equals(jsonObject.getString("msgId"))) {
+                        LogUtil.d("收到服务器心跳");
+                        return true;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+        });
     }
      
 
-和普通使用不同的在于，配置中分别启动了心跳检测功能和消息的回调功能，同时心跳的自动检测需要一个全局的心跳包实例，作为给服务器发送的一个心跳包
-
-这里需要声明的是，本框架的消息回调功能是需要服务器软件的配合的，基本原理就是每次客户端发送消息的时候都会随机生成一个字符串，而在服务器响应消息的时候需要将这个字符串返回来给客户端，只有这样客户端才知道当前响应的消息是对哪个消息的响应
+启动心跳机制关键要定义一个心跳包实例作为Socket发送给服务端的心跳，然后实现一个接口，用来识别当前收到的消息是否为服务器的心跳，这个要根据自己的现实情况来实现，其实也挺简单的。
 
 
 ### 四、EasySocket的回调功能演示
 
-经过上面的配置，首先实现心跳包的自动发送和接收并且检测连接状态，同时也实现了消息的回调功能，即当发送一个带有回调标识的消息给服务器的话，我们可以准确地接收到这个消息对应的响应消息，示例如下
+EasySocket的最大特点收到实现了消息的回调功能，即当发送一个带有回调标识的消息给服务器的时候，我们可以准确地接收到这个消息对应的响应消息，示例如下
 
     /**
      * 发送一个有回调的消息
      */
     private void sendSingerMsg() {
  
-        SingerSender sender=new SingerSender();
+        CallbackSender sender = new CallbackSender();
         sender.setMsgId("singer_msg");
         sender.setFrom("android");
-        EasySocket.getInstance().upObject(sender)
-                .onCallBack(new SimpleCallBack<SingerResponse>(sender) {
+        EasySocket.getInstance().upCallbackMessage(sender)
+                .onCallBack(new SimpleCallBack<CallbackResponse>(sender) {
                     @Override
-                    public void onResponse(SingerResponse response) {
-                        LogUtil.d("回调消息="+response.toString());
+                    public void onResponse(CallbackResponse response) {
+                        LogUtil.d("回调消息=" + response.toString());
                     }
                 });
- 
     }
     
 执行结果如下：
 
-	发送的数据={"from":"android","msgId":"singer_msg","singer":"PZSE51SLQMOJ1ZZFO8MA"}
+	发送的数据={"from":"android","msgId":"singer_msg","singer":"ZOLDZSWBPRR21I0ZVMR6"}
 
-	回调消息=SingerResponse{from='server', msgId='singer_msg', singer='PZSE51SLQMOJ1ZZFO8MA'} 
+	回调消息=SingerResponse{from='server', msgId='singer_msg', singer='ZOLDZSWBPRR21I0ZVMR6'}
 
-可以看到，发送消息的时候有一个数据singer就是消息的回调标识，socket接收到的响应消息也带有singer标识，而且是同一个值，正是这个singer才让我们可以识别到哪个响应消息对应哪个发送消息
+可以看到，发送消息的时候有一个数据singer是消息的回调标识，socket接收到的响应消息也是带有singer标识，而且是同一个值，正是这个singer才让我们可以识别到响应消息对应的是哪个发送消息
+
+回调功能的基本原理也很简单，每次客户端发送消息的时候都会随机生成一个字符串作为此消息的唯一标识，本框架用singer作为回调标识，服务端方面在响应有singer标识的消息的时候，将这个singer标识返回给客户端就OK 了，至于客户端是怎么处理的，大家可以看看项目的源码
+
 
 此外还封装了一个带进度框的请求，非常实用，使用方法如下：
 
-                MyCallbackSender sender = new MyCallbackSender();
+                CallbackSender sender = new CallbackSender();
                 sender.setFrom("android");
-                sender.setMsgId("my_request");
+                sender.setMsgId("delay_msg");
                 EasySocket.getInstance()
-                        .upObject(sender)
+                        .upCallbackMessage(sender)
                         .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender) {
                             @Override
                             public void onResponse(String s) {
-                                LogUtil.d("请求返回的消息=" + s);
+                                LogUtil.d("进度条回调消息=" + s);
                             }
                         });
             
@@ -306,17 +308,5 @@ EasySocket的区别于其他Socket框架的主要特点是具备数据回调功�
      * 是否开启请求超时检测
      */
     private boolean isOpenRequestTimeout;
-    /**
-     * 客户端心跳包
-     */
-    private BaseClientHeart clientHeart;
-    /**
-     * 是否开启心跳功能，默认关闭
-     */
-    private boolean isActiveHeart;
-    /**
-     * 是否启动socket的回调功能，默认关闭
-     */
-    private boolean isEnableCallback;
-
+    
 GitHub代码的Demo中还有socket服务端的测试代码，大家可以用本地IP地址对本框架进行测试，欢迎点评交流。
