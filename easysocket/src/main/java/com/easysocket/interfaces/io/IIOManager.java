@@ -9,9 +9,9 @@ public interface IIOManager {
 
     /**
      * 发送字节序列的数据
-     * @param buffer
+     * @param bytes
      */
-    void sendBuffer(byte[] buffer);
+    void sendBytes(byte[] bytes);
 
     /**
      * 关闭io管理器

@@ -1,7 +1,7 @@
 package com.easysocket.connection.reconnect;
 
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.NeedReconnect;
+import com.easysocket.entity.IsNeedReconnect;
 import com.easysocket.utils.LogUtil;
 
 import java.util.concurrent.Executors;
@@ -45,7 +45,7 @@ public class DefaultReConnection extends AbsReconnection {
                 shutDown();
                 return;
             }
-            //是否处于可连接状态
+            //是否可连接的
             if (!connectionManager.isConnectViable()) {
                 shutDown();
                 return;
@@ -84,17 +84,19 @@ public class DefaultReConnection extends AbsReconnection {
 
     @Override
     public void onSocketConnSuccess(SocketAddress socketAddress) {
+        //连接成功则关闭重连线程
         shutDown();
     }
 
     @Override
-    public void onSocketConnFail(SocketAddress socketAddress, NeedReconnect needReconnect) {
-        if (!needReconnect.booleanValue()) {
+    public void onSocketConnFail(SocketAddress socketAddress, IsNeedReconnect isNeedReconnect) {
+        //如果连接失败，但不需要重连，则关闭
+        if (!isNeedReconnect.booleanValue()) {
             shutDown();
             return;
         }
         connectionFailedTimes++;
-        //如果大于最大连接次数，则可使用备用host,然后轮流切换两个host
+        //如果大于最大连接次数并且有备用host,则轮流切换两个host
         if (connectionFailedTimes > MAX_CONNECTION_FAILED_TIMES && socketAddress.getBackupAddress() != null) {
             connectionFailedTimes = 0; //归零
             SocketAddress backupAddress = socketAddress.getBackupAddress();
@@ -111,8 +113,9 @@ public class DefaultReConnection extends AbsReconnection {
     }
 
     @Override
-    public void onSocketDisconnect(SocketAddress socketAddress, NeedReconnect needReconnect) {
-        if (!needReconnect.booleanValue()) {
+    public void onSocketDisconnect(SocketAddress socketAddress, IsNeedReconnect isNeedReconnect) {
+        //是否需要重连
+        if (!isNeedReconnect.booleanValue()) {
             shutDown();
             return;
         }

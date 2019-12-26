@@ -7,11 +7,11 @@ import java.io.Serializable;
  * Date：2019/6/3
  * Note：是否需要重连
  */
-public class NeedReconnect implements Serializable {
+public class IsNeedReconnect implements Serializable {
 
     private boolean isNeedRecon;
 
-    public NeedReconnect(boolean isNeedRecon) {
+    public IsNeedReconnect(boolean isNeedRecon) {
         this.isNeedRecon=isNeedRecon;
     }
 

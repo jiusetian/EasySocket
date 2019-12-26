@@ -17,7 +17,7 @@ public abstract class AbsReconnection implements ISocketActionListener, IReconnL
      */
     protected IConnectionManager connectionManager;
     /**
-     * 连接管理器是否销毁
+     * socket连接管理器是否已销毁
      */
     protected boolean isDetach;
 

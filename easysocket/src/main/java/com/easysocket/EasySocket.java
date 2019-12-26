@@ -2,20 +2,20 @@ package com.easysocket;
 
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.heartbeat.HeartManager;
-import com.easysocket.entity.NeedReconnect;
+import com.easysocket.entity.IsNeedReconnect;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.basemsg.BaseSender;
 import com.easysocket.entity.basemsg.BaseCallbackSender;
 import com.easysocket.entity.basemsg.ISender;
 import com.easysocket.entity.exception.InitialExeption;
-import com.easysocket.entity.exception.NotNullException;
+import com.easysocket.entity.exception.NoNullException;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
 
 /**
  * Author：Alex
  * Date：2019/6/4
- * Note：框架对外开放的api
+ * Note：对外开放的api
  */
 public class EasySocket {
 
@@ -111,7 +111,7 @@ public class EasySocket {
      * @return
      */
     public EasySocket destroyConnection(){
-        getConnection().disconnect(new NeedReconnect(false));
+        getConnection().disconnect(new IsNeedReconnect(false));
         return this;
     }
 
@@ -186,7 +186,7 @@ public class EasySocket {
     public IConnectionManager getConnection() {
         if (connection == null) {
             testInit();
-            throw new NotNullException("请先创建一个socket主连接");
+            throw new NoNullException("请先创建一个socket主连接");
         }
         return connection;
     }

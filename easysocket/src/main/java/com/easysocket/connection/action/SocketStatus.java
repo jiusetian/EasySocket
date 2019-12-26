@@ -9,5 +9,5 @@ public interface SocketStatus {
     int SOCKET_DISCONNECTED = 0;
     int SOCKET_CONNECTING = 1;
     int SOCKET_CONNECTED = 2;
-    int SOCKET_DISCONNECTIONG=3;
+    int SOCKET_DISCONNECTING =3;
 }

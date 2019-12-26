@@ -8,6 +8,10 @@ import java.io.Serializable;
  * Note：socket行为分发接口
  */
 public interface ISocketActionDispatch {
+    /**
+     * 停止分发线程
+     */
+    void stopDispatchThread();
 
     void dispatchAction(String action);
 

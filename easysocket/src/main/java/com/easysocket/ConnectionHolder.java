@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Author：Alex
  * Date：2019/6/4
- * Note：连接管理器的holder
+ * Note：socket连接管理器的holder
  */
 public class ConnectionHolder {
 
@@ -86,6 +86,7 @@ public class ConnectionHolder {
             @Override
             public void onSwitchConnectionInfo(IConnectionManager manager, SocketAddress oldAddress,
                                                SocketAddress newAddress) {
+                //切换了另外一个主机的连接，所以删除旧的连接，添加新的连接
                 synchronized (mConnectionManagerMap) {
                     mConnectionManagerMap.remove(createKey(oldAddress));
                     mConnectionManagerMap.put(createKey(newAddress), manager);

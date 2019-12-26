@@ -69,7 +69,6 @@ public class EasySocketOptions {
      * 获取请求消息唯一标识singer的工厂，默认为DefaultCallbackSingerFactory
      */
     private CallbackSingerFactory callbackSingerFactory;
-
     /**
      * 请求超时时间，单位毫秒
      */

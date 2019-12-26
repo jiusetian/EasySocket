@@ -1,6 +1,6 @@
 package com.easysocket.interfaces.conn;
 
-import com.easysocket.entity.NeedReconnect;
+import com.easysocket.entity.IsNeedReconnect;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.OriginReadData;
 
@@ -19,16 +19,16 @@ public interface ISocketActionListener {
     /**
      * socket连接失败
      * @param socketAddress
-     * @param needReconnect 是否需要重连
+     * @param isNeedReconnect 是否需要重连
      */
-    void onSocketConnFail(SocketAddress socketAddress, NeedReconnect needReconnect);
+    void onSocketConnFail(SocketAddress socketAddress, IsNeedReconnect isNeedReconnect);
 
     /**
      * 断开socket连接
      * @param socketAddress
-     * @param needReconnect 是否需要重连
+     * @param isNeedReconnect 是否需要重连
      */
-    void onSocketDisconnect(SocketAddress socketAddress, NeedReconnect needReconnect);
+    void onSocketDisconnect(SocketAddress socketAddress, IsNeedReconnect isNeedReconnect);
 
     /**
      * socket读数据反馈

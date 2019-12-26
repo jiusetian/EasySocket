@@ -1,9 +1,8 @@
 package com.easysocket.connection.iowork;
 
 import com.easysocket.config.EasySocketOptions;
-import com.easysocket.connection.action.SocketStatus;
-import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.conn.IConnectionManager;
+import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.io.IWriter;
 import com.easysocket.utils.LogUtil;
 
@@ -42,26 +41,33 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
      */
     private Thread writerThread;
     /**
+     * 是否停止写数据
+     */
+    private boolean isStop;
+    /**
      * 需要写入的数据
      */
     private LinkedBlockingDeque<byte[]> packetsToSend = new LinkedBlockingDeque<>();
 
     public EasyWriter(IConnectionManager connectionManager, ISocketActionDispatch actionDispatch) {
         this.connectionManager = connectionManager;
-        socketOptions=connectionManager.getOptions();
+        socketOptions = connectionManager.getOptions();
         outputStream = connectionManager.getOutStream();
         this.actionDispatch = actionDispatch;
     }
 
     @Override
     public void openWriter() {
-        writerThread = new Thread(writerTask, "writer thread");
-        writerThread.start();
+        if (!isStop) {
+            isStop=false;
+            writerThread = new Thread(writerTask, "writer thread");
+            writerThread.start();
+        }
     }
 
     @Override
     public void setOption(EasySocketOptions socketOptions) {
-        this.socketOptions=socketOptions;
+        this.socketOptions = socketOptions;
     }
 
     /**
@@ -70,8 +76,8 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
     private Runnable writerTask = new Runnable() {
         @Override
         public void run() {
-            //只要socket处于连接的状态，就一直活动
-            while (connectionManager.getConnectionStatus() == SocketStatus.SOCKET_CONNECTED) {
+            //循环写数据到socket中
+            while (!isStop) {
                 try {
                     byte[] sender = packetsToSend.take();
                     write(sender);
@@ -86,14 +92,14 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
     @Override
     public void write(byte[] sendBytes) {
         if (sendBytes != null) {
-            LogUtil.d("发送的数据="+new String(sendBytes, Charset.forName("utf-8")));
+            LogUtil.d("发送的数据=" + new String(sendBytes, Charset.forName("utf-8")));
             try {
                 int packageSize = socketOptions.getMaxWriteBytes(); //每次发送的数据包的大小
                 int remainingCount = sendBytes.length;
                 ByteBuffer writeBuf = ByteBuffer.allocate(packageSize); //分配一个内存缓存
                 writeBuf.order(socketOptions.getReadOrder());
                 int index = 0;
-                //如果要发送的数据大小大于每次发送的数据包的大小， 则要分多次将数据发出去
+                //如果要发送的数据大小大于每次发送的数据包的大小，则要分多次将数据发出去
                 while (remainingCount > 0) {
                     int realWriteLength = Math.min(packageSize, remainingCount);
                     writeBuf.clear(); //清空缓存
@@ -132,7 +138,9 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
 
     private void shutDownThread() {
         if (writerThread != null && writerThread.isAlive() && !writerThread.isInterrupted()) {
+            isStop = true;
             writerThread.interrupt();
+            writerThread = null;
         }
     }
 }

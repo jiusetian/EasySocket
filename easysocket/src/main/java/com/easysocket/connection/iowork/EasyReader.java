@@ -2,8 +2,7 @@ package com.easysocket.connection.iowork;
 
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.action.IOAction;
-import com.easysocket.connection.action.SocketStatus;
-import com.easysocket.entity.NeedReconnect;
+import com.easysocket.entity.IsNeedReconnect;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.exception.SocketReadExeption;
 import com.easysocket.interfaces.conn.IConnectionManager;
@@ -46,6 +45,10 @@ public class EasyReader implements IReader<EasySocketOptions> {
      * 读数据线程
      */
     private Thread readerThread;
+    /**
+     * 是否停止线程
+     */
+    private boolean stopThread;
 
     public EasyReader(IConnectionManager connectionManager, ISocketActionDispatch actionDispatch) {
         inputStream = connectionManager.getInputStream();
@@ -61,7 +64,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
         int headerLength = headerProtocol.getHeaderLength(); //默认的包头长度是4个字节
         ByteBuffer headBuf = ByteBuffer.allocate(headerLength); //读取数据包头的缓存
         headBuf.order(socketOptions.getReadOrder());
-        
+
         //读取数据的header=====>>>
         try {
             //有余留数据
@@ -79,13 +82,13 @@ public class EasyReader implements IReader<EasySocketOptions> {
                 } else { //读取header之后还有余留缓存
                     remainingBuf.position(headerLength); //移动指针位置
                 }
-            }
-            //没有余留数据
-            else {
+            } else { //没有余留数据
                 readHeaderFromSteam(headBuf, headBuf.capacity());
             }
+
             //将header赋值到原始数据中
             originalData.setHeaderData(headBuf.array());
+
 
             // 开始读取body数据=====>>>
             int bodyLength = headerProtocol.getBodyLength(originalData.getHeaderData(), socketOptions.getReadOrder());
@@ -146,8 +149,8 @@ public class EasyReader implements IReader<EasySocketOptions> {
                     }
                 }
             } else if (bodyLength < 0) {
-                connectionManager.disconnect( new NeedReconnect(true)); //断开重连
-                throw new SocketReadExeption("读取失败，读取到的数据长度小于0，可能是读取的过程中跟socket跟服务器断开了连接");
+                connectionManager.disconnect(new IsNeedReconnect(true)); //断开重连
+                throw new SocketReadExeption("读取失败，读取到的数据长度小于0，可能是读取的过程中socket跟服务器断开了连接");
             }
             //将读取到一个完整数据发布出去
             //LogUtil.d("接收的数据=" + originalData.getBodyString());
@@ -159,8 +162,11 @@ public class EasyReader implements IReader<EasySocketOptions> {
 
     @Override
     public void openReader() {
-        readerThread = new Thread(readerTask, "reader thread");
-        readerThread.start();
+        if (!stopThread) {
+            readerThread = new Thread(readerTask, "reader thread");
+            stopThread = false;
+            readerThread.start();
+        }
     }
 
     /**
@@ -169,7 +175,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
     private Runnable readerTask = new Runnable() {
         @Override
         public void run() {
-            while (connectionManager.getConnectionStatus() == SocketStatus.SOCKET_CONNECTED) {
+            while (!stopThread) {
                 read();
             }
         }
@@ -181,7 +187,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
             byte[] bytes = new byte[1];
             int value = inputStream.read(bytes); //从输入流中读取相应长度的数据
             if (value == -1) {
-                connectionManager.disconnect( new NeedReconnect(true)); //断开重连
+                connectionManager.disconnect(new IsNeedReconnect(true)); //断开重连
                 throw new SocketReadExeption("读取数据的包头失败，在" + value + "位置断开了，可能是因为socket跟服务器断开了连接");
 
             }
@@ -232,7 +238,9 @@ public class EasyReader implements IReader<EasySocketOptions> {
 
     private void shutDownThread() {
         if (readerThread != null && readerThread.isAlive() && !readerThread.isInterrupted()) {
+            stopThread = true;
             readerThread.interrupt();
+            readerThread = null;
         }
     }
 }

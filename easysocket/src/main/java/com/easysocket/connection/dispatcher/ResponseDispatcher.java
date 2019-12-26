@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Author：Alex
  * Date：2019/6/4
- * Note：反馈消息分发器
+ * Note：回调消息分发器
  */
 public class ResponseDispatcher implements RequestTimeoutListener {
     /**

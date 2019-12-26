@@ -1,7 +1,7 @@
 package com.easysocket.connection.iowork;
 
 import com.easysocket.config.EasySocketOptions;
-import com.easysocket.entity.exception.NotNullException;
+import com.easysocket.entity.exception.NoNullException;
 import com.easysocket.interfaces.config.IOptions;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.conn.IConnectionManager;
@@ -48,9 +48,9 @@ public class IOManager implements IIOManager, IOptions {
     }
 
     @Override
-    public void sendBuffer(byte[] buffer) {
+    public void sendBytes(byte[] bytes) {
         if (writer != null)
-            writer.offer(buffer);
+            writer.offer(bytes);
     }
 
     @Override
@@ -90,11 +90,11 @@ public class IOManager implements IIOManager, IOptions {
     private void makesureHeaderProtocolNotEmpty() {
         IReaderProtocol protocol = connectionManager.getOptions().getReaderProtocol();
         if (protocol == null) {
-            throw new NotNullException("The reader protocol can not be Null.");
+            throw new NoNullException("The reader protocol can not be Null.");
         }
 
         if (protocol.getHeaderLength() == 0) {
-            throw new NotNullException("The header length can not be zero.");
+            throw new NoNullException("The header length can not be zero.");
         }
     }
 }

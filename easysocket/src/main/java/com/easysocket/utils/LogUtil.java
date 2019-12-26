@@ -2,9 +2,7 @@ package com.easysocket.utils;
 
 import android.util.Log;
 
-/**
- * Created by lzw on 15/7/14.
- */
+
 public class LogUtil {
     public static final String LOGTAG = "easysocket";
     public static boolean debugEnabled = true;

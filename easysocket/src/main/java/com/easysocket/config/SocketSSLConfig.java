@@ -31,6 +31,7 @@ public class SocketSSLConfig {
     }
 
     public static class Builder {
+
         private SocketSSLConfig mConfig;
 
         public Builder() {

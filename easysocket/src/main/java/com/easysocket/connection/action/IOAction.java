@@ -6,7 +6,7 @@ package com.easysocket.connection.action;
  * Note：
  */
 public interface IOAction {
-    //收到推送消息响应
+    //收到消息响应
     String ACTION_READ_COMPLETE = "action_read_complete";
 
 }

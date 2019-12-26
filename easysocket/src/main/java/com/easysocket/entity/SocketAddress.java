@@ -3,7 +3,7 @@ package com.easysocket.entity;
 /**
  * Author：Alex
  * Date：2019/5/31
- * Note：socket地址相关信息
+ * Note：socket主机地址
  */
 public class SocketAddress {
 

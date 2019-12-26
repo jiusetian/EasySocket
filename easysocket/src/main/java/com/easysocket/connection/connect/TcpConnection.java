@@ -2,6 +2,7 @@ package com.easysocket.connection.connect;
 
 import com.easysocket.config.DefaultX509ProtocolTrustManager;
 import com.easysocket.config.SocketSSLConfig;
+import com.easysocket.connection.action.SocketStatus;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.utils.LogUtil;
 import com.easysocket.utils.Util;
@@ -20,7 +21,7 @@ import javax.net.ssl.TrustManager;
 /**
  * Author：Alex
  * Date：2019/5/29
- * Note：tcp的连接
+ * Note：tcp连接
  */
 public class TcpConnection extends SuperConnection {
     /**
@@ -38,11 +39,12 @@ public class TcpConnection extends SuperConnection {
             socket = getSocketByConfig();
         } catch (Exception e) {
             e.printStackTrace();
+            connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED); //设置为未连接状态
             throw new RuntimeException("创建socket失败");
         }
 
         //进行socket连接
-        socket.connect(new InetSocketAddress(socketAddress.getIp(), socketAddress.getPort()), socketOptions.getConnectTimeout() );
+        socket.connect(new InetSocketAddress(socketAddress.getIp(), socketAddress.getPort()), socketOptions.getConnectTimeout());
         //关闭Nagle算法,无论TCP数据报大小,立即发送
         socket.setTcpNoDelay(true);
         //连接已经打开
@@ -63,7 +65,7 @@ public class TcpConnection extends SuperConnection {
      * @return
      */
     private synchronized Socket getSocketByConfig() throws Exception {
-        //自定义socket操作
+        //自定义的socket生成工厂
         if (socketOptions.getSocketFactory() != null) {
             return socketOptions.getSocketFactory().createSocket(socketAddress, socketOptions);
         }
