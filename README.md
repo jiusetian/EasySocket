@@ -135,8 +135,6 @@ dependencies {
         //发送
         EasySocket.getInstance().upObject(testMsg);
     }
-    
-如果是只是测试的话，可以将IP地址设置为本地IP，然后在Android studio中启动项目的服务器测试软件，选择java test 运行就可以了
 
 执行结果如下：
 
@@ -147,6 +145,10 @@ dependencies {
 
 
 可以看到注册的监听器监收到了服务器的响应消息
+
+    
+如果是只是测试的话，可以运行本项目提供的服务端程序socket_server，在Android studio要先将服务端程序添加配置上去，具体怎么操作可以参考我的博客上的做法
+博客地址：https://blog.csdn.net/liuxingrong666/article/details/91579548
 
 
 ### 三、EasySocket启动心跳机制
