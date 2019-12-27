@@ -190,7 +190,7 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
     /**
      * 发送一个有回调的消息
      */
-    private void sendSingerMsg() {
+    private void sendCallbackMsg() {
  
         CallbackSender sender = new CallbackSender();
         sender.setMsgId("singer_msg");
@@ -200,6 +200,12 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
                     @Override
                     public void onResponse(CallbackResponse response) {
                         LogUtil.d("回调消息=" + response.toString());
+                    }
+		    
+		    @Override
+                    public void onError(Exception e) {
+                        super.onError(e);
+                        e.printStackTrace();
                     }
                 });
     }
@@ -226,6 +232,12 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
                             @Override
                             public void onResponse(String s) {
                                 LogUtil.d("进度条回调消息=" + s);
+                            }
+			    
+			    @Override
+                            public void onError(Exception e) {
+                                super.onError(e);
+                                e.printStackTrace();
                             }
                         });
             
