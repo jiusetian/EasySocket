@@ -4,6 +4,7 @@ import com.easysocket.callback.SuperCallBack;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
+import com.easysocket.entity.exception.RequestTimeOutException;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.SocketActionListener;
 import com.easysocket.utils.LogUtil;
@@ -74,7 +75,9 @@ public class ResponseDispatcher {
                         timeoutItem item = timeoutQueue.take();
                         if (item != null) {
                             LogUtil.d("移除超时="+item.singer);
-                            callbacks.remove(item.singer);
+                            SuperCallBack callBack=callbacks.remove(item.singer);
+                            if (callBack!=null)
+                                callBack.onError(new RequestTimeOutException("request timeout"));
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();

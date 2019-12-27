@@ -18,7 +18,6 @@ import com.easysocket.interfaces.config.IConnectionSwitchListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
 import com.easysocket.utils.LogUtil;
-import com.easysocket.utils.Util;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -322,7 +321,7 @@ public abstract class SuperConnection implements IConnectionManager {
     @Override
     public synchronized IConnectionManager upCallbackMessage(BaseCallbackSender sender) {
         //设置一个20位随机字符串作为识别标识
-        sender.setSinger(Util.getRandomChar(20));
+        sender.updateSinger();
         sendBytes(sender.parse());
         return this;
     }

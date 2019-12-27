@@ -10,7 +10,7 @@ import java.nio.charset.Charset;
 /**
  * Author：Alex
  * Date：2019/10/19
- * Note：消息的父类
+ * Note：基础消息父类
  */
 public class BaseSender implements ISender {
 

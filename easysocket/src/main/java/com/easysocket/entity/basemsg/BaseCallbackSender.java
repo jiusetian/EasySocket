@@ -1,5 +1,7 @@
 package com.easysocket.entity.basemsg;
 
+import com.easysocket.utils.Util;
+
 /**
  * Author：Alex
  * Date：2019/10/19
@@ -18,6 +20,13 @@ public class BaseCallbackSender extends BaseSender {
 
     public void setSinger(String singer) {
         this.singer = singer;
+    }
+
+    /**
+     * 更新回调标识singer，在消息发送前执行
+     */
+    public void updateSinger(){
+        setSinger(Util.getRandomChar(20));
     }
 
 }
