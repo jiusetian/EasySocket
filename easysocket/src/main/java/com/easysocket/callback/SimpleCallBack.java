@@ -17,12 +17,12 @@ public abstract class SimpleCallBack<T> extends SuperCallBack<T> {
 
     @Override
     public void onStart() {
-        openTimeoutTask(); //开始超时任务
+
     }
 
     @Override
     public void onCompleted() {
-        closeTimeoutTask(); //停止超时任务
+
     }
 
     @Override

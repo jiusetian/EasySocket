@@ -98,13 +98,13 @@ public abstract class ProgressDialogCallBack<T> extends SuperCallBack<T> impleme
 
     @Override
     public void onStart() {
-        openTimeoutTask(); //开始计时
+
         showProgress();
     }
 
     @Override
     public void onCompleted() {
-        closeTimeoutTask();//停止计时
+
         dismissProgress();
     }
 

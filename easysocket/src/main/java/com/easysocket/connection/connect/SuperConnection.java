@@ -175,10 +175,14 @@ public abstract class SuperConnection implements IConnectionManager {
                 //关闭io线程
                 if (ioManager != null)
                     ioManager.closeIO();
+                //关闭回调分发器线程
+                if (responseDispatcher != null)
+                    responseDispatcher.stopThread();
                 //关闭连接线程
                 if (connectThread != null && connectThread.isAlive() && !connectThread.isInterrupted()) {
                     connectThread.interrupt();
                 }
+                LogUtil.d("关闭socket连接");
                 //关闭连接
                 closeConnection();
             } catch (IOException e) {

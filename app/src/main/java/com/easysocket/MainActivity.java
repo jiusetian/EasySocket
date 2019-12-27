@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
         //监听socket行为
         EasySocket.getInstance().subscribeSocketAction(socketActionListener);
 
+
+
         //发送一个消息
         findViewById(R.id.send_msg).setOnClickListener(new View.OnClickListener() {
             @Override
