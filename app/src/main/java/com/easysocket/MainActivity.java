@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.callback_msg).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendSingerMsg();
+                sendCallbackMsg();
             }
         });
 
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 发送一个有回调的消息
      */
-    private void sendSingerMsg() {
+    private void sendCallbackMsg() {
 
         CallbackSender sender = new CallbackSender();
         sender.setMsgId("singer_msg");
