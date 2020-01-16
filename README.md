@@ -38,12 +38,11 @@ allprojects {
 
 2、Module的build.gradle文件中添加依赖配置
 
-dependencies { 
+  dependencies { 
 
     //{visionCode}是版本号的意思，比如implementation 'com.github.jiusetian:EasySocket:1.5.6' 
     implementation 'com.github.jiusetian:EasySocket:visionCode' 
- 
-}
+  }
 
 ### 二、EasySocket的基本功能使用
        
