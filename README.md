@@ -2,15 +2,15 @@
 
  博客地址：https://blog.csdn.net/liuxingrong666/article/details/91579548
 
-EasySocket的初衷是希望通过对传输数据的处理使得socket编程更加简单、方便，传统的socket框架客户端发出一个请求信息，然后服务器返回一个应答信息，但是我们无法识别这个应答信息是对应哪个请求的，而EasySocket可以将每一个请求信息和应答信息实现一一对接，从而在socket层面实现了请求回调的功能。
+EasySocket的初衷是希望使Socket编程变得更加简单、快捷，因此项目在实现了Socket基本功能的基础上，还实现了TCP层面的请求回调功能。传统的Socket框架客户端发出一个请求信息，然后服务器返回一个应答信息，但是我们无法识别这个应答信息是对应哪个请求的，而EasySocket实现了将每个请求跟应答的一一对接，从而在Socket层面实现了请求回调功能
 
 ### EasySocket特点：
 
    1、采用链式调用一键发送数据，根据自己的需求配置参数，简单易用，灵活性高
    
-   2、EasySocket不单实现了包括TCP的连接和断开、数据的发送和接收、心跳保活机制等功能，还实现了socket层面的请求回调功能
+   2、EasySocket不但实现了包括TCP的连接和断开、数据的发送和接收、心跳保活、重连机制等功能，还实现了Socket层面的请求回调功能
    
-   3、消息结构使用（包头+包体）的协议，其中包体存储要发送的数据实体，而包头则存储包体的数据长度，这种结构方式方便于数据的解析，解决了TCP通信中断包、粘包等问题；
+   3、消息结构使用的协议为：包头+包体，其中包体存储要发送的数据实体，而包头则存储包体的数据长度，这种结构方式便于数据的解析，很好地解决了Socket通信中消息的断包和粘包问题
 
    4、EasySocket只需简单的配置即可启动心跳检测功能
 
@@ -38,13 +38,13 @@ allprojects {
 
 2、Module的build.gradle文件中添加依赖配置
 
-dependencies {
+  dependencies { 
+   
+    //{visionCode}是版本号的意思，比如implementation 'com.github.jiusetian:EasySocket:1.5.6' 
+    implementation 'com.github.jiusetian:EasySocket:visionCode' 
+  }
 
-    implementation 'com.github.jiusetian:EasySocket:{visionCode}'
-
-}
-
-### 二、EasySocket的简单使用
+### 二、EasySocket的基本功能使用
        
 一般在项目的Application中对EasySocket进行全局化配置，下面是一个最简单的配置
 
@@ -180,10 +180,10 @@ Socket的连接监听一般用心跳包去检测，EasySocket启动心跳机制�
     }
      
 
-启动心跳机制关键要定义一个心跳包实例作为Socket发送给服务端的心跳，然后实现一个接口，用来识别当前收到的消息是否为服务器的心跳，这个要根据自己的现实情况来实现，其实也挺简单的。
+启动心跳机制关键要定义一个心跳包实例作为Socket发送给服务端的心跳，然后实现一个接口，用来识别当前收到的消息是否为服务器的心跳，这个要根据自己的现实情况来实现，其实也挺简单的
 
 
-### 四、EasySocket的回调功能演示
+### 四、EasySocket的请求回调功能
 
 EasySocket的最大特点收到实现了消息的回调功能，即当发送一个带有回调标识的消息给服务器的时候，我们可以准确地接收到这个消息对应的响应消息，示例如下
 
@@ -221,7 +221,7 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
 回调功能的基本原理也很简单，每次客户端发送消息的时候都会随机生成一个字符串作为此消息的唯一标识，本框架用singer作为回调标识，服务端方面在响应有singer标识的消息的时候，将这个singer标识返回给客户端就OK 了，至于客户端是怎么处理的，大家可以看看项目的源码
 
 
-此外还封装了一个带进度框的请求，非常实用，使用方法如下：
+此外还封装了一个带进度框的请求，非常实用，使用方法如下
 
                 CallbackSender sender = new CallbackSender();
                 sender.setFrom("android");
@@ -252,7 +252,7 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
         }
     };
 
-以上演示了EasySocket的基本使用方法，欢迎start。
+以上演示了EasySocket的基本使用方法，欢迎start
 
 ### 五、EasySocket的配置信息说明（EasySocketOptions）
 
@@ -322,4 +322,4 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
      */
     private boolean isOpenRequestTimeout;
     
-GitHub代码的Demo中还有socket服务端的测试代码，大家可以用本地IP地址对本框架进行测试，欢迎点评交流。
+GitHub代码的Demo中还有socket服务端的测试代码，大家可以用本地IP地址对本框架进行测试，欢迎点评交流
