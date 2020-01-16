@@ -30,7 +30,7 @@ public class EasySocket {
     /**
      * 连接的端口
      */
-    private int port = -1;
+    private int port;
     /**
      * 连接的参数
      */
@@ -238,8 +238,8 @@ public class EasySocket {
         if (ip == null) {
             throw new InitialExeption("没有初始化连接的IP，请设置一个socket的IP，比如在application中进行初始化");
         }
-        if (port == -1) {
-            throw new InitialExeption("没有初始化连接的端口port，请设置一个socket的端口，比如在application中进行初始化");
-        }
+//        if (port == -1) {
+//            throw new InitialExeption("没有初始化连接的端口port，请设置一个socket的端口，比如在application中进行初始化");
+//        }
     }
 }

@@ -123,8 +123,8 @@ public abstract class SuperConnection implements IConnectionManager {
             return;
         }
         connectionStatus.set(SocketStatus.SOCKET_CONNECTING);
-        if (socketAddress.getIp() == null || socketAddress.getPort() <= 0) {
-            throw new NoNullException("连接参数有误，请检查是否设置了连接IP和port");
+        if (socketAddress.getIp() == null) {
+            throw new NoNullException("连接参数有误，请检查是否设置了连接IP");
         }
         //初始化心跳管理器
         if (heartManager == null)

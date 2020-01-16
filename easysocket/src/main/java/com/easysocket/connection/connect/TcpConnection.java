@@ -42,9 +42,9 @@ public class TcpConnection extends SuperConnection {
             connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED); //设置为未连接状态
             throw new RuntimeException("创建socket失败");
         }
-
         //进行socket连接
         socket.connect(new InetSocketAddress(socketAddress.getIp(), socketAddress.getPort()), socketOptions.getConnectTimeout());
+
         //关闭Nagle算法,无论TCP数据报大小,立即发送
         socket.setTcpNoDelay(true);
         //连接已经打开
@@ -75,7 +75,7 @@ public class TcpConnection extends SuperConnection {
         if (config == null) {
             return new Socket();
         }
-
+        //获取SSL配置工厂
         SSLSocketFactory factory = config.getCustomSSLFactory();
         if (factory == null) {
             String protocol = "SSL";

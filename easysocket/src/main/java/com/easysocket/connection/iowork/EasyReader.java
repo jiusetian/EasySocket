@@ -132,7 +132,8 @@ public class EasyReader implements IReader<EasySocketOptions> {
                 }
                 //继续从stream中读
                 readBodyFromStream(byteBuffer);
-                originalData.setBodyData(byteBuffer.array()); //将body数据赋值
+                //将body数据存入originalData中
+                originalData.setBodyData(byteBuffer.array());
             }
             //数据body长度为0
             else if (bodyLength == 0) {
