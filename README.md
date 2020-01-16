@@ -2,7 +2,7 @@
 
  博客地址：https://blog.csdn.net/liuxingrong666/article/details/91579548
 
-EasySocket的初衷是希望通过对传输数据的处理使得Socket编程更加简单、方便，EasySocket在实现了基本功能的基础上，还实现了Socket层面的请求回调功能。传统的Socket框架客户端发出一个请求信息，然后服务器返回一个应答信息，但是我们无法识别这个应答信息是对应哪个请求的，而EasySocket实现了将每个请求跟应答的一一对接，从而在Socket层面实现了请求回调功能
+EasySocket的初衷是希望Socket编程更加方便、快捷，因此项目在实现了Socket基本功能的基础上，还实现了TCP层面的请求回调功能。传统的Socket框架客户端发出一个请求信息，然后服务器返回一个应答信息，但是我们无法识别这个应答信息是对应哪个请求的，而EasySocket实现了将每个请求跟应答的一一对接，从而在Socket层面实现了请求回调功能
 
 ### EasySocket特点：
 
