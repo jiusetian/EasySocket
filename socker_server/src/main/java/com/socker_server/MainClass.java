@@ -27,7 +27,7 @@ public class MainClass {
             server = new ServerSocket(PORT);
             mExecutorService = Executors.newCachedThreadPool();
             System.out.println("server is running");
-            Socket client = null;
+            Socket client;
             while (true) {
                 client = server.accept();
                 mList.add(client);

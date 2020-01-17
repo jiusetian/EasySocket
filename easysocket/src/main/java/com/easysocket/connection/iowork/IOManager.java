@@ -7,7 +7,7 @@ import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.io.IIOManager;
 import com.easysocket.interfaces.io.IReader;
-import com.easysocket.interfaces.io.IReaderProtocol;
+import com.easysocket.interfaces.io.IMessageProtocol;
 import com.easysocket.interfaces.io.IWriter;
 
 /**
@@ -88,7 +88,7 @@ public class IOManager implements IIOManager, IOptions {
      * 确保包结构协议不为空
      */
     private void makesureHeaderProtocolNotEmpty() {
-        IReaderProtocol protocol = connectionManager.getOptions().getReaderProtocol();
+        IMessageProtocol protocol = connectionManager.getOptions().getMessageProtocol();
         if (protocol == null) {
             throw new NoNullException("The reader protocol can not be Null.");
         }

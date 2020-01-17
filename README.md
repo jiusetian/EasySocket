@@ -271,7 +271,7 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
     /**
      * 从socket读取数据时遵从数据包结构协议，在业务层进行定义
      */
-    private IReaderProtocol readerProtocol;
+    private IReaderProtocol messageProtocol;
     /**
      * 写数据时单个数据包的最大值
      */

@@ -8,7 +8,7 @@ import com.easysocket.entity.exception.SocketReadExeption;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.io.IReader;
-import com.easysocket.interfaces.io.IReaderProtocol;
+import com.easysocket.interfaces.io.IMessageProtocol;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,8 +60,8 @@ public class EasyReader implements IReader<EasySocketOptions> {
     @Override
     public void read() {
         OriginReadData originalData = new OriginReadData();
-        IReaderProtocol headerProtocol = socketOptions.getReaderProtocol();
-        int headerLength = headerProtocol.getHeaderLength(); //默认的包头长度是4个字节
+        IMessageProtocol messageProtocol = socketOptions.getMessageProtocol();
+        int headerLength = messageProtocol.getHeaderLength(); //默认的包头长度是4个字节
         ByteBuffer headBuf = ByteBuffer.allocate(headerLength); //读取数据包头的缓存
         headBuf.order(socketOptions.getReadOrder());
 
@@ -91,7 +91,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
 
 
             // 开始读取body数据=====>>>
-            int bodyLength = headerProtocol.getBodyLength(originalData.getHeaderData(), socketOptions.getReadOrder());
+            int bodyLength = messageProtocol.getBodyLength(originalData.getHeaderData(), socketOptions.getReadOrder());
             if (bodyLength > 0) {
                 if (bodyLength > socketOptions.getMaxResponseDataMb() * 1024 * 1024) { //是否大于最大的读取数
                     throw new SocketReadExeption("服务器返回的单次数据的大小已经超过了规定的最大值，为了防止内存溢出，请规范好相关协议");

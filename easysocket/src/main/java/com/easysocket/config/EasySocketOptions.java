@@ -2,7 +2,7 @@ package com.easysocket.config;
 
 import com.easysocket.connection.reconnect.AbsReconnection;
 import com.easysocket.connection.reconnect.DefaultReConnection;
-import com.easysocket.interfaces.io.IReaderProtocol;
+import com.easysocket.interfaces.io.IMessageProtocol;
 
 import java.nio.ByteOrder;
 
@@ -28,7 +28,7 @@ public class EasySocketOptions {
     /**
      * 从socket读取数据时遵从数据包结构协议，在业务层进行定义
      */
-    private IReaderProtocol readerProtocol;
+    private IMessageProtocol messageProtocol;
     /**
      * 写数据时单个数据包的最大值
      */
@@ -158,8 +158,8 @@ public class EasySocketOptions {
          * @param readerProtocol
          * @return
          */
-        public Builder setReaderProtocol(IReaderProtocol readerProtocol) {
-            socketOptions.readerProtocol = readerProtocol;
+        public Builder setReaderProtocol(IMessageProtocol readerProtocol) {
+            socketOptions.messageProtocol = readerProtocol;
             return this;
         }
 
@@ -276,7 +276,7 @@ public class EasySocketOptions {
     public static EasySocketOptions getDefaultOptions() {
         EasySocketOptions options = new EasySocketOptions();
         options.heartbeatFreq = 5 * 1000;
-        options.readerProtocol = new DefaultReaderProtocol();
+        options.messageProtocol = new DefaultMessageProtocol();
         options.maxResponseDataMb = 5;
         options.connectTimeout = 5 * 1000; //连接超时默认5秒
         options.maxWriteBytes = 100;
@@ -301,8 +301,8 @@ public class EasySocketOptions {
         return readOrder;
     }
 
-    public IReaderProtocol getReaderProtocol() {
-        return readerProtocol;
+    public IMessageProtocol getMessageProtocol() {
+        return messageProtocol;
     }
 
     public int getMaxWriteBytes() {
@@ -367,8 +367,8 @@ public class EasySocketOptions {
         this.readOrder = readOrder;
     }
 
-    public void setReaderProtocol(IReaderProtocol readerProtocol) {
-        this.readerProtocol = readerProtocol;
+    public void setMessageProtocol(IMessageProtocol messageProtocol) {
+        this.messageProtocol = messageProtocol;
     }
 
     public void setMaxWriteBytes(int maxWriteBytes) {

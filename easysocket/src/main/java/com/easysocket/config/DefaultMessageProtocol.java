@@ -1,6 +1,6 @@
 package com.easysocket.config;
 
-import com.easysocket.interfaces.io.IReaderProtocol;
+import com.easysocket.interfaces.io.IMessageProtocol;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -8,9 +8,9 @@ import java.nio.ByteOrder;
 /**
  * Author：Alex
  * Date：2019/5/31
- * Note：读取io数据时，默认的包头数据格式
+ * Note：读取io数据时，默认的消息数据格式
  */
-public class DefaultReaderProtocol implements IReaderProtocol {
+public class DefaultMessageProtocol implements IMessageProtocol {
     @Override
     public int getHeaderLength() {
         return 4; //包头的长度，用来保存body的长度值
