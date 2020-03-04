@@ -3,13 +3,12 @@ package com.easysocket.config;
 import com.easysocket.connection.reconnect.AbsReconnection;
 import com.easysocket.connection.reconnect.DefaultReConnection;
 import com.easysocket.interfaces.io.IMessageProtocol;
-
 import java.nio.ByteOrder;
 
 /**
- * Author：Alex
- * Date：2019/5/31
- * Note：socket相关配置
+ * Author：Alex。
+ * Date：2019/5/31。
+ * Note：socket相关配置。
  */
 public class EasySocketOptions {
 
@@ -77,6 +76,11 @@ public class EasySocketOptions {
      * 是否开启请求超时检测
      */
     private boolean isOpenRequestTimeout;
+
+    /**
+     * IO字符流的编码方式，默认utf-8
+     */
+    private String charsetName;
 
     public boolean isDebug() {
         return isDebug;
@@ -262,6 +266,11 @@ public class EasySocketOptions {
             return this;
         }
 
+        public Builder setCharsetName(String charsetName){
+            socketOptions.charsetName=charsetName;
+            return this;
+        }
+
         public EasySocketOptions build() {
             return socketOptions;
         }
@@ -290,8 +299,11 @@ public class EasySocketOptions {
         options.callbackSingerFactory = new DefaultCallbackSingerFactory();
         options.requestTimeout = 10 * 1000; //默认十秒
         options.isOpenRequestTimeout = true; //默认开启
+        options.charsetName="utf-8";
         return options;
     }
+
+    public String getCharsetName(){return charsetName;}
 
     public ByteOrder getWriteOrder() {
         return writeOrder;

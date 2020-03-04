@@ -33,8 +33,6 @@ public class MainActivity extends AppCompatActivity {
         //监听socket行为
         EasySocket.getInstance().subscribeSocketAction(socketActionListener);
 
-
-
         //发送一个消息
         findViewById(R.id.send_msg).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
         CallbackSender sender = new CallbackSender();
         sender.setMsgId("singer_msg");
-        sender.setFrom("android");
+        sender.setFrom("我来自android");
         EasySocket.getInstance().upCallbackMessage(sender)
                 .onCallBack(new SimpleCallBack<CallbackResponse>(sender) {
                     @Override
@@ -208,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
         //socket配置为默认值
         EasySocketOptions options = new EasySocketOptions.Builder()
+                .setCharsetName("utf-8")
                 .build();
 
         //初始化EasySocket

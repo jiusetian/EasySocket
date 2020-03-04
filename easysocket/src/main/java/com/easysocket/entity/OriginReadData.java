@@ -1,5 +1,7 @@
 package com.easysocket.entity;
 
+import com.easysocket.EasySocket;
+
 import java.io.Serializable;
 import java.nio.charset.Charset;
 
@@ -40,6 +42,6 @@ public class OriginReadData implements Serializable {
      * @return
      */
     public String getBodyString(){
-        return new String(getBodyData(), Charset.forName("utf-8"));
+        return new String(getBodyData(), Charset.forName(EasySocket.getInstance().getOptions().getCharsetName()));
     }
 }

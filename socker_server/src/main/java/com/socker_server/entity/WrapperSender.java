@@ -18,7 +18,8 @@ public class WrapperSender implements Serializable {
     }
 
     public byte[] parse(){
-        byte[] body = content.getBytes(Charset.defaultCharset());
+        //默认为utf-8编码
+        byte[] body = content.getBytes(Charset.forName("utf-8"));
         ByteBuffer bb = ByteBuffer.allocate(4 + body.length);
         bb.order(ByteOrder.BIG_ENDIAN);
         bb.putInt(body.length);
