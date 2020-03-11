@@ -72,6 +72,7 @@ public class ResponseDispatcher {
                 @Override
                 public void run() {
                     try {
+                        //只有超时的元素才会被取出，没有的话会被等待
                         timeoutItem item = timeoutQueue.take();
                         if (item != null) {
                             LogUtil.d("移除超时="+item.singer);
@@ -82,7 +83,7 @@ public class ResponseDispatcher {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-
+                    //继续循环
                     if (!timeoutExecutor.isShutdown()) {
                         run();
                     }
@@ -130,9 +131,9 @@ public class ResponseDispatcher {
     public void addSocketCallback(SuperCallBack superCallBack) {
         callbacks.put(superCallBack.getSinger(), superCallBack);
         //放入延时队列
-        long time = socketOptions == null ?
+        long delayTime = socketOptions == null ?
                 EasySocketOptions.getDefaultOptions().getRequestTimeout() : socketOptions.getRequestTimeout();
-        timeoutQueue.add(new timeoutItem(superCallBack.singer, time, TimeUnit.MILLISECONDS));
+        timeoutQueue.add(new timeoutItem(superCallBack.singer, delayTime, TimeUnit.MILLISECONDS));
     }
 
     /**
@@ -141,16 +142,16 @@ public class ResponseDispatcher {
     class timeoutItem implements Delayed {
 
         String singer; //当前callback的singer
-        long time; //触发时间
+        long executeTime; //触发时间
 
-        public timeoutItem(String singer, long time, TimeUnit timeUnit) {
+        public timeoutItem(String singer, long delayTime, TimeUnit timeUnit) {
             this.singer = singer;
-            this.time = System.currentTimeMillis() + (time > 0 ? timeUnit.toMillis(time) : 0);
+            this.executeTime = System.currentTimeMillis() + (delayTime > 0 ? timeUnit.toMillis(delayTime) : 0);
         }
 
         @Override
         public long getDelay(TimeUnit unit) {
-            return time - System.currentTimeMillis();
+            return executeTime - System.currentTimeMillis();
         }
 
         @Override
