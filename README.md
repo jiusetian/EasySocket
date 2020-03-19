@@ -147,7 +147,7 @@ allprojects {
 可以看到注册的监听器监收到了服务器的响应消息
 
     
-如果是只是测试的话，可以运行本项目提供的服务端程序socket_server，在Android studio要先将服务端程序添加配置上去，具体怎么操作可以参考我的博客，地址：https://blog.csdn.net/liuxingrong666/article/details/91579548
+测试的话，可以运行本项目提供的服务端程序socket_server，在Android studio要先将服务端程序添加配置上去，具体怎么操作可以参考我的博客，地址：https://blog.csdn.net/liuxingrong666/article/details/91579548
 
 
 ### 三、EasySocket启动心跳机制
@@ -196,7 +196,7 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
         sender.setMsgId("singer_msg");
         sender.setFrom("android");
         EasySocket.getInstance().upCallbackMessage(sender)
-                .onCallBack(new SimpleCallBack<CallbackResponse>(sender) {
+                .onCallBack(new SimpleCallBack<CallbackResponse>(sender.getSigner()) {
                     @Override
                     public void onResponse(CallbackResponse response) {
                         LogUtil.d("回调消息=" + response.toString());
@@ -216,9 +216,9 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
 
 	回调消息=SingerResponse{from='server', msgId='singer_msg', signer='ZOLDZSWBPRR21I0ZVMR6'}
 
-可以看到，发送消息的时候有一个数据singer是消息的回调标识，socket接收到的响应消息也是带有singer标识，而且是同一个值，正是这个singer才让我们可以识别到响应消息对应的是哪个发送消息
+可以看到，发送消息的时候有一个数据signer是消息的回调标识，socket接收到的响应消息也是带有signer标识，而且是同一个值，正是这个signer才让我们可以识别到响应消息对应的是哪个发送消息
 
-回调功能的基本原理也很简单，每次客户端发送消息的时候都会随机生成一个字符串作为此消息的唯一标识，本框架用singer作为回调标识，服务端方面在响应有singer标识的消息的时候，将这个singer标识返回给客户端就OK 了，至于客户端是怎么处理的，大家可以看看项目的源码
+回调功能的基本原理也很简单，每次客户端发送消息的时候都会随机生成一个字符串作为此消息的唯一标识，本框架用signer作为回调标识，服务端方面在响应有signer标识的消息的时候，将这个signer标识返回给客户端就OK 了，至于客户端是怎么处理的，大家可以看看项目的源码
 
 
 此外还封装了一个带进度框的请求，非常实用，使用方法如下
@@ -228,7 +228,7 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
                 sender.setMsgId("delay_msg");
                 EasySocket.getInstance()
                         .upCallbackMessage(sender)
-                        .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender) {
+                        .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender.getSigner()) {
                             @Override
                             public void onResponse(String s) {
                                 LogUtil.d("进度条回调消息=" + s);
@@ -255,11 +255,11 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
 以上演示了EasySocket的基本使用方法，欢迎start
 
 ### 五、EasySocket的配置信息说明（EasySocketOptions）
-
     /**
      * 框架是否是调试模式
      */
     private static boolean isDebug = true;
+
     /**
      * 写入Socket管道的字节序
      */
@@ -271,7 +271,7 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
     /**
      * 从socket读取数据时遵从数据包结构协议，在业务层进行定义
      */
-    private IReaderProtocol messageProtocol;
+    private IMessageProtocol messageProtocol;
     /**
      * 写数据时单个数据包的最大值
      */
@@ -307,12 +307,11 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
     /**
      * socket工厂
      */
-    private EasySocketFactory socketFactory;
+    private SocketFactory socketFactory;
     /**
      * 获取请求消息唯一标识singer的工厂，默认为DefaultCallbackSingerFactory
      */
-    private CallbackSingerFactory getSignerFactory;
- 
+    private GetSignerFactory getSignerFactory;
     /**
      * 请求超时时间，单位毫秒
      */
@@ -321,5 +320,10 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
      * 是否开启请求超时检测
      */
     private boolean isOpenRequestTimeout;
+ 
+    /**
+     * IO字符流的编码方式，默认utf-8
+     */
+    private String charsetName;
     
-GitHub代码的Demo中还有socket服务端的测试代码，大家可以用本地IP地址对本框架进行测试，欢迎点评交流
+Demo中还有socket服务端的测试代码，大家可以用本地IP地址对本框架进行测试，欢迎点评交流
