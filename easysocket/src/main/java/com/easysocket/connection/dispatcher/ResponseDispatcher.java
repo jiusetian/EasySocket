@@ -24,15 +24,15 @@ import java.util.concurrent.TimeUnit;
  */
 public class ResponseDispatcher {
     /**
-     * 保存回调实例的map,key为每个请求对象的callbackSign
+     * 保存回调监听实例,key为请求回调标识signer
      */
     private Map<String, SuperCallBack> callbacks = new HashMap<>();
     /**
-     * 保存待检测的超时请求，这是一个延时队列，元素超时的时候会被取出来
+     * 保存需要进行超时检测的请求，这是一个延时队列，元素超时的时候会被取出来
      */
     private DelayQueue<timeoutItem> timeoutQueue = new DelayQueue<>();
     /**
-     * 请求超时检测的线程管理器
+     * 超时检测的线程管理器
      */
     private ExecutorService timeoutExecutor;
 
@@ -49,7 +49,7 @@ public class ResponseDispatcher {
         socketOptions = connectionManager.getOptions();
         //注册监听
         connectionManager.subscribeSocketAction(socketActionListener);
-        //开始超时监听线程
+        //开始超时检测线程
         startTimeoutThread();
     }
 
@@ -105,19 +105,19 @@ public class ResponseDispatcher {
     }
 
     /**
-     * socket行为监听，重写反馈消息回调方法即可
+     * socket行为监听，重写反馈消息的回调方法
      */
     private SocketActionListener socketActionListener = new SocketActionListener() {
         @Override
         public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
-            if (callbacks.size() == 0) return; //没有回调
-            String sign = socketOptions.getCallbackSingerFactory().getCallbackSinger(originReadData);
-            //获取对应的callback
-            SuperCallBack callBack = callbacks.get(sign);
+            if (callbacks.size() == 0) return;
+            String signer = socketOptions.getGetSignerFactory().getCallbackSigner(originReadData);
+            //获取signer对应的callback
+            SuperCallBack callBack = callbacks.get(signer);
             if (callBack != null) {
                 //回调
                 callBack.onSuccess(originReadData.getBodyString());
-                callbacks.remove(sign); //移除完成任务的callback
+                callbacks.remove(signer); //移除完成任务的callback
             }
         }
 
@@ -129,19 +129,19 @@ public class ResponseDispatcher {
      * @param superCallBack
      */
     public void addSocketCallback(SuperCallBack superCallBack) {
-        callbacks.put(superCallBack.getSinger(), superCallBack);
+        callbacks.put(superCallBack.getSigner(), superCallBack);
         //放入延时队列
         long delayTime = socketOptions == null ?
                 EasySocketOptions.getDefaultOptions().getRequestTimeout() : socketOptions.getRequestTimeout();
-        timeoutQueue.add(new timeoutItem(superCallBack.singer, delayTime, TimeUnit.MILLISECONDS));
+        timeoutQueue.add(new timeoutItem(superCallBack.getSigner(), delayTime, TimeUnit.MILLISECONDS));
     }
 
     /**
-     * 请求延时队列的item
+     * 延时队列的item
      */
     class timeoutItem implements Delayed {
 
-        String singer; //当前callback的singer
+        String singer; //当前callback的signer
         long executeTime; //触发时间
 
         public timeoutItem(String singer, long delayTime, TimeUnit timeUnit) {

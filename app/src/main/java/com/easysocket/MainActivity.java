@@ -67,9 +67,11 @@ public class MainActivity extends AppCompatActivity {
                 sender.setMsgId("delay_msg");
                 EasySocket.getInstance()
                         .upCallbackMessage(sender)
-                        .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender) {
+                        .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender.getSigner()) {
+
                             @Override
                             public void onResponse(String s) {
+
                                 LogUtil.d("进度条回调消息=" + s);
                             }
 
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         sender.setMsgId("singer_msg");
         sender.setFrom("我来自android");
         EasySocket.getInstance().upCallbackMessage(sender)
-                .onCallBack(new SimpleCallBack<CallbackResponse>(sender) {
+                .onCallBack(new SimpleCallBack<CallbackResponse>(sender.getSigner()) {
                     @Override
                     public void onResponse(CallbackResponse response) {
                         LogUtil.d("回调消息=" + response.toString());

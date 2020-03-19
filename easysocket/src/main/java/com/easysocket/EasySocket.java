@@ -15,11 +15,11 @@ import com.easysocket.interfaces.conn.ISocketActionListener;
 /**
  * Author：Alex
  * Date：2019/6/4
- * Note：对外开放的api
+ * Note：EasySocket api
  */
 public class EasySocket {
 
-    //静态的连接管理器持有者
+    //连接管理器
     private static ConnectionHolder connectionHolder = ConnectionHolder.getInstance();
 
     private volatile static EasySocket singleton = null; //加了volatile更加安全
@@ -136,7 +136,7 @@ public class EasySocket {
     }
 
     /**
-     * 发送一个string
+     * 发送String
      *
      * @param str
      */
@@ -146,7 +146,7 @@ public class EasySocket {
     }
 
     /**
-     * 发送byte数组
+     * 发送byte[]
      *
      * @param bytes
      * @return
@@ -157,7 +157,7 @@ public class EasySocket {
     }
 
     /**
-     * 监听socket行为
+     * 注册监听socket行为
      *
      * @param socketActionListener
      */
@@ -236,7 +236,7 @@ public class EasySocket {
      */
     public void testInit() {
         if (ip == null) {
-            throw new InitialExeption("没有初始化连接的IP，请设置一个socket的IP，比如在application中进行初始化");
+            throw new InitialExeption("请设置IP值");
         }
     }
 }

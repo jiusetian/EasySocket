@@ -1,13 +1,13 @@
 package com.socker_server.entity;
 
-import com.socker_server.entity.message.SingerServerMsg;
+import com.socker_server.entity.message.SignerServerMsg;
 
 /**
  * Author：Alex
  * Date：2019/6/11
  * Note：
  */
-public class SingerResponse extends SingerServerMsg {
+public class SignerResponse extends SignerServerMsg {
     private String from;
 
     public String getFrom() {

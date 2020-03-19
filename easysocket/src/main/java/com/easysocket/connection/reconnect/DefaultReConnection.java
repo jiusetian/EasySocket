@@ -27,7 +27,7 @@ public class DefaultReConnection extends AbsReconnection {
      */
     private long reconnectTimeDelay = 10 * 1000;
     /**
-     * 重连线程管理器
+     * 重连线程
      */
     private ScheduledExecutorService reConnExecutor;
 
@@ -58,7 +58,7 @@ public class DefaultReConnection extends AbsReconnection {
     };
 
     /**
-     * 开始进行重连
+     * 进行重连
      */
     private void reconnect() {
         if (reConnExecutor == null || reConnExecutor.isShutdown()) {
@@ -77,7 +77,7 @@ public class DefaultReConnection extends AbsReconnection {
 
     @Override
     public boolean equals(Object o) {
-        //getClass返回Class类型的对象，比较它们的类型对象是否==，其实比较它们是否是同一个Class创建的对象
+        //getClass返回Class类型的对象，比较它们的类型对象是否==，其实是比较它们是否为同一个Class创建的对象
         if (o == null || getClass() != o.getClass()) return false;
         return true;
     }

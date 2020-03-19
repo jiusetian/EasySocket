@@ -8,5 +8,4 @@ package com.easysocket.connection.action;
 public interface IOAction {
     //收到消息响应
     String ACTION_READ_COMPLETE = "action_read_complete";
-
 }

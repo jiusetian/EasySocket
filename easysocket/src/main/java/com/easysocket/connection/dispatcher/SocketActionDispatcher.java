@@ -21,7 +21,7 @@ import static com.easysocket.connection.action.SocketAction.ACTION_DISCONNECTION
 /**
  * Author：Alex
  * Date：2019/6/1
- * Note：socket行为的分发器
+ * Note：socket行为分发器
  */
 public class SocketActionDispatcher implements ISocketActionDispatch {
     /**
@@ -166,7 +166,6 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
     private void startDispatchThread() {
         if (!isStop){
             isStop=false;
-            //开启线程处理回调信息
             actionThread=new DispatchThread();
             actionThread.start();
 

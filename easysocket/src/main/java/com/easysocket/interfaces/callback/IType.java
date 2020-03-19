@@ -25,5 +25,5 @@ public interface IType<T> {
 
     Type getType();
 
-    Class<?> getClazz();
+    Class<?> getGenericityClazz();
 }

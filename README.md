@@ -212,9 +212,9 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
     
 执行结果如下：
 
-	发送的数据={"from":"android","msgId":"singer_msg","singer":"ZOLDZSWBPRR21I0ZVMR6"}
+	发送的数据={"from":"android","msgId":"singer_msg","signer":"ZOLDZSWBPRR21I0ZVMR6"}
 
-	回调消息=SingerResponse{from='server', msgId='singer_msg', singer='ZOLDZSWBPRR21I0ZVMR6'}
+	回调消息=SingerResponse{from='server', msgId='singer_msg', signer='ZOLDZSWBPRR21I0ZVMR6'}
 
 可以看到，发送消息的时候有一个数据singer是消息的回调标识，socket接收到的响应消息也是带有singer标识，而且是同一个值，正是这个singer才让我们可以识别到响应消息对应的是哪个发送消息
 
@@ -311,7 +311,7 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
     /**
      * 获取请求消息唯一标识singer的工厂，默认为DefaultCallbackSingerFactory
      */
-    private CallbackSingerFactory callbackSingerFactory;
+    private CallbackSingerFactory getSignerFactory;
  
     /**
      * 请求超时时间，单位毫秒

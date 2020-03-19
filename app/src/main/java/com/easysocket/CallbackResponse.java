@@ -20,7 +20,7 @@ public class CallbackResponse extends BaseCallbackResponse {
         return "SingerResponse{" +
                 "from='" + from + '\'' +
                 ", msgId='" + msgId + '\'' +
-                ", singer='" + singer + '\'' +
+                ", signer='" + singer + '\'' +
                 '}';
     }
 

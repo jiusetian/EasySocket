@@ -8,7 +8,7 @@ package com.easysocket.interfaces.io;
 public interface IIOManager {
 
     /**
-     * 发送字节序列的数据
+     * 发送字节数组
      * @param bytes
      */
     void sendBytes(byte[] bytes);

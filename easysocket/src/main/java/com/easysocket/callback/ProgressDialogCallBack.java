@@ -5,27 +5,24 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 
 import com.easysocket.entity.exception.RequestCancelException;
-import com.easysocket.entity.basemsg.BaseCallbackSender;
 import com.easysocket.interfaces.callback.IProgressDialog;
 import com.easysocket.interfaces.callback.ProgressCancelListener;
-import com.google.gson.Gson;
 
 
 /**
- * 描述：可以自定义带有加载进度框的回调
- * 1.可以自定义带有加载进度框的回调,是否需要显示，是否可以取消
+ * 自定义带有加载进度框的回调
  */
 public abstract class ProgressDialogCallBack<T> extends SuperCallBack<T> implements ProgressCancelListener {
+
     private IProgressDialog progressDialog;
     private Dialog mDialog;
     private boolean isShowProgress = true;
 
     /**
-     *
      * @param
      */
-    public ProgressDialogCallBack(IProgressDialog progressDialog, BaseCallbackSender sender) {
-        super(sender);
+    public ProgressDialogCallBack(IProgressDialog progressDialog, String singer) {
+        super(singer);
         this.progressDialog = progressDialog;
         init(false);
         onStart();
@@ -40,8 +37,8 @@ public abstract class ProgressDialogCallBack<T> extends SuperCallBack<T> impleme
      * @param
      */
     public ProgressDialogCallBack(IProgressDialog progressDialog, boolean isShowProgress,
-                                  boolean isCancel, BaseCallbackSender sender) {
-        super(sender);
+                                  boolean isCancel, String singer) {
+        super(singer);
         this.progressDialog = progressDialog;
         this.isShowProgress = isShowProgress;
         init(isCancel);
@@ -75,10 +72,8 @@ public abstract class ProgressDialogCallBack<T> extends SuperCallBack<T> impleme
         if (!isShowProgress) {
             return;
         }
-        if (mDialog != null) {
-            if (!mDialog.isShowing()) {
-                mDialog.show();
-            }
+        if (mDialog != null && !mDialog.isShowing()) {
+            mDialog.show();
         }
     }
 
@@ -89,36 +84,19 @@ public abstract class ProgressDialogCallBack<T> extends SuperCallBack<T> impleme
         if (!isShowProgress) {
             return;
         }
-        if (mDialog != null) {
-            if (mDialog.isShowing()) {
-                mDialog.dismiss();
-            }
+        if (mDialog != null && mDialog.isShowing()) {
+            mDialog.dismiss();
         }
     }
 
     @Override
     public void onStart() {
-
         showProgress();
     }
 
     @Override
     public void onCompleted() {
-
         dismissProgress();
-    }
-
-    @Override
-    public void onSuccess(String s) {
-        onCompleted();
-        Class<?> clazz = getClazz();
-        if (clazz.equals(String.class)) { //泛型是字符串类型
-            onResponse((T) s);
-        } else { //非string
-            Gson gson = new Gson();
-            T result = (T) gson.fromJson(s, clazz);
-            onResponse(result);
-        }
     }
 
     public abstract void onResponse(T t);

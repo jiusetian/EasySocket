@@ -63,11 +63,11 @@ public class EasySocketOptions {
     /**
      * socket工厂
      */
-    private EasySocketFactory socketFactory;
+    private SocketFactory socketFactory;
     /**
      * 获取请求消息唯一标识singer的工厂，默认为DefaultCallbackSingerFactory
      */
-    private CallbackSingerFactory callbackSingerFactory;
+    private GetSignerFactory getSignerFactory;
     /**
      * 请求超时时间，单位毫秒
      */
@@ -126,10 +126,10 @@ public class EasySocketOptions {
         /**
          * 设置请求ack的工厂
          *
-         * @param callbackSingerFactory
+         * @param getSignerFactory
          */
-        public Builder setCallbackSingerFactory(CallbackSingerFactory callbackSingerFactory) {
-            socketOptions.callbackSingerFactory = callbackSingerFactory;
+        public Builder setCallbackSingerFactory(GetSignerFactory getSignerFactory) {
+            socketOptions.getSignerFactory = getSignerFactory;
             return this;
         }
 
@@ -261,7 +261,7 @@ public class EasySocketOptions {
          * @param socketFactory
          * @return
          */
-        public Builder setSocketFactory(EasySocketFactory socketFactory) {
+        public Builder setSocketFactory(SocketFactory socketFactory) {
             socketOptions.socketFactory = socketFactory;
             return this;
         }
@@ -296,7 +296,7 @@ public class EasySocketOptions {
         options.reconnectionManager = new DefaultReConnection();
         options.easySSLConfig = null;
         options.socketFactory = null;
-        options.callbackSingerFactory = new DefaultCallbackSingerFactory();
+        options.getSignerFactory = new DefaultGetSignerFactory();
         options.requestTimeout = 10 * 1000; //默认十秒
         options.isOpenRequestTimeout = true; //默认开启
         options.charsetName="utf-8";
@@ -349,7 +349,7 @@ public class EasySocketOptions {
         return easySSLConfig;
     }
 
-    public EasySocketFactory getSocketFactory() {
+    public SocketFactory getSocketFactory() {
         return socketFactory;
     }
 
@@ -361,8 +361,8 @@ public class EasySocketOptions {
         return isOpenRequestTimeout;
     }
 
-    public CallbackSingerFactory getCallbackSingerFactory() {
-        return callbackSingerFactory;
+    public GetSignerFactory getGetSignerFactory() {
+        return getSignerFactory;
     }
 
     /** 各种set方法*/
@@ -415,12 +415,12 @@ public class EasySocketOptions {
         this.easySSLConfig = easySSLConfig;
     }
 
-    public void setSocketFactory(EasySocketFactory socketFactory) {
+    public void setSocketFactory(SocketFactory socketFactory) {
         this.socketFactory = socketFactory;
     }
 
-    public void setCallbackSingerFactory(CallbackSingerFactory callbackSingerFactory) {
-        this.callbackSingerFactory = callbackSingerFactory;
+    public void setGetSignerFactory(GetSignerFactory getSignerFactory) {
+        this.getSignerFactory = getSignerFactory;
     }
 
     public void setRequestTimeout(long requestTimeout) {

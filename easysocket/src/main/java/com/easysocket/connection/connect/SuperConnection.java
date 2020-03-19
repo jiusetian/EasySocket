@@ -36,7 +36,7 @@ public abstract class SuperConnection implements IConnectionManager {
     /**
      * 连接线程
      */
-    private Thread connectThread; //连接线程
+    private Thread connectThread;
     /**
      * socket地址信息
      */
@@ -119,18 +119,18 @@ public abstract class SuperConnection implements IConnectionManager {
         LogUtil.d("开始socket连接");
         //检查当前连接状态
         if (connectionStatus.get() != SocketStatus.SOCKET_DISCONNECTED) {
-            LogUtil.d("socket已经连接");
+            LogUtil.d("socket已连接");
             return;
         }
         connectionStatus.set(SocketStatus.SOCKET_CONNECTING);
         if (socketAddress.getIp() == null) {
-            throw new NoNullException("连接参数有误，请检查是否设置了连接IP");
+            throw new NoNullException("连接参数有误，请检查是否设置了IP");
         }
-        //初始化心跳管理器
+        //心跳管理器
         if (heartManager == null)
             heartManager = new HeartManager(this, actionDispatcher);
 
-        //重连管理器相关
+        //重连管理器
         if (reconnection != null)
             reconnection.detach();
         reconnection = socketOptions.getReconnectionManager();
@@ -161,7 +161,7 @@ public abstract class SuperConnection implements IConnectionManager {
      * 断开连接线程
      */
     private class DisconnectThread extends Thread {
-        IsNeedReconnect isNeedReconnect; //当前断开连接是否需要重连
+        IsNeedReconnect isNeedReconnect; //当前连接的断开是否需要自动重连
 
         public DisconnectThread(IsNeedReconnect isNeedReconnect, String name) {
             super(name);
@@ -218,24 +218,23 @@ public abstract class SuperConnection implements IConnectionManager {
     }
 
     /**
-     * 连接打开成功
+     * 连接成功
      */
     protected void onConnectionOpened() {
         LogUtil.d("socket连接成功");
-        //连接成功
         actionDispatcher.dispatchAction(SocketAction.ACTION_CONN_SUCCESS);
         connectionStatus.set(SocketStatus.SOCKET_CONNECTED);
         startManager();
     }
 
-    //开启相关管理器
+    //开启管理器
     private void startManager() {
         responseDispatcher = new ResponseDispatcher(this);
         ioManager = new IOManager(this, actionDispatcher);
         ioManager.startIO();
     }
 
-    //切换了主机的IP和端口
+    //切换了主机IP和端口
     @Override
     public synchronized void switchHost(SocketAddress socketAddress) {
         if (socketAddress != null) {
@@ -258,7 +257,7 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public boolean isConnectViable() {
-        //即当前socket是否处于没连接的状态，状态的初始值是没连接的，还有当连接失败或主动调用断开连接的时候，都为没连接的状态
+        //当前socket是否处于可连接状态
         return connectionStatus.get() == SocketStatus.SOCKET_DISCONNECTED;
     }
 
@@ -295,7 +294,6 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public void onCallBack(SuperCallBack callBack) {
-        callBack.setSocketOptions(socketOptions);
         responseDispatcher.addSocketCallback(callBack);
     }
 
@@ -320,8 +318,8 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public synchronized IConnectionManager upCallbackMessage(BaseCallbackSender sender) {
-        //设置一个20位随机字符串作为识别标识
-        sender.updateSinger();
+        //设置一个20位随机字符串作为识别标识signer
+        sender.generateSinger();
         sendBytes(sender.parse());
         return this;
     }

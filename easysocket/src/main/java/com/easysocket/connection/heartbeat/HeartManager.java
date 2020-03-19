@@ -38,7 +38,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     private BaseSender clientHeart;
 
     /**
-     * 心跳包发送线程管理器
+     * 心跳包发送线程
      */
     private ScheduledExecutorService heartExecutor;
 
@@ -75,7 +75,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     private final Runnable beatTask = new Runnable() {
         @Override
         public void run() {
-            //心跳丢失次数判断，心跳包丢失了一定的次数则会进行socket的断开重连操作
+            //心跳丢失次数判断，心跳包丢失了一定的次数则会进行socket的断开重连
             if (socketOptions.getMaxHeartbeatLoseTimes() != -1 && loseTimes.incrementAndGet() >= socketOptions.getMaxHeartbeatLoseTimes()) {
                 //断开重连
                 connectionManager.disconnect(new IsNeedReconnect(true));

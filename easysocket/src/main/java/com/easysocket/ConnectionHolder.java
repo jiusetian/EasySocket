@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Author：Alex
  * Date：2019/6/4
- * Note：socket连接管理器的holder
+ * Note：socket连接管理器
  */
 public class ConnectionHolder {
 
@@ -100,7 +100,6 @@ public class ConnectionHolder {
     }
 
     /**
-     * 生成保存连接的map的对应key值
      * @param socketAddress
      * @return
      */

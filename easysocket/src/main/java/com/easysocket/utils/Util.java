@@ -5,6 +5,7 @@ import android.os.Looper;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.Random;
 
 /**
@@ -13,24 +14,24 @@ import java.util.Random;
 public class Util {
 
     /**
-     * 普通类反射获取泛型方式，获取需要实际解析的类型
+     * 获取泛型参数的类型
      *
      * @param <T>
      * @return
      */
-    public static <T> Type findNeedClass(Class<T> cls) {
-        //以下代码是通过泛型解析实际参数,泛型必须传
-        Type genType = cls.getGenericSuperclass(); //返回直接继承的父类（包含泛型参数）,如果有泛型T,也要包括进去
-        Type[] params = ((ParameterizedType) genType).getActualTypeArguments(); //获取泛型中的实际类型
-        Type type = params[0];
+    public static <T> Type findGenericityType(Class<T> cls) {
+        Type genType = cls.getGenericSuperclass(); //返回直接继承的父类（包含泛型参数）类型,如果有泛型T,也要包括进去
+        //getActualTypeArguments 获取泛型中的实际类型，比如Map<Sting,String>中的String类型
+        Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+        Type type = params[0]; //泛型的实际类型
         Type finalNeedType;
-        if (params.length > 1) { //这个类似是：CacheResult<SkinTestResult> 2层
-            if (!(type instanceof ParameterizedType)) throw new IllegalStateException("没有填写泛型参数");
+        if (type instanceof ParameterizedType) { //二级泛型，这里就处理最多二级吧，形如 A<B<T>>，两个<>
             finalNeedType = ((ParameterizedType) type).getActualTypeArguments()[0];
-            //Type rawType = ((ParameterizedType) type).getRawType();
-        } else { //这个类似是:SkinTestResult  1层
+        } else { // 一级泛型，形如A<T>
             finalNeedType = type;
         }
+        //如果泛型类型还是变量类型，比如T、V之类的，代表没有填写泛型参数
+        if (finalNeedType instanceof TypeVariable) throw new IllegalStateException("没有填写泛型参数");
         return finalNeedType;
     }
 
@@ -63,25 +64,27 @@ public class Util {
 
     /**
      * 获取handler对象
+     *
      * @param isMainHandler 是否为主线程的handler，为false时返回的是当前线程handler
      * @return
      */
-    public static Handler getHandler(boolean isMainHandler){
+    public static Handler getHandler(boolean isMainHandler) {
         Handler handler;
-        if (isMainHandler){
-            handler=new Handler(Looper.getMainLooper());
-        }else {
+        if (isMainHandler) {
+            handler = new Handler(Looper.getMainLooper());
+        } else {
             Looper.prepare();
-            handler=new Handler();
+            handler = new Handler();
         }
         return handler;
     }
 
     /**
      * 睡眠多少毫秒
+     *
      * @param milliSecond 毫秒
      */
-    public static void sleep(long milliSecond){
+    public static void sleep(long milliSecond) {
         try {
             Thread.sleep(milliSecond);
         } catch (InterruptedException e) {

@@ -3,7 +3,7 @@ package com.easysocket.entity.basemsg;
 /**
  * Author：Alex
  * Date：2019/12/7
- * Note：带有标识singer的回调消息的基类
+ * Note：带有标识signer的回调消息的基类
  */
 public abstract class BaseCallbackResponse extends BaseResponse{
     /**

@@ -1,10 +1,9 @@
 package com.easysocket.callback;
 
 
-import com.easysocket.config.EasySocketOptions;
-import com.easysocket.entity.basemsg.BaseCallbackSender;
 import com.easysocket.interfaces.callback.IType;
 import com.easysocket.utils.Util;
+import com.google.gson.Gson;
 
 import java.lang.reflect.Type;
 
@@ -13,41 +12,24 @@ import java.lang.reflect.Type;
  */
 public abstract class SuperCallBack<T> implements IType<T> {
     /**
-     * 生成随机字符串，用来识别服务端对客户端反馈消息的唯一标识
+     * 随机字符串，识别服务端反馈消息的唯一标识
      */
-    public String singer;
+    private String signer;
 
     /**
-     * socket参数配置
+     * @param signer 识别服务端反馈消息的唯一标识
      */
-    protected EasySocketOptions socketOptions;
-
-
-    /**
-     * @param sender
-     */
-    public SuperCallBack(BaseCallbackSender sender) {
-        if (sender != null)
-            this.singer = sender.getSinger();
+    public SuperCallBack(String signer) {
+        this.signer = signer;
     }
-
-
-    public void setSocketOptions(EasySocketOptions socketOptions) {
-        this.socketOptions = socketOptions;
-    }
-
 
     /**
      * 获取请求的标识
      *
      * @return
      */
-    public String getSinger() {
-        return singer;
-    }
-
-    public void setSinger(String sign) {
-        singer = sign;
+    public String getSigner() {
+        return signer;
     }
 
     public abstract void onStart();
@@ -56,7 +38,19 @@ public abstract class SuperCallBack<T> implements IType<T> {
 
     public abstract void onError(Exception e);
 
-    public abstract void onSuccess(String s);
+    public void onSuccess(String s) {
+        onCompleted();
+        Class<?> clazz = getGenericityClazz();
+        if (clazz.equals(String.class)) { //泛型是String类型
+            onResponse((T) s);
+        } else { //非String
+            Gson gson = new Gson();
+            T result = (T) gson.fromJson(s, clazz);
+            onResponse(result);
+        }
+    }
+
+    public abstract void onResponse(T t);
 
     /**
      * 获取泛型参数的类型
@@ -65,16 +59,16 @@ public abstract class SuperCallBack<T> implements IType<T> {
      */
     @Override
     public Type getType() {
-        return Util.findNeedClass(getClass());
+        return Util.findGenericityType(getClass());
     }
 
     /**
-     * 获取泛型的class对象
+     * 获取泛型参数的class类型
      *
      * @return
      */
     @Override
-    public Class<?> getClazz() {
+    public Class<?> getGenericityClazz() {
         return (Class<?>) getType(); //转为泛型参数的class对象
     }
 }
