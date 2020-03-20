@@ -18,12 +18,14 @@ import com.easysocket.interfaces.conn.ISocketActionListener;
  */
 public class EasySocket {
 
-    //连接管理器
+    /**
+     * 连接管理器
+     */
     private static ConnectionHolder connectionHolder = ConnectionHolder.getInstance();
 
     private volatile static EasySocket singleton = null; //加了volatile更加安全
     /**
-     * 连接的参数
+     * 连接参数
      */
     private EasySocketOptions options;
     /**
@@ -48,7 +50,7 @@ public class EasySocket {
     }
 
     /**
-     * 设置连接的参数
+     * 设置连接参数
      */
     public EasySocket options(EasySocketOptions socketOptions) {
         options = socketOptions;
@@ -81,12 +83,11 @@ public class EasySocket {
         connection = connectionHolder.getConnection(socketAddress,
                 options == null ? EasySocketOptions.getDefaultOptions() : options);
         connection.connect(); //进行连接
-
         return this;
     }
 
     /**
-     * 销毁socket连接
+     * 销毁连接
      *
      * @return
      */
@@ -166,7 +167,7 @@ public class EasySocket {
      */
     public IConnectionManager getConnection() {
         if (connection == null) {
-            throw new NoNullException("请先创建一个socket主连接");
+            throw new NoNullException("请先创建socket连接");
         }
         return connection;
     }
