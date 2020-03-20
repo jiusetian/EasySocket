@@ -88,7 +88,7 @@ allprojects {
          * @param isReconnect 是否需要重连
          */
         @Override
-        public void onSocketConnFail(SocketAddress socketAddress, IsReconnect isReconnect) {
+        public void onSocketConnFail(SocketAddress socketAddress, Boolean isReconnect) {
             super.onSocketConnFail(socketAddress, isReconnect);
         }
  
@@ -98,7 +98,7 @@ allprojects {
          * @param isReconnect 是否需要重连
          */
         @Override
-        public void onSocketDisconnect(SocketAddress socketAddress, IsReconnect isReconnect) {
+        public void onSocketDisconnect(SocketAddress socketAddress, Boolean isReconnect) {
             super.onSocketDisconnect(socketAddress, isReconnect);
         }
  
