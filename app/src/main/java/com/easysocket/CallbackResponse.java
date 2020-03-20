@@ -1,13 +1,13 @@
 package com.easysocket;
 
-import com.easysocket.entity.basemsg.BaseCallbackResponse;
+import com.easysocket.entity.basemsg.SuperCallbackResponse;
 
 /**
  * Author：Alex
  * Date：2019/12/7
- * Note：带有回调标识singer的响应消息
+ * Note：带有回调标识callbackId的响应消息
  */
-public class CallbackResponse extends BaseCallbackResponse {
+public class CallbackResponse extends SuperCallbackResponse {
 
     private String from;
     /**
@@ -15,12 +15,14 @@ public class CallbackResponse extends BaseCallbackResponse {
      */
     private String msgId;
 
+    private String callbackId;
+
     @Override
     public String toString() {
         return "SingerResponse{" +
                 "from='" + from + '\'' +
                 ", msgId='" + msgId + '\'' +
-                ", signer='" + singer + '\'' +
+                ", callbackId='" + callbackId + '\'' +
                 '}';
     }
 
@@ -39,5 +41,15 @@ public class CallbackResponse extends BaseCallbackResponse {
 
     public void setFrom(String from) {
         this.from = from;
+    }
+
+    @Override
+    public String getCallbackId() {
+        return callbackId;
+    }
+
+    @Override
+    public void setCallbackId(String callbackId) {
+        this.callbackId = callbackId;
     }
 }

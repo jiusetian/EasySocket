@@ -1,13 +1,13 @@
 package com.easysocket;
 
-import com.easysocket.entity.basemsg.BaseSender;
+import com.easysocket.entity.basemsg.SuperSender;
 
 /**
  * Author：Alex
  * Date：2019/12/6
  * Note：不带回调标识singer的消息
  */
-public class TestMsg extends BaseSender {
+public class TestMsg extends SuperSender {
 
     private String msgId;
     private String from;

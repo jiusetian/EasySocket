@@ -65,9 +65,10 @@ public class EasySocketOptions {
      */
     private SocketFactory socketFactory;
     /**
-     * 获取请求消息唯一标识singer的工厂，默认为DefaultCallbackSingerFactory
+     * 实现回调功能需要callbackID，而callbackID是保存在发送消息和返回消息中的，此工厂用来获取socket消息中
+     * 保存callbackID值的键，即key，比如json格式中的key-value中的key
      */
-    private GetSignerFactory getSignerFactory;
+    private CallbakcIdKeyFactory callbakcIdKeyFactory;
     /**
      * 请求超时时间，单位毫秒
      */
@@ -126,10 +127,10 @@ public class EasySocketOptions {
         /**
          * 设置请求ack的工厂
          *
-         * @param getSignerFactory
+         * @param callbakcIdKeyFactory
          */
-        public Builder setCallbackSingerFactory(GetSignerFactory getSignerFactory) {
-            socketOptions.getSignerFactory = getSignerFactory;
+        public Builder setCallbackIdKeyFactory(CallbakcIdKeyFactory callbakcIdKeyFactory) {
+            socketOptions.callbakcIdKeyFactory = callbakcIdKeyFactory;
             return this;
         }
 
@@ -296,7 +297,7 @@ public class EasySocketOptions {
         options.reconnectionManager = new DefaultReConnection();
         options.easySSLConfig = null;
         options.socketFactory = null;
-        options.getSignerFactory = new DefaultGetSignerFactory();
+        options.callbakcIdKeyFactory = null;
         options.requestTimeout = 10 * 1000; //默认十秒
         options.isOpenRequestTimeout = true; //默认开启
         options.charsetName="utf-8";
@@ -361,8 +362,8 @@ public class EasySocketOptions {
         return isOpenRequestTimeout;
     }
 
-    public GetSignerFactory getGetSignerFactory() {
-        return getSignerFactory;
+    public CallbakcIdKeyFactory getCallbakcIdKeyFactory() {
+        return callbakcIdKeyFactory;
     }
 
     /** 各种set方法*/
@@ -419,8 +420,8 @@ public class EasySocketOptions {
         this.socketFactory = socketFactory;
     }
 
-    public void setGetSignerFactory(GetSignerFactory getSignerFactory) {
-        this.getSignerFactory = getSignerFactory;
+    public void setCallbakcIdKeyFactory(CallbakcIdKeyFactory callbakcIdKeyFactory) {
+        this.callbakcIdKeyFactory = callbakcIdKeyFactory;
     }
 
     public void setRequestTimeout(long requestTimeout) {

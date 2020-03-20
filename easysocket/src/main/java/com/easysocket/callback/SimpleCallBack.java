@@ -7,8 +7,8 @@ package com.easysocket.callback;
 public abstract class SimpleCallBack<T> extends SuperCallBack<T> {
 
 
-    public SimpleCallBack(String singer) {
-        super(singer);
+    public SimpleCallBack(String callbackId) {
+        super(callbackId);
     }
 
     @Override

@@ -4,10 +4,15 @@ import com.easysocket.callback.SuperCallBack;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
+import com.easysocket.entity.basemsg.SuperCallbackSender;
 import com.easysocket.entity.exception.RequestTimeOutException;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.SocketActionListener;
 import com.easysocket.utils.LogUtil;
+import com.easysocket.utils.Util;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ResponseDispatcher {
     /**
-     * 保存回调监听实例,key为请求回调标识signer
+     * 保存回调监听实例,key为请求回调标识callbackId
      */
     private Map<String, SuperCallBack> callbacks = new HashMap<>();
     /**
@@ -75,9 +80,8 @@ public class ResponseDispatcher {
                         //只有超时的元素才会被取出，没有的话会被等待
                         timeoutItem item = timeoutQueue.take();
                         if (item != null) {
-                            LogUtil.d("移除超时="+item.singer);
-                            SuperCallBack callBack=callbacks.remove(item.singer);
-                            if (callBack!=null)
+                            SuperCallBack callBack = callbacks.remove(item.callbackId);
+                            if (callBack != null)
                                 callBack.onError(new RequestTimeOutException("request timeout"));
                         }
                     } catch (InterruptedException e) {
@@ -99,7 +103,7 @@ public class ResponseDispatcher {
         if (timeoutExecutor != null && !timeoutExecutor.isShutdown()) {
             //shutdown和shutdownNow的主要区别是前者中断未执行的线程，后者中断所有线程
             timeoutExecutor.shutdownNow();
-            timeoutExecutor=null;
+            timeoutExecutor = null;
         }
 
     }
@@ -111,17 +115,26 @@ public class ResponseDispatcher {
         @Override
         public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
             if (callbacks.size() == 0) return;
-            String signer = socketOptions.getGetSignerFactory().getCallbackSigner(originReadData);
-            //获取signer对应的callback
-            SuperCallBack callBack = callbacks.get(signer);
-            if (callBack != null) {
-                //回调
-                callBack.onSuccess(originReadData.getBodyString());
-                callbacks.remove(signer); //移除完成任务的callback
+            if (socketOptions.getCallbakcIdKeyFactory() == null) return;
+            try {
+                String callbackIdKey = socketOptions.getCallbakcIdKeyFactory().getCallbackIdKey();
+                JSONObject data = new JSONObject(originReadData.getBodyString());
+                String callbackId = data.getString(callbackIdKey);
+                //获取signer对应的callback
+                SuperCallBack callBack = callbacks.get(callbackId);
+                if (callBack != null) {
+                    //回调
+                    callBack.onSuccess(originReadData.getBodyString());
+                    callbacks.remove(callbackId); //移除完成任务的callback
+                    LogUtil.d("移除id=" + callbackId + "---" + callbacks.size());
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
 
     };
+
 
     /**
      * 添加回调实例
@@ -129,11 +142,11 @@ public class ResponseDispatcher {
      * @param superCallBack
      */
     public void addSocketCallback(SuperCallBack superCallBack) {
-        callbacks.put(superCallBack.getSigner(), superCallBack);
+        callbacks.put(superCallBack.getCallbackId(), superCallBack);
         //放入延时队列
         long delayTime = socketOptions == null ?
                 EasySocketOptions.getDefaultOptions().getRequestTimeout() : socketOptions.getRequestTimeout();
-        timeoutQueue.add(new timeoutItem(superCallBack.getSigner(), delayTime, TimeUnit.MILLISECONDS));
+        timeoutQueue.add(new timeoutItem(superCallBack.getCallbackId(), delayTime, TimeUnit.MILLISECONDS));
     }
 
     /**
@@ -141,11 +154,11 @@ public class ResponseDispatcher {
      */
     class timeoutItem implements Delayed {
 
-        String singer; //当前callback的signer
+        String callbackId; //当前callback的callbackId
         long executeTime; //触发时间
 
-        public timeoutItem(String singer, long delayTime, TimeUnit timeUnit) {
-            this.singer = singer;
+        public timeoutItem(String callbackId, long delayTime, TimeUnit timeUnit) {
+            this.callbackId = callbackId;
             this.executeTime = System.currentTimeMillis() + (delayTime > 0 ? timeUnit.toMillis(delayTime) : 0);
         }
 
@@ -159,5 +172,26 @@ public class ResponseDispatcher {
             return (int) (this.getDelay(TimeUnit.MILLISECONDS) - o.getDelay(TimeUnit.MILLISECONDS));
         }
     }
+
+    /**
+     * 检查当前callbackID是否已经存在，如果已经存在一个了，那么将更新当前消息的callbackID
+     *
+     * @param callbackSender
+     * @return
+     */
+    public void checkCallbackSender(SuperCallbackSender callbackSender) {
+
+        try {
+            Util.checkNotNull(socketOptions.getCallbakcIdKeyFactory(), "要想实现EasySocket的回调功能，CallbackIdFactory不能为null，" +
+                    "请实现一个CallbackIdFactory并在初始化的时候通过EasySocketOptions的setCallbackIdKeyFactory进行配置");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String callbackId = callbackSender.getCallbackId();
+        if (callbacks.containsKey(callbackId)) {
+            callbackSender.setCallbackId(callbackSender.generateCallbackId());
+        }
+    }
+
 
 }

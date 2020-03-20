@@ -1,6 +1,6 @@
 package com.easysocket.interfaces.conn;
 
-import com.easysocket.entity.basemsg.BaseCallbackSender;
+import com.easysocket.entity.basemsg.SuperCallbackSender;
 import com.easysocket.entity.basemsg.ISender;
 
 /**
@@ -28,7 +28,7 @@ public interface ISend {
      * @param sender
      * @return
      */
-    IConnectionManager upCallbackMessage(BaseCallbackSender sender);
+    IConnectionManager upCallbackMessage(SuperCallbackSender sender);
 
     /**
      * 发送bytes

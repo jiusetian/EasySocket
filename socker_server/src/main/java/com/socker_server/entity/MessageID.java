@@ -5,11 +5,11 @@ package com.socker_server.entity;
  * Date：2019/6/6
  * Note：
  */
-public class MsgId {
+public class MessageID {
 
-    public static final String SINGER_MSG="singer_msg"; //带singer的消息
+    public static final String CALLBACK_MSG ="callback_msg"; //回调消息
 
-    public static final String NO_SINGER_MSG ="no_singer_msg"; //测试消息
+    public static final String TEST_MSG ="test_msg"; //测试消息
 
     public static final String HEARTBEAT="heart_beat"; //心跳包
 

@@ -4,8 +4,8 @@ import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.heartbeat.HeartManager;
 import com.easysocket.entity.IsNeedReconnect;
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.basemsg.BaseSender;
-import com.easysocket.entity.basemsg.BaseCallbackSender;
+import com.easysocket.entity.basemsg.SuperSender;
+import com.easysocket.entity.basemsg.SuperCallbackSender;
 import com.easysocket.entity.basemsg.ISender;
 import com.easysocket.entity.exception.InitialExeption;
 import com.easysocket.entity.exception.NoNullException;
@@ -130,7 +130,7 @@ public class EasySocket {
      * @param sender
      * @return
      */
-    public IConnectionManager upCallbackMessage(BaseCallbackSender sender){
+    public IConnectionManager upCallbackMessage(SuperCallbackSender sender){
         getConnection().upCallbackMessage(sender);
         return connection;
     }
@@ -172,7 +172,7 @@ public class EasySocket {
      * @param clientHeart
      * @return
      */
-    public EasySocket startHeartBeat(BaseSender clientHeart, HeartManager.HeartbeatListener listener) {
+    public EasySocket startHeartBeat(SuperSender clientHeart, HeartManager.HeartbeatListener listener) {
         getConnection().getHeartManager().startHeartbeat(clientHeart,listener);
         return this;
     }
@@ -212,7 +212,7 @@ public class EasySocket {
      * @param socketAddress
      * @param socketOptions
      */
-    public IConnectionManager upToSpecifyConnection(BaseCallbackSender sender, SocketAddress socketAddress, EasySocketOptions socketOptions) {
+    public IConnectionManager upToSpecifyConnection(SuperCallbackSender sender, SocketAddress socketAddress, EasySocketOptions socketOptions) {
         EasySocketOptions options = socketOptions == null ? EasySocketOptions.getDefaultOptions() : socketOptions;
         IConnectionManager connectionManager = connectionHolder.getConnection(socketAddress, options);
         if (connectionManager.isConnectViable())
@@ -227,7 +227,7 @@ public class EasySocket {
      * @param sender
      * @param socketAddress
      */
-    public IConnectionManager upToSpecifyConnection(BaseCallbackSender sender, SocketAddress socketAddress) {
+    public IConnectionManager upToSpecifyConnection(SuperCallbackSender sender, SocketAddress socketAddress) {
         return upToSpecifyConnection(sender, socketAddress, null);
     }
 
@@ -236,7 +236,7 @@ public class EasySocket {
      */
     public void testInit() {
         if (ip == null) {
-            throw new InitialExeption("请设置IP值");
+            throw new InitialExeption("请设置IP");
         }
     }
 }

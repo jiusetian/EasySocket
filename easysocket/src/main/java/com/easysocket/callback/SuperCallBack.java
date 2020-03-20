@@ -14,22 +14,22 @@ public abstract class SuperCallBack<T> implements IType<T> {
     /**
      * 随机字符串，识别服务端反馈消息的唯一标识
      */
-    private String signer;
+    private String callbackId;
 
     /**
-     * @param signer 识别服务端反馈消息的唯一标识
+     * @param callbackId 识别服务端反馈消息的唯一标识
      */
-    public SuperCallBack(String signer) {
-        this.signer = signer;
+    public SuperCallBack(String callbackId) {
+        this.callbackId = callbackId;
     }
 
     /**
-     * 获取请求的标识
+     * 获取请求回调ID
      *
      * @return
      */
-    public String getSigner() {
-        return signer;
+    public String getCallbackId() {
+        return callbackId;
     }
 
     public abstract void onStart();

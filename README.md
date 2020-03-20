@@ -130,7 +130,7 @@ allprojects {
      */
     private void sendMessage() {
         TestMsg testMsg =new TestMsg();
-        testMsg.setMsgId("no_singer_msg");
+        testMsg.setMsgId("test_msg");
         testMsg.setFrom("android");
         //发送
         EasySocket.getInstance().upObject(testMsg);
@@ -138,10 +138,10 @@ allprojects {
 
 执行结果如下：
 
-	发送的数据={"from":"android","msgId":"no_singer_msg"} 
+	发送的数据={"from":"android","msgId":"test_msg"} 
 
 
-	socket监听器收到数据={"from":"server","msgId":"no_singer_msg"} 
+	socket监听器收到数据={"from":"server","msgId":"no_singer_msg"}
 
 
 可以看到注册的监听器监收到了服务器的响应消息
@@ -185,8 +185,115 @@ Socket的连接监听一般用心跳包去检测，EasySocket启动心跳机制�
 
 ### 四、EasySocket的请求回调功能
 
-EasySocket的最大特点收到实现了消息的回调功能，即当发送一个带有回调标识的消息给服务器的时候，我们可以准确地接收到这个消息对应的响应消息，示例如下
+EasySocket的最大特点是实现了消息的回调功能，即当发送一个带有回调标识的消息给服务器的时候，我们可以准确地接收到这个消息的响应。启用回调功能需要用户实现如下步骤
 
+    1.自定义CallbakcIdKeyFactory
+
+    因为回调消息需要携带一个消息的唯一标识，这里我们称之为callbackId，通常这个值会打包在Json格式的消息中，但是每个人的callbackId在json消息中对应的key值可能不一样，所以用户需要自定义CallbakcIdKeyFactory来告诉框架callbackId的key值是什么，如Demo中所示
+
+    public class CallbackIdKeyFactoryImpl extends CallbakcIdKeyFactory {
+     
+        @Override
+        public String getCallbackIdKey() {
+            return "callbackId";
+        }
+    }
+    这里我的callbackId值对应的key就是callbackId，即在json消息的key-value形式中是这样的：callbackId : callbackId的值，这样我们就知道怎么从消息中去获取callbackId值了
+    
+    2.配置CallbakcIdKeyFactory
+    
+    定义好了CallbakcIdKeyFactory，需要进行配置，如下
+        //socket配置
+        EasySocketOptions options = new EasySocketOptions.Builder()
+                .setCharsetName("utf-8")
+                .setCallbackIdKeyFactory(new CallbackIdKeyFactoryImpl())
+                .build();
+    启用回调功能的时候，需要将定义好的CallbakcIdKeyFactory通过setCallbackIdKeyFactory方法配置上去
+    
+    
+    3.自定义回调功能的消息
+    
+    本框架默认都是以Json格式来解析消息的，其他形式暂不支持，每个人的回调标识callbackId在消息类中对应的字段可能不一样，所以需要我们通过继承SuperCallbackSender和SuperCallbackResponse来定义自己的消息结构类，其中SuperCallbackSender是发送消息的父类，SuperCallbackResponse是接收消息的父类，Demo的例子如下
+    //回调消息的发送类
+    public class CallbackSender extends SuperCallbackSender {
+     
+        private String msgId;
+        private String from;
+        private String callbackId;
+     
+        public String getMsgId() {
+            return msgId;
+        }
+     
+        public void setMsgId(String msgId) {
+            this.msgId = msgId;
+        }
+     
+        public String getFrom() {
+            return from;
+        }
+     
+        public void setFrom(String from) {
+            this.from = from;
+        }
+     
+        @Override
+        public String getCallbackId() {
+            return callbackId;
+        }
+     
+        @Override
+        public void setCallbackId(String callbackId) {
+            this.callbackId=callbackId;
+        }
+    }
+     
+    //回调消息的接收类
+    public class CallbackResponse extends SuperCallbackResponse {
+     
+        private String from;
+        /**
+         * 消息ID
+         */
+        private String msgId;
+     
+        private String callbackId;
+        
+        public String getMsgId() {
+            return msgId;
+        }
+     
+        public void setMsgId(String msgId) {
+            this.msgId = msgId;
+        }
+     
+     
+        public String getFrom() {
+            return from;
+        }
+     
+        public void setFrom(String from) {
+            this.from = from;
+        }
+     
+        @Override
+        public String getCallbackId() {
+            return callbackId;
+        }
+     
+        @Override
+        public void setCallbackId(String callbackId) {
+            this.callbackId = callbackId;
+        }
+    }
+    
+    
+    4.服务器方面的配合使用
+    
+    回调功能需要服务器方面的配合，因为回调消息携带了唯一标识即callbackId，所以服务器在响应消息的时候，需要将这个callbackId的值返回给客户端
+    
+    如果以上方面都准备好的话，那么就可以实现Socket的回调功能了，示例如下
+                    
     /**
      * 发送一个有回调的消息
      */
@@ -212,23 +319,20 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
     
 执行结果如下：
 
-	发送的数据={"from":"android","msgId":"singer_msg","signer":"ZOLDZSWBPRR21I0ZVMR6"}
+	发送的数据=������V{"callbackId":"VOOOSRR8VI56I8MPGRML","from":"我来自android","msgId":"callback_msg"} 
 
-	回调消息=SingerResponse{from='server', msgId='singer_msg', signer='ZOLDZSWBPRR21I0ZVMR6'}
+	回调消息=SingerResponse{from='server', msgId='callback_msg', callbackId='VOOOSRR8VI56I8MPGRML'}
 
-可以看到，发送消息的时候有一个数据signer是消息的回调标识，socket接收到的响应消息也是带有signer标识，而且是同一个值，正是这个signer才让我们可以识别到响应消息对应的是哪个发送消息
+    可以看到，在发送的回调方法中收到了此消息的反馈
 
-回调功能的基本原理也很简单，每次客户端发送消息的时候都会随机生成一个字符串作为此消息的唯一标识，本框架用signer作为回调标识，服务端方面在响应有signer标识的消息的时候，将这个signer标识返回给客户端就OK 了，至于客户端是怎么处理的，大家可以看看项目的源码
-
-
-此外还封装了一个带进度框的请求，非常实用，使用方法如下
+    此外还封装了一个带进度框的请求，非常实用，使用方法如下
 
                 CallbackSender sender = new CallbackSender();
                 sender.setFrom("android");
                 sender.setMsgId("delay_msg");
                 EasySocket.getInstance()
                         .upCallbackMessage(sender)
-                        .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender.getSigner()) {
+                        .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender.getCallbackId()) {
                             @Override
                             public void onResponse(String s) {
                                 LogUtil.d("进度条回调消息=" + s);
@@ -255,75 +359,75 @@ EasySocket的最大特点收到实现了消息的回调功能，即当发送一�
 以上演示了EasySocket的基本使用方法，欢迎start
 
 ### 五、EasySocket的配置信息说明（EasySocketOptions）
-    /**
-     * 框架是否是调试模式
-     */
-    private static boolean isDebug = true;
-
-    /**
-     * 写入Socket管道的字节序
-     */
-    private ByteOrder writeOrder;
-    /**
-     * 从Socket读取字节时的字节序
-     */
-    private ByteOrder readOrder;
-    /**
-     * 从socket读取数据时遵从数据包结构协议，在业务层进行定义
-     */
-    private IMessageProtocol messageProtocol;
-    /**
-     * 写数据时单个数据包的最大值
-     */
-    private int maxWriteBytes;
-    /**
-     * 读数据时单次读取最大缓存值，数值越大效率越高，但是系统消耗也越大
-     */
-    private int maxReadBytes;
-    /**
-     * 心跳频率/毫秒
-     */
-    private long heartbeatFreq;
-    /**
-     * 心跳最大的丢失次数，大于这个数据，将断开socket连接
-     */
-    private int maxHeartbeatLoseTimes;
-    /**
-     * 连接超时时间(毫秒)
-     */
-    private int connectTimeout;
-    /**
-     * 服务器返回数据的最大值（单位Mb），防止客户端内存溢出
-     */
-    private int maxResponseDataMb;
-    /**
-     * socket重连管理器
-     */
-    private AbsReconnection reconnectionManager;
-    /**
-     * 安全套接字相关配置
-     */
-    private SocketSSLConfig easySSLConfig;
-    /**
-     * socket工厂
-     */
-    private SocketFactory socketFactory;
-    /**
-     * 获取请求消息唯一标识singer的工厂，默认为DefaultCallbackSingerFactory
-     */
-    private GetSignerFactory getSignerFactory;
-    /**
-     * 请求超时时间，单位毫秒
-     */
-    private long requestTimeout;
-    /**
-     * 是否开启请求超时检测
-     */
-    private boolean isOpenRequestTimeout;
- 
-    /**
-     * IO字符流的编码方式，默认utf-8
-     */
-    private String charsetName;
+     /**
+        * 框架是否是调试模式
+        */
+       private static boolean isDebug = true;
+       /**
+        * 写入Socket管道的字节序
+        */
+       private ByteOrder writeOrder;
+       /**
+        * 从Socket读取字节时的字节序
+        */
+       private ByteOrder readOrder;
+       /**
+        * 从socket读取数据时遵从数据包结构协议，在业务层进行定义
+        */
+       private IMessageProtocol messageProtocol;
+       /**
+        * 写数据时单个数据包的最大值
+        */
+       private int maxWriteBytes;
+       /**
+        * 读数据时单次读取最大缓存值，数值越大效率越高，但是系统消耗也越大
+        */
+       private int maxReadBytes;
+       /**
+        * 心跳频率/毫秒
+        */
+       private long heartbeatFreq;
+       /**
+        * 心跳最大的丢失次数，大于这个数据，将断开socket连接
+        */
+       private int maxHeartbeatLoseTimes;
+       /**
+        * 连接超时时间(毫秒)
+        */
+       private int connectTimeout;
+       /**
+        * 服务器返回数据的最大值（单位Mb），防止客户端内存溢出
+        */
+       private int maxResponseDataMb;
+       /**
+        * socket重连管理器
+        */
+       private AbsReconnection reconnectionManager;
+       /**
+        * 安全套接字相关配置
+        */
+       private SocketSSLConfig easySSLConfig;
+       /**
+        * socket工厂
+        */
+       private SocketFactory socketFactory;
+       /**
+        * 实现回调功能需要callbackID，而callbackID是保存在发送消息和返回消息中的，此工厂用来获取socket消息中
+        * 保存callbackID值的键，即key，比如json格式中的key-value中的key
+        */
+       private CallbakcIdKeyFactory callbakcIdKeyFactory;
+       /**
+        * 请求超时时间，单位毫秒
+        */
+       private long requestTimeout;
+       /**
+        * 是否开启请求超时检测
+        */
+       private boolean isOpenRequestTimeout;
     
+       /**
+        * IO字符流的编码方式，默认utf-8
+        */
+       private String charsetName;
+       
 Demo中还有socket服务端的测试代码，大家可以用本地IP地址对本框架进行测试，欢迎点评交流

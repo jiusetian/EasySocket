@@ -21,8 +21,8 @@ public abstract class ProgressDialogCallBack<T> extends SuperCallBack<T> impleme
     /**
      * @param
      */
-    public ProgressDialogCallBack(IProgressDialog progressDialog, String singer) {
-        super(singer);
+    public ProgressDialogCallBack(IProgressDialog progressDialog, String callbackId) {
+        super(callbackId);
         this.progressDialog = progressDialog;
         init(false);
         onStart();
@@ -37,8 +37,8 @@ public abstract class ProgressDialogCallBack<T> extends SuperCallBack<T> impleme
      * @param
      */
     public ProgressDialogCallBack(IProgressDialog progressDialog, boolean isShowProgress,
-                                  boolean isCancel, String singer) {
-        super(singer);
+                                  boolean isCancel, String callbackId) {
+        super(callbackId);
         this.progressDialog = progressDialog;
         this.isShowProgress = isShowProgress;
         init(isCancel);

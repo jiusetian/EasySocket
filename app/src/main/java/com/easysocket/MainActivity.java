@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 sender.setMsgId("delay_msg");
                 EasySocket.getInstance()
                         .upCallbackMessage(sender)
-                        .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender.getSigner()) {
+                        .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender.getCallbackId()) {
 
                             @Override
                             public void onResponse(String s) {
@@ -101,10 +101,10 @@ public class MainActivity extends AppCompatActivity {
     private void sendCallbackMsg() {
 
         CallbackSender sender = new CallbackSender();
-        sender.setMsgId("singer_msg");
+        sender.setMsgId("callback_msg");
         sender.setFrom("我来自android");
         EasySocket.getInstance().upCallbackMessage(sender)
-                .onCallBack(new SimpleCallBack<CallbackResponse>(sender.getSigner()) {
+                .onCallBack(new SimpleCallBack<CallbackResponse>(sender.getCallbackId()) {
                     @Override
                     public void onResponse(CallbackResponse response) {
                         LogUtil.d("回调消息=" + response.toString());
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void sendMessage() {
         TestMsg testMsg = new TestMsg();
-        testMsg.setMsgId("no_singer_msg");
+        testMsg.setMsgId("test_msg");
         testMsg.setFrom("android");
         //发送
         EasySocket.getInstance().upObject(testMsg);
@@ -206,9 +206,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initEasySocket() {
 
-        //socket配置为默认值
+        //socket配置
         EasySocketOptions options = new EasySocketOptions.Builder()
                 .setCharsetName("utf-8")
+                .setCallbackIdKeyFactory(new CallbackIdKeyFactoryImpl())
                 .build();
 
         //初始化EasySocket

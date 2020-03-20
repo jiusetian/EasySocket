@@ -91,4 +91,16 @@ public class Util {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 非空检查
+     * @param object
+     * @param emsg
+     * @throws
+     */
+    public static void checkNotNull(Object object,String emsg) throws Exception {
+        if (object==null){
+            throw new Exception(emsg);
+        }
+    }
 }

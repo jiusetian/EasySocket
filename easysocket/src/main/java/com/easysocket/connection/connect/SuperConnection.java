@@ -11,7 +11,7 @@ import com.easysocket.connection.iowork.IOManager;
 import com.easysocket.connection.reconnect.AbsReconnection;
 import com.easysocket.entity.IsNeedReconnect;
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.basemsg.BaseCallbackSender;
+import com.easysocket.entity.basemsg.SuperCallbackSender;
 import com.easysocket.entity.basemsg.ISender;
 import com.easysocket.entity.exception.NoNullException;
 import com.easysocket.interfaces.config.IConnectionSwitchListener;
@@ -317,9 +317,8 @@ public abstract class SuperConnection implements IConnectionManager {
     }
 
     @Override
-    public synchronized IConnectionManager upCallbackMessage(BaseCallbackSender sender) {
-        //设置一个20位随机字符串作为识别标识signer
-        sender.generateSinger();
+    public synchronized IConnectionManager upCallbackMessage(SuperCallbackSender sender) {
+        responseDispatcher.checkCallbackSender(sender);
         sendBytes(sender.parse());
         return this;
     }

@@ -1,13 +1,14 @@
-package com.socker_server.entity;
+package com.socker_server.entity.message;
 
-import com.socker_server.entity.message.SignerServerMsg;
+import com.socker_server.entity.message.base.SuperResponse;
 
 /**
  * Author：Alex
- * Date：2019/6/11
+ * Date：2019/6/6
  * Note：
  */
-public class SignerResponse extends SignerServerMsg {
+public class ServerHeartBeat extends SuperResponse {
+
     private String from;
 
     public String getFrom() {

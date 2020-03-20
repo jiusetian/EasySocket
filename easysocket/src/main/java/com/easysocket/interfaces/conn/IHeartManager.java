@@ -1,7 +1,7 @@
 package com.easysocket.interfaces.conn;
 
 import com.easysocket.connection.heartbeat.HeartManager;
-import com.easysocket.entity.basemsg.BaseSender;
+import com.easysocket.entity.basemsg.SuperSender;
 
 /**
  * Author：Alex
@@ -14,7 +14,7 @@ public interface IHeartManager {
      * 开始心跳
      * @param clientHeart
      */
-    void startHeartbeat(BaseSender clientHeart, HeartManager.HeartbeatListener listener);
+    void startHeartbeat(SuperSender clientHeart, HeartManager.HeartbeatListener listener);
 
     /**
      * 停止心跳
