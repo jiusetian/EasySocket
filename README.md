@@ -187,7 +187,8 @@ Socket的连接监听一般用心跳包去检测，EasySocket启动心跳机制�
 
 EasySocket的最大特点是实现了消息的回调功能，即当发送一个带有回调标识的消息给服务器的时候，我们可以准确地接收到这个消息的响应。启用回调功能需要用户实现如下步骤
 
-   1.自定义CallbakcIdKeyFactory
+  
+ 1.自定义CallbakcIdKeyFactory
 
    因为回调消息需要携带一个消息的唯一标识，这里我们称之为callbackId，通常这个值会打包在Json格式的消息中，但是每个人的callbackId在json消息中对应的key值可能不一样，所以用户需要自定义CallbakcIdKeyFactory来告诉框架callbackId的key值是什么，如Demo中所示
 
@@ -201,7 +202,7 @@ EasySocket的最大特点是实现了消息的回调功能，即当发送一个�
    这里我的callbackId值对应的key就是callbackId，即在json消息的key-value形式中是这样的：callbackId : callbackId的值，这样我们就知道怎么从消息中去获取callbackId值了
     
     
-   2.配置CallbakcIdKeyFactory
+ 2.配置CallbakcIdKeyFactory
     
    定义好了CallbakcIdKeyFactory，需要进行配置，如下
         //socket配置
@@ -212,7 +213,7 @@ EasySocket的最大特点是实现了消息的回调功能，即当发送一个�
     启用回调功能的时候，需要将定义好的CallbakcIdKeyFactory通过setCallbackIdKeyFactory方法配置上去
     
     
-   3.自定义回调功能的消息
+ 3.自定义回调功能的消息
     
    本框架默认都是以Json格式来解析消息的，其他形式暂不支持，每个人的回调标识callbackId在消息类中对应的字段可能不一样，所以需要我们通过继承SuperCallbackSender和SuperCallbackResponse来定义自己的消息结构类，其中SuperCallbackSender是发送消息的父类，SuperCallbackResponse是接收消息的父类，Demo的例子如下
     
@@ -290,7 +291,7 @@ EasySocket的最大特点是实现了消息的回调功能，即当发送一个�
     }
     
     
-   4.服务器方面的配合使用
+ 4.服务器方面的配合使用
     
    回调功能需要服务器方面的配合，因为回调消息携带了唯一标识即callbackId，所以服务器在响应消息的时候，需要将这个callbackId的值返回给客户端
     
