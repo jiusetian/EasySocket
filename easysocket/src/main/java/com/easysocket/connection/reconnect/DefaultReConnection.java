@@ -1,7 +1,6 @@
 package com.easysocket.connection.reconnect;
 
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.IsNeedReconnect;
 import com.easysocket.utils.LogUtil;
 
 import java.util.concurrent.Executors;
@@ -89,7 +88,7 @@ public class DefaultReConnection extends AbsReconnection {
     }
 
     @Override
-    public void onSocketConnFail(SocketAddress socketAddress, IsNeedReconnect isNeedReconnect) {
+    public void onSocketConnFail(SocketAddress socketAddress, Boolean isNeedReconnect) {
         //如果连接失败，但不需要重连，则关闭
         if (!isNeedReconnect.booleanValue()) {
             shutDown();
@@ -113,7 +112,7 @@ public class DefaultReConnection extends AbsReconnection {
     }
 
     @Override
-    public void onSocketDisconnect(SocketAddress socketAddress, IsNeedReconnect isNeedReconnect) {
+    public void onSocketDisconnect(SocketAddress socketAddress, Boolean isNeedReconnect) {
         //是否需要重连
         if (!isNeedReconnect.booleanValue()) {
             shutDown();

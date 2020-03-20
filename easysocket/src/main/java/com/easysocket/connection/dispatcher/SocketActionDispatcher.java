@@ -1,6 +1,5 @@
 package com.easysocket.connection.dispatcher;
 
-import com.easysocket.entity.IsNeedReconnect;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.interfaces.conn.IConnectionManager;
@@ -50,14 +49,15 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
      */
     private static final LinkedBlockingQueue<ActionBean> actions = new LinkedBlockingQueue();
 
+
     public SocketActionDispatcher(IConnectionManager connectionManager, SocketAddress socketAddress) {
         this.socketAddress = socketAddress;
         this.connectionManager = connectionManager;
         startDispatchThread();
     }
 
-    public void setSocketAddress(SocketAddress info){
-        socketAddress =info;
+    public void setSocketAddress(SocketAddress info) {
+        socketAddress = info;
     }
 
 
@@ -102,14 +102,12 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                     ActionBean actionBean = actions.take();
                     if (actionBean != null && actionBean.mDispatcher != null) {
                         SocketActionDispatcher actionDispatcher = actionBean.mDispatcher;
-                        synchronized (actionDispatcher.actionListeners) {
-                            List<ISocketActionListener> copyListeners = new ArrayList<>(actionDispatcher.actionListeners);
-                            Iterator<ISocketActionListener> listeners = copyListeners.iterator();
-                            //逐一通知
-                            while (listeners.hasNext()) {
-                                ISocketActionListener listener = listeners.next();
-                                actionDispatcher.dispatchActionToListener(actionBean.mAction, actionBean.arg, listener);
-                            }
+                        List<ISocketActionListener> copyListeners = new ArrayList<>(actionDispatcher.actionListeners);
+                        Iterator<ISocketActionListener> listeners = copyListeners.iterator();
+                        //逐一通知
+                        while (listeners.hasNext()) {
+                            ISocketActionListener listener = listeners.next();
+                            actionDispatcher.dispatchActionToListener(actionBean.mAction, actionBean.arg, listener);
                         }
                     }
                 } catch (InterruptedException e) {
@@ -129,6 +127,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
             this.arg = arg;
             mDispatcher = dispatcher;
         }
+
         String mAction = "";
         Serializable arg;
         SocketActionDispatcher mDispatcher;
@@ -149,11 +148,11 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                 break;
 
             case ACTION_CONN_FAIL: //连接失败
-                actionListener.onSocketConnFail(socketAddress, (IsNeedReconnect) content);
+                actionListener.onSocketConnFail(socketAddress, (Boolean) content);
                 break;
 
             case ACTION_DISCONNECTION: //连接断开
-                actionListener.onSocketDisconnect(socketAddress, (IsNeedReconnect) content);
+                actionListener.onSocketDisconnect(socketAddress, (Boolean) content);
                 break;
 
             case ACTION_READ_COMPLETE: //读取数据完成
@@ -164,9 +163,9 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
 
     //开始分发线程
     private void startDispatchThread() {
-        if (!isStop){
-            isStop=false;
-            actionThread=new DispatchThread();
+        if (!isStop) {
+            isStop = false;
+            actionThread = new DispatchThread();
             actionThread.start();
 
         }
@@ -175,9 +174,9 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
     @Override
     public void stopDispatchThread() {
         if (actionThread != null && actionThread.isAlive() && !actionThread.isInterrupted()) {
-            isStop=true;
+            isStop = true;
             actionThread.interrupt();
-            actionThread=null;
+            actionThread = null;
         }
     }
 

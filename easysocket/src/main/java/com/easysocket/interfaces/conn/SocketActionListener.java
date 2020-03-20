@@ -1,8 +1,7 @@
 package com.easysocket.interfaces.conn;
 
-import com.easysocket.entity.IsNeedReconnect;
-import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.OriginReadData;
+import com.easysocket.entity.SocketAddress;
 
 /**
  * Author：Alex
@@ -24,7 +23,7 @@ public abstract class SocketActionListener implements ISocketActionListener{
      * @param isNeedReconnect 是否需要重连
      */
     @Override
-    public void onSocketConnFail(SocketAddress socketAddress, IsNeedReconnect isNeedReconnect) {
+    public void onSocketConnFail(SocketAddress socketAddress, Boolean isNeedReconnect) {
 
     }
     /**
@@ -33,7 +32,7 @@ public abstract class SocketActionListener implements ISocketActionListener{
      * @param isNeedReconnect 是否需要重连
      */
     @Override
-    public void onSocketDisconnect(SocketAddress socketAddress, IsNeedReconnect isNeedReconnect) {
+    public void onSocketDisconnect(SocketAddress socketAddress, Boolean isNeedReconnect) {
 
     }
     /**

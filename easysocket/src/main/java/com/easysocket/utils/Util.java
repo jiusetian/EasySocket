@@ -98,9 +98,13 @@ public class Util {
      * @param emsg
      * @throws
      */
-    public static void checkNotNull(Object object,String emsg) throws Exception {
-        if (object==null){
-            throw new Exception(emsg);
+    public static void checkNotNull(Object object,String emsg) {
+        try {
+            if (object==null){
+                throw new Exception(emsg);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

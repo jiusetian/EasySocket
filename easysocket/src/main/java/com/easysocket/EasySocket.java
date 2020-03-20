@@ -2,11 +2,10 @@ package com.easysocket;
 
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.heartbeat.HeartManager;
-import com.easysocket.entity.IsNeedReconnect;
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.basemsg.SuperSender;
-import com.easysocket.entity.basemsg.SuperCallbackSender;
 import com.easysocket.entity.basemsg.ISender;
+import com.easysocket.entity.basemsg.SuperCallbackSender;
+import com.easysocket.entity.basemsg.SuperSender;
 import com.easysocket.entity.exception.InitialExeption;
 import com.easysocket.entity.exception.NoNullException;
 import com.easysocket.interfaces.conn.IConnectionManager;
@@ -111,7 +110,7 @@ public class EasySocket {
      * @return
      */
     public EasySocket destroyConnection(){
-        getConnection().disconnect(new IsNeedReconnect(false));
+        getConnection().disconnect(new Boolean(false));
         return this;
     }
 

@@ -1,7 +1,6 @@
 package com.easysocket.interfaces.conn;
 
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.IsNeedReconnect;
 import com.easysocket.interfaces.callback.ICallBack;
 import com.easysocket.interfaces.config.IOptions;
 
@@ -23,7 +22,7 @@ public interface IConnectionManager extends ISubscribeSocketAction, IOptions<ICo
      * 关闭连接
      * @param isNeedReconnect 是否需要重连
      */
-    void disconnect(IsNeedReconnect isNeedReconnect);
+    void disconnect(Boolean isNeedReconnect);
 
 
     /**

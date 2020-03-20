@@ -2,13 +2,12 @@ package com.easysocket.connection.iowork;
 
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.action.IOAction;
-import com.easysocket.entity.IsNeedReconnect;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.exception.SocketReadExeption;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
-import com.easysocket.interfaces.io.IReader;
 import com.easysocket.interfaces.io.IMessageProtocol;
+import com.easysocket.interfaces.io.IReader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -150,7 +149,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
                     }
                 }
             } else if (bodyLength < 0) {
-                connectionManager.disconnect(new IsNeedReconnect(true)); //断开重连
+                connectionManager.disconnect(new Boolean(true)); //断开重连
                 throw new SocketReadExeption("读取失败，读取到的数据长度小于0，可能是读取的过程中socket跟服务器断开了连接");
             }
             //将读取到一个完整数据发布出去
@@ -188,7 +187,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
             byte[] bytes = new byte[1];
             int value = inputStream.read(bytes); //从输入流中读取相应长度的数据
             if (value == -1) {
-                connectionManager.disconnect(new IsNeedReconnect(true)); //断开重连
+                connectionManager.disconnect(new Boolean(true)); //断开重连
                 throw new SocketReadExeption("读取数据的包头失败，在" + value + "位置断开了，可能是因为socket跟服务器断开了连接");
 
             }

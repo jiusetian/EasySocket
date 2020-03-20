@@ -1,7 +1,6 @@
 package com.easysocket.connection.heartbeat;
 
 import com.easysocket.config.EasySocketOptions;
-import com.easysocket.entity.IsNeedReconnect;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.basemsg.SuperSender;
@@ -78,7 +77,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
             //心跳丢失次数判断，心跳包丢失了一定的次数则会进行socket的断开重连
             if (socketOptions.getMaxHeartbeatLoseTimes() != -1 && loseTimes.incrementAndGet() >= socketOptions.getMaxHeartbeatLoseTimes()) {
                 //断开重连
-                connectionManager.disconnect(new IsNeedReconnect(true));
+                connectionManager.disconnect(new Boolean(true));
                 resetLoseTimes();
             } else { //发送心跳包
                 connectionManager.upObject(clientHeart);
@@ -147,12 +146,12 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     }
 
     @Override
-    public void onSocketConnFail(SocketAddress socketAddress, IsNeedReconnect isNeedReconnect) {
+    public void onSocketConnFail(SocketAddress socketAddress, Boolean isNeedReconnect) {
         stopHeartThread();
     }
 
     @Override
-    public void onSocketDisconnect(SocketAddress socketAddress, IsNeedReconnect isNeedReconnect) {
+    public void onSocketDisconnect(SocketAddress socketAddress, Boolean isNeedReconnect) {
         stopHeartThread();
     }
 

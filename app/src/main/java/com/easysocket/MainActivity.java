@@ -9,7 +9,6 @@ import com.easysocket.callback.ProgressDialogCallBack;
 import com.easysocket.callback.SimpleCallBack;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.heartbeat.HeartManager;
-import com.easysocket.entity.IsNeedReconnect;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.interfaces.callback.IProgressDialog;
@@ -174,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
          * @param isNeedReconnect 是否需要重连
          */
         @Override
-        public void onSocketConnFail(SocketAddress socketAddress, IsNeedReconnect isNeedReconnect) {
+        public void onSocketConnFail(SocketAddress socketAddress, Boolean isNeedReconnect) {
             super.onSocketConnFail(socketAddress, isNeedReconnect);
         }
 
@@ -184,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
          * @param isNeedReconnect 是否需要重连
          */
         @Override
-        public void onSocketDisconnect(SocketAddress socketAddress, IsNeedReconnect isNeedReconnect) {
+        public void onSocketDisconnect(SocketAddress socketAddress, Boolean isNeedReconnect) {
             super.onSocketDisconnect(socketAddress, isNeedReconnect);
         }
 

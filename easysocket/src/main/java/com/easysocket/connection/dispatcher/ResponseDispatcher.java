@@ -181,12 +181,8 @@ public class ResponseDispatcher {
      */
     public void checkCallbackSender(SuperCallbackSender callbackSender) {
 
-        try {
-            Util.checkNotNull(socketOptions.getCallbakcIdKeyFactory(), "要想实现EasySocket的回调功能，CallbackIdFactory不能为null，" +
-                    "请实现一个CallbackIdFactory并在初始化的时候通过EasySocketOptions的setCallbackIdKeyFactory进行配置");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Util.checkNotNull(socketOptions.getCallbakcIdKeyFactory(), "要想实现EasySocket的回调功能，CallbackIdFactory不能为null，" +
+                "请实现一个CallbackIdFactory并在初始化的时候通过EasySocketOptions的setCallbackIdKeyFactory进行配置");
         String callbackId = callbackSender.getCallbackId();
         if (callbacks.containsKey(callbackId)) {
             callbackSender.setCallbackId(callbackSender.generateCallbackId());

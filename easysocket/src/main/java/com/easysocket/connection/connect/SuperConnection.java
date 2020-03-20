@@ -9,10 +9,9 @@ import com.easysocket.connection.dispatcher.SocketActionDispatcher;
 import com.easysocket.connection.heartbeat.HeartManager;
 import com.easysocket.connection.iowork.IOManager;
 import com.easysocket.connection.reconnect.AbsReconnection;
-import com.easysocket.entity.IsNeedReconnect;
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.basemsg.SuperCallbackSender;
 import com.easysocket.entity.basemsg.ISender;
+import com.easysocket.entity.basemsg.SuperCallbackSender;
 import com.easysocket.entity.exception.NoNullException;
 import com.easysocket.interfaces.config.IConnectionSwitchListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
@@ -144,7 +143,7 @@ public abstract class SuperConnection implements IConnectionManager {
     }
 
     @Override
-    public synchronized void disconnect(IsNeedReconnect isNeedReconnect) {
+    public synchronized void disconnect(Boolean isNeedReconnect) {
         if (connectionStatus.get() == SocketStatus.SOCKET_DISCONNECTING) {
             return;
         }
@@ -161,9 +160,9 @@ public abstract class SuperConnection implements IConnectionManager {
      * 断开连接线程
      */
     private class DisconnectThread extends Thread {
-        IsNeedReconnect isNeedReconnect; //当前连接的断开是否需要自动重连
+        Boolean isNeedReconnect; //当前连接的断开是否需要自动重连
 
-        public DisconnectThread(IsNeedReconnect isNeedReconnect, String name) {
+        public DisconnectThread(Boolean isNeedReconnect, String name) {
             super(name);
             this.isNeedReconnect = isNeedReconnect;
         }
@@ -211,7 +210,7 @@ public abstract class SuperConnection implements IConnectionManager {
                 e.printStackTrace();
                 LogUtil.d("socket连接失败");
                 connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED);
-                actionDispatcher.dispatchAction(SocketAction.ACTION_CONN_FAIL, new IsNeedReconnect(true)); //第二个参数指需要重连
+                actionDispatcher.dispatchAction(SocketAction.ACTION_CONN_FAIL, new Boolean(true)); //第二个参数指需要重连
 
             }
         }
