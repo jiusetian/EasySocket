@@ -242,7 +242,7 @@ public abstract class SuperConnection implements IConnectionManager {
 
             if (actionDispatcher != null)
                 actionDispatcher.setSocketAddress(socketAddress);
-
+            //切换主机
             if (connectionSwitchListener != null) {
                 connectionSwitchListener.onSwitchConnectionInfo(this, oldAddress, socketAddress);
             }

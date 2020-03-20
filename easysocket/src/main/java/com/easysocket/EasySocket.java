@@ -23,14 +23,6 @@ public class EasySocket {
 
     private volatile static EasySocket singleton = null; //加了volatile更加安全
     /**
-     * 连接的Ip
-     */
-    private String ip = null;
-    /**
-     * 连接的端口
-     */
-    private int port;
-    /**
      * 连接的参数
      */
     private EasySocketOptions options;
@@ -38,7 +30,6 @@ public class EasySocket {
      * 连接器
      */
     private IConnectionManager connection;
-
 
     /**
      * 单例
@@ -57,24 +48,6 @@ public class EasySocket {
     }
 
     /**
-     * 初始化默认的IP
-     *
-     * @param ip
-     */
-    public EasySocket ip(String ip) {
-        this.ip = ip;
-        return this;
-    }
-
-    /**
-     * 初始化默认的端口
-     */
-    public EasySocket port(int port) {
-        this.port = port;
-        return this;
-    }
-
-    /**
      * 设置连接的参数
      */
     public EasySocket options(EasySocketOptions socketOptions) {
@@ -84,6 +57,7 @@ public class EasySocket {
 
     /**
      * 获取配置参数
+     *
      * @return
      */
     public EasySocketOptions getOptions() {
@@ -96,8 +70,14 @@ public class EasySocket {
      * @return
      */
     public EasySocket buildConnection() {
-        testInit(); //检查必须的初始化
-        SocketAddress socketAddress = new SocketAddress(ip, port);
+        SocketAddress socketAddress = options.getSocketAddress();
+        if (options.getSocketAddress() == null) {
+            throw new InitialExeption("请在EasySocketOptions中设置SocketAddress");
+        }
+        //如果有备用主机则设置
+        if (options.getBackupAddress() != null) {
+            socketAddress.setBackupAddress(options.getBackupAddress());
+        }
         connection = connectionHolder.getConnection(socketAddress,
                 options == null ? EasySocketOptions.getDefaultOptions() : options);
         connection.connect(); //进行连接
@@ -107,9 +87,10 @@ public class EasySocket {
 
     /**
      * 销毁socket连接
+     *
      * @return
      */
-    public EasySocket destroyConnection(){
+    public EasySocket destroyConnection() {
         getConnection().disconnect(new Boolean(false));
         return this;
     }
@@ -126,10 +107,11 @@ public class EasySocket {
 
     /**
      * 发送一个有回调的消息
+     *
      * @param sender
      * @return
      */
-    public IConnectionManager upCallbackMessage(SuperCallbackSender sender){
+    public IConnectionManager upCallbackMessage(SuperCallbackSender sender) {
         getConnection().upCallbackMessage(sender);
         return connection;
     }
@@ -172,7 +154,7 @@ public class EasySocket {
      * @return
      */
     public EasySocket startHeartBeat(SuperSender clientHeart, HeartManager.HeartbeatListener listener) {
-        getConnection().getHeartManager().startHeartbeat(clientHeart,listener);
+        getConnection().getHeartManager().startHeartbeat(clientHeart, listener);
         return this;
     }
 
@@ -184,7 +166,6 @@ public class EasySocket {
      */
     public IConnectionManager getConnection() {
         if (connection == null) {
-            testInit();
             throw new NoNullException("请先创建一个socket主连接");
         }
         return connection;
@@ -205,37 +186,27 @@ public class EasySocket {
     }
 
     /**
-     * 发送至指定的地址
+     * 获取指定的连接
      *
-     * @param sender
      * @param socketAddress
-     * @param socketOptions
+     * @return
      */
-    public IConnectionManager upToSpecifyConnection(SuperCallbackSender sender, SocketAddress socketAddress, EasySocketOptions socketOptions) {
-        EasySocketOptions options = socketOptions == null ? EasySocketOptions.getDefaultOptions() : socketOptions;
-        IConnectionManager connectionManager = connectionHolder.getConnection(socketAddress, options);
-        if (connectionManager.isConnectViable())
-            connectionManager.connect();
-        connectionManager.upBytes(sender.parse());
-        return connectionManager;
+    public IConnectionManager getSpecifyConnection(SocketAddress socketAddress) {
+        return connectionHolder.getConnection(socketAddress);
     }
 
     /**
-     * 发送至指定的地址
+     * 发送消息至指定的连接
      *
      * @param sender
      * @param socketAddress
      */
-    public IConnectionManager upToSpecifyConnection(SuperCallbackSender sender, SocketAddress socketAddress) {
-        return upToSpecifyConnection(sender, socketAddress, null);
-    }
-
-    /**
-     * 检查初始化是否完成
-     */
-    public void testInit() {
-        if (ip == null) {
-            throw new InitialExeption("请设置IP");
+    public IConnectionManager upToSpecifyConnection(SuperSender sender, SocketAddress socketAddress) {
+        IConnectionManager connect = getSpecifyConnection(socketAddress);
+        if (connect != null) {
+            connect.upObject(sender);
         }
+        return connect;
     }
+
 }

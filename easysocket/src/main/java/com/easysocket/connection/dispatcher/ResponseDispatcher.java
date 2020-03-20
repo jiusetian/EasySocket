@@ -126,7 +126,7 @@ public class ResponseDispatcher {
                     //回调
                     callBack.onSuccess(originReadData.getBodyString());
                     callbacks.remove(callbackId); //移除完成任务的callback
-                    LogUtil.d("移除id=" + callbackId + "---" + callbacks.size());
+                    LogUtil.d("移除的callbackId=" + callbackId );
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

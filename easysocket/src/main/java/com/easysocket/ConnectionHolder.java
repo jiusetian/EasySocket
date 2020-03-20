@@ -81,7 +81,7 @@ public class ConnectionHolder {
     private IConnectionManager createNewManagerAndCache(SocketAddress info, EasySocketOptions socketOptions) {
         SuperConnection manager = new TcpConnection(info); //创建连接管理器
         manager.setOptions(socketOptions); //设置参数
-        //连接信息切换监听
+        //连接主机的切换监听
         manager.setOnConnectionSwitchListener(new IConnectionSwitchListener() {
             @Override
             public void onSwitchConnectionInfo(IConnectionManager manager, SocketAddress oldAddress,
@@ -106,6 +106,5 @@ public class ConnectionHolder {
     private String createKey(SocketAddress socketAddress){
         return socketAddress.getIp()+":"+ socketAddress.getPort();
     }
-
 
 }

@@ -39,7 +39,7 @@ public class DefaultReConnection extends AbsReconnection {
     private final Runnable RcConnTask = new Runnable() {
         @Override
         public void run() {
-            LogUtil.d("执行重连任务");
+            LogUtil.d("执行重连");
             if (isDetach) {
                 shutDown();
                 return;
@@ -103,6 +103,7 @@ public class DefaultReConnection extends AbsReconnection {
             backupAddress.setBackupAddress(bbAddress);
             if (connectionManager.isConnectViable()) {
                 connectionManager.switchHost(backupAddress);
+                //切换主机地址，重新连接
                 reconnect();
             }
         } else {

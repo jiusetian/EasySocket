@@ -2,7 +2,9 @@ package com.easysocket.config;
 
 import com.easysocket.connection.reconnect.AbsReconnection;
 import com.easysocket.connection.reconnect.DefaultReConnection;
+import com.easysocket.entity.SocketAddress;
 import com.easysocket.interfaces.io.IMessageProtocol;
+
 import java.nio.ByteOrder;
 
 /**
@@ -16,6 +18,14 @@ public class EasySocketOptions {
      * 框架是否是调试模式
      */
     private static boolean isDebug = true;
+    /**
+     * 主机地址
+     */
+    private SocketAddress socketAddress;
+    /**
+     * 备用主机地址
+     */
+    private SocketAddress backupAddress;
     /**
      * 写入Socket管道的字节序
      */
@@ -87,6 +97,7 @@ public class EasySocketOptions {
         return isDebug;
     }
 
+
     /**
      * 静态内部类
      */
@@ -100,6 +111,28 @@ public class EasySocketOptions {
 
         public Builder(EasySocketOptions defaultOptions) {
             socketOptions = defaultOptions;
+        }
+
+        /**
+         * 设置socket 主机地址
+         *
+         * @param socketAddress
+         * @return
+         */
+        public Builder setSocketAddress(SocketAddress socketAddress) {
+            socketOptions.socketAddress = socketAddress;
+            return this;
+        }
+
+        /**
+         * 设置备用的主机地址
+         *
+         * @param backupAddress
+         * @return
+         */
+        public Builder setBackupAddress(SocketAddress backupAddress) {
+            socketOptions.backupAddress = backupAddress;
+            return this;
         }
 
         /**
@@ -267,8 +300,8 @@ public class EasySocketOptions {
             return this;
         }
 
-        public Builder setCharsetName(String charsetName){
-            socketOptions.charsetName=charsetName;
+        public Builder setCharsetName(String charsetName) {
+            socketOptions.charsetName = charsetName;
             return this;
         }
 
@@ -285,6 +318,8 @@ public class EasySocketOptions {
      */
     public static EasySocketOptions getDefaultOptions() {
         EasySocketOptions options = new EasySocketOptions();
+        options.socketAddress = null;
+        options.backupAddress = null;
         options.heartbeatFreq = 5 * 1000;
         options.messageProtocol = new DefaultMessageProtocol();
         options.maxResponseDataMb = 5;
@@ -300,11 +335,13 @@ public class EasySocketOptions {
         options.callbakcIdKeyFactory = null;
         options.requestTimeout = 10 * 1000; //默认十秒
         options.isOpenRequestTimeout = true; //默认开启
-        options.charsetName="utf-8";
+        options.charsetName = "utf-8";
         return options;
     }
 
-    public String getCharsetName(){return charsetName;}
+    public String getCharsetName() {
+        return charsetName;
+    }
 
     public ByteOrder getWriteOrder() {
         return writeOrder;
@@ -366,7 +403,9 @@ public class EasySocketOptions {
         return callbakcIdKeyFactory;
     }
 
-    /** 各种set方法*/
+    /**
+     * 各种set方法
+     */
 
     public static void setIsDebug(boolean isDebug) {
         EasySocketOptions.isDebug = isDebug;
@@ -430,6 +469,14 @@ public class EasySocketOptions {
 
     public void setOpenRequestTimeout(boolean openRequestTimeout) {
         isOpenRequestTimeout = openRequestTimeout;
+    }
+
+    public SocketAddress getSocketAddress() {
+        return socketAddress;
+    }
+
+    public SocketAddress getBackupAddress() {
+        return backupAddress;
     }
 
 }

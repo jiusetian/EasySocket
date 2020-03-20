@@ -207,17 +207,13 @@ public class MainActivity extends AppCompatActivity {
 
         //socket配置
         EasySocketOptions options = new EasySocketOptions.Builder()
-                .setCharsetName("utf-8")
+                .setSocketAddress(new SocketAddress("192.168.3.9", 9999)) //主机地址
                 .setCallbackIdKeyFactory(new CallbackIdKeyFactoryImpl())
                 .build();
 
         //初始化EasySocket
         EasySocket.getInstance()
-                .ip("192.168.3.9") //IP地址
-                .port(9999) //端口
-                .options(options); //连接的配置
-
-        //创建一个socket连接
-        EasySocket.getInstance().buildConnection();
+                .options(options) //连接的配置
+                .buildConnection();//创建一个socket连接
     }
 }
