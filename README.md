@@ -48,24 +48,21 @@ allprojects {
        
 一般在项目的Application中对EasySocket进行全局化配置，下面是一个最简单的配置
 
-    /**
-     * 初始化EasySocket
-     */
-    private void initEasySocket() {
- 
-        //socket配置为默认值
-        EasySocketOptions options = new EasySocketOptions.Builder()
-                .build();
- 
-        //初始化EasySocket
-        EasySocket.getInstance()
-                .ip("192.168.4.52") //IP地址，测试的时候可以使用本地IP地址
-                .port(9999) //端口
-                .options(options); //连接的配置
- 
-        //创建一个socket连接
-        EasySocket.getInstance().buildConnection();
-    }
+        /**
+         * 初始化EasySocket
+         */
+        private void initEasySocket() {
+     
+            //socket配置
+            EasySocketOptions options = new EasySocketOptions.Builder()
+                    .setSocketAddress(new SocketAddress("192.168.3.9", 9999)) //主机地址
+                    .build();
+     
+            //初始化EasySocket
+            EasySocket.getInstance()
+                    .options(options) //项目配置
+                    .buildConnection();//创建一个socket连接
+        }
 
 这里主要设置了IP和端口，其他的配置参数都使用了默认值，来看看框架的简单使用
 
@@ -205,12 +202,14 @@ EasySocket的最大特点是实现了消息的回调功能，即当发送一个�
  2.配置CallbakcIdKeyFactory
     
    定义好了CallbakcIdKeyFactory，需要进行配置，如下
-        //socket配置
-        EasySocketOptions options = new EasySocketOptions.Builder()
-                .setCharsetName("utf-8")
-                .setCallbackIdKeyFactory(new CallbackIdKeyFactoryImpl())
-                .build();
-    启用回调功能的时候，需要将定义好的CallbakcIdKeyFactory通过setCallbackIdKeyFactory方法配置上去
+   
+           //socket配置
+           EasySocketOptions options = new EasySocketOptions.Builder()
+                   .setSocketAddress(new SocketAddress("192.168.3.9", 9999)) //主机地址
+                   .setCallbackIdKeyFactory(new CallbackIdKeyFactoryImpl())
+                   .build();
+                
+   启用回调功能的时候，需要将定义好的CallbakcIdKeyFactory通过setCallbackIdKeyFactory方法配置上去
     
     
  3.自定义回调功能的消息
@@ -362,75 +361,84 @@ EasySocket的最大特点是实现了消息的回调功能，即当发送一个�
 以上演示了EasySocket的基本使用方法，欢迎start
 
 ### 五、EasySocket的配置信息说明（EasySocketOptions）
-     /**
-        * 框架是否是调试模式
-        */
-       private static boolean isDebug = true;
-       /**
-        * 写入Socket管道的字节序
-        */
-       private ByteOrder writeOrder;
-       /**
-        * 从Socket读取字节时的字节序
-        */
-       private ByteOrder readOrder;
-       /**
-        * 从socket读取数据时遵从数据包结构协议，在业务层进行定义
-        */
-       private IMessageProtocol messageProtocol;
-       /**
-        * 写数据时单个数据包的最大值
-        */
-       private int maxWriteBytes;
-       /**
-        * 读数据时单次读取最大缓存值，数值越大效率越高，但是系统消耗也越大
-        */
-       private int maxReadBytes;
-       /**
-        * 心跳频率/毫秒
-        */
-       private long heartbeatFreq;
-       /**
-        * 心跳最大的丢失次数，大于这个数据，将断开socket连接
-        */
-       private int maxHeartbeatLoseTimes;
-       /**
-        * 连接超时时间(毫秒)
-        */
-       private int connectTimeout;
-       /**
-        * 服务器返回数据的最大值（单位Mb），防止客户端内存溢出
-        */
-       private int maxResponseDataMb;
-       /**
-        * socket重连管理器
-        */
-       private AbsReconnection reconnectionManager;
-       /**
-        * 安全套接字相关配置
-        */
-       private SocketSSLConfig easySSLConfig;
-       /**
-        * socket工厂
-        */
-       private SocketFactory socketFactory;
-       /**
-        * 实现回调功能需要callbackID，而callbackID是保存在发送消息和返回消息中的，此工厂用来获取socket消息中
-        * 保存callbackID值的键，即key，比如json格式中的key-value中的key
-        */
-       private CallbakcIdKeyFactory callbakcIdKeyFactory;
-       /**
-        * 请求超时时间，单位毫秒
-        */
-       private long requestTimeout;
-       /**
-        * 是否开启请求超时检测
-        */
-       private boolean isOpenRequestTimeout;
-    
-       /**
-        * IO字符流的编码方式，默认utf-8
-        */
-       private String charsetName;
+      
+    /**
+     * 框架是否是调试模式
+     */
+    private static boolean isDebug = true;
+    /**
+     * 主机地址
+     */
+    private SocketAddress socketAddress;
+    /**
+     * 备用主机地址
+     */
+    private SocketAddress backupAddress;
+    /**
+     * 写入Socket管道的字节序
+     */
+    private ByteOrder writeOrder;
+    /**
+     * 从Socket读取字节时的字节序
+     */
+    private ByteOrder readOrder;
+    /**
+     * 从socket读取数据时遵从数据包结构协议，在业务层进行定义
+     */
+    private IMessageProtocol messageProtocol;
+    /**
+     * 写数据时单个数据包的最大值
+     */
+    private int maxWriteBytes;
+    /**
+     * 读数据时单次读取最大缓存值，数值越大效率越高，但是系统消耗也越大
+     */
+    private int maxReadBytes;
+    /**
+     * 心跳频率/毫秒
+     */
+    private long heartbeatFreq;
+    /**
+     * 心跳最大的丢失次数，大于这个数据，将断开socket连接
+     */
+    private int maxHeartbeatLoseTimes;
+    /**
+     * 连接超时时间(毫秒)
+     */
+    private int connectTimeout;
+    /**
+     * 服务器返回数据的最大值（单位Mb），防止客户端内存溢出
+     */
+    private int maxResponseDataMb;
+    /**
+     * socket重连管理器
+     */
+    private AbsReconnection reconnectionManager;
+    /**
+     * 安全套接字相关配置
+     */
+    private SocketSSLConfig easySSLConfig;
+    /**
+     * socket工厂
+     */
+    private SocketFactory socketFactory;
+    /**
+     * 实现回调功能需要callbackID，而callbackID是保存在发送消息和返回消息中的，此工厂用来获取socket消息中
+     * 保存callbackID值的键，即key，比如json格式中的key-value中的key
+     */
+    private CallbakcIdKeyFactory callbakcIdKeyFactory;
+    /**
+     * 请求超时时间，单位毫秒
+     */
+    private long requestTimeout;
+    /**
+     * 是否开启请求超时检测
+     */
+    private boolean isOpenRequestTimeout;
+ 
+    /**
+     * IO字符流的编码方式，默认utf-8
+     */
+    private String charsetName;
        
 Demo中还有socket服务端的测试代码，大家可以用本地IP地址对本框架进行测试，欢迎点评交流

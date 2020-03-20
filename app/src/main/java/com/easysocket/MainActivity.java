@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 
         //初始化EasySocket
         EasySocket.getInstance()
-                .options(options) //连接的配置
+                .options(options) //项目配置
                 .buildConnection();//创建一个socket连接
     }
 }
