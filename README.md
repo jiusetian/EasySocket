@@ -40,7 +40,7 @@ allprojects {
 
   dependencies { 
    
-    //{visionCode}是版本号的意思，比如implementation 'com.github.jiusetian:EasySocket:1.5.6' 
+    //{visionCode}是版本号的意思，比如implementation 'com.github.jiusetian:EasySocket:1.6.0' 
     implementation 'com.github.jiusetian:EasySocket:visionCode' 
   }
 
