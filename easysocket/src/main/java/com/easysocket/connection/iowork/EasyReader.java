@@ -8,6 +8,7 @@ import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.io.IMessageProtocol;
 import com.easysocket.interfaces.io.IReader;
+import com.easysocket.utils.LogUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,32 +65,35 @@ public class EasyReader implements IReader<EasySocketOptions> {
         ByteBuffer headBuf = ByteBuffer.allocate(headerLength); //读取数据包头的缓存
         headBuf.order(socketOptions.getReadOrder());
 
-        //读取数据的header=====>>>
+        /*读取数据的header=====>>>*/
         try {
-            //有余留数据
-            if (remainingBuf != null) {
-                //flip方法：buffer的容量不变，将limit移动到buffer的数据大小索引位置，将position置为0，这样就可以从0这个位置开始读取数据，直到limit大小的位置，limit就是buffer保存数据的大小
+            if (remainingBuf != null) { //有余留数据
+                //flip方法：buffer的容量不变，将limit移动到buffer的数据大小索引位置，将position置为0，这样就可以从0这个位置开始读取数据
+                // 直到limit大小的位置，limit是buffer保存数据的大小
                 remainingBuf.flip();
+                //数据读取长度，如果余留数据不够一个header，则全部读取，如果大于一个header，则只读一个header大小的数据
                 int length = Math.min(remainingBuf.remaining(), headerLength);
                 //将长度为length的数据写入headBuf中
                 headBuf.put(remainingBuf.array(), 0, length);
-                if (length < headerLength) { //不够一个header
+
+                if (length < headerLength) { //余留数据不够一个header
                     //there are no data left
                     remainingBuf = null;
-                    //再从stream中读取header剩下的长度
+                    //从stream中读取header剩下的长度
                     readHeaderFromSteam(headBuf, headerLength - length);
                 } else { //读取header之后还有余留缓存
                     remainingBuf.position(headerLength); //移动指针位置
                 }
             } else { //没有余留数据
+                //直接从stream读取一个header的数据
                 readHeaderFromSteam(headBuf, headBuf.capacity());
             }
 
-            //将header赋值到原始数据中
+            //将header数据赋值给原始数据
             originalData.setHeaderData(headBuf.array());
 
-
-            // 开始读取body数据=====>>>
+            /*开始读取body数据=====>>>*/
+            //数据体的长度
             int bodyLength = messageProtocol.getBodyLength(originalData.getHeaderData(), socketOptions.getReadOrder());
             if (bodyLength > 0) {
                 if (bodyLength > socketOptions.getMaxResponseDataMb() * 1024 * 1024) { //是否大于最大的读取数
@@ -97,18 +101,20 @@ public class EasyReader implements IReader<EasySocketOptions> {
                 }
                 ByteBuffer byteBuffer = ByteBuffer.allocate(bodyLength);
                 byteBuffer.order(socketOptions.getReadOrder());
-                //有余留数据未读取
+
+                //有余留数据
                 if (remainingBuf != null) {
                     int bodyStartPosition = remainingBuf.position();
+
                     int length = Math.min(remainingBuf.remaining(), bodyLength);
-                    //从余留的数据中读取
+                    //从余留的数据中读取length长度数据
                     byteBuffer.put(remainingBuf.array(), bodyStartPosition, length);
                     //移动position位置
                     remainingBuf.position(bodyStartPosition + length);
 
-                    //表示余留数据的大于大于或等于body数据的大小
+                    //表示余留数据大于或等于body数据
                     if (length == bodyLength) {
-                        if (remainingBuf.remaining() > 0) { //还有数据余留
+                        if (remainingBuf.remaining() > 0) { //读完还有数据余留，保存起来等下一次读取
                             ByteBuffer temp = ByteBuffer.allocate(remainingBuf.remaining());
                             temp.order(socketOptions.getReadOrder());
                             temp.put(remainingBuf.array(), remainingBuf.position(), remainingBuf.remaining());
@@ -119,9 +125,10 @@ public class EasyReader implements IReader<EasySocketOptions> {
 
                         //将读取到body数据赋值给原始数据
                         originalData.setBodyData(byteBuffer.array());
+                        LogUtil.d("接收的原始数据=" + originalData.getBodyString());
                         //分发数据
                         actionDispatch.dispatchAction(IOAction.ACTION_READ_COMPLETE, originalData);
-                        //此次读取结束，return
+                        //此次读取结束
                         return;
                     }
                     //没有数据余留了
@@ -129,7 +136,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
                         remainingBuf = null;
                     }
                 }
-                //继续从stream中读
+                //没有余留数据，从stream中读
                 readBodyFromStream(byteBuffer);
                 //将body数据存入originalData中
                 originalData.setBodyData(byteBuffer.array());
@@ -153,7 +160,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
                 throw new SocketReadExeption("读取失败，读取到的数据长度小于0，可能是读取的过程中socket跟服务器断开了连接");
             }
             //将读取到一个完整数据发布出去
-            //LogUtil.d("接收的数据=" + originalData.getBodyString());
+            LogUtil.d("接收的原始数据=" + originalData.getBodyString());
             actionDispatch.dispatchAction(IOAction.ACTION_READ_COMPLETE, originalData);
         } catch (Exception e) {
             e.printStackTrace();
