@@ -61,17 +61,16 @@ public class EasyReader implements IReader<EasySocketOptions> {
     public void read() {
         OriginReadData originalData = new OriginReadData();
         IMessageProtocol messageProtocol = socketOptions.getMessageProtocol();
-        int headerLength = messageProtocol.getHeaderLength(); //默认的包头长度是4个字节
-        ByteBuffer headBuf = ByteBuffer.allocate(headerLength); //读取数据包头的缓存
+        int headerLength = messageProtocol.getHeaderLength(); //默认包头为4个字节
+        ByteBuffer headBuf = ByteBuffer.allocate(headerLength); //读取数据包头的buffer
         headBuf.order(socketOptions.getReadOrder());
 
         /*读取数据的header=====>>>*/
         try {
             if (remainingBuf != null) { //有余留数据
-                //flip方法：buffer的容量不变，将limit移动到buffer的数据大小索引位置，将position置为0，这样就可以从0这个位置开始读取数据
-                // 直到limit大小的位置，limit是buffer保存数据的大小
+                //flip方法：一般在从Buffer读出数据前调用，将limit设置为当前position，然后将position设置为0，在读数据的时候，limit代表可读数据的有效长度
                 remainingBuf.flip();
-                //数据读取长度，如果余留数据不够一个header，则全部读取，如果大于一个header，则只读一个header大小的数据
+                //数据读取长度，如果余留数据不够一个header，则全部读取，如果大于一个header，则只读一个header的数据
                 int length = Math.min(remainingBuf.remaining(), headerLength);
                 //将长度为length的数据写入headBuf中
                 headBuf.put(remainingBuf.array(), 0, length);
@@ -97,7 +96,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
             int bodyLength = messageProtocol.getBodyLength(originalData.getHeaderData(), socketOptions.getReadOrder());
             if (bodyLength > 0) {
                 if (bodyLength > socketOptions.getMaxResponseDataMb() * 1024 * 1024) { //是否大于最大的读取数
-                    throw new SocketReadExeption("服务器返回的单次数据的大小已经超过了规定的最大值，为了防止内存溢出，请规范好相关协议");
+                    throw new SocketReadExeption("服务器返回的单次数据已经超过规定的最大值，为了防止内存溢出，请规范好相关协议");
                 }
                 ByteBuffer byteBuffer = ByteBuffer.allocate(bodyLength);
                 byteBuffer.order(socketOptions.getReadOrder());
@@ -192,7 +191,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
     private void readHeaderFromSteam(ByteBuffer headBuf, int readLength) throws IOException {
         for (int i = 0; i < readLength; i++) {
             byte[] bytes = new byte[1];
-            int value = inputStream.read(bytes); //从输入流中读取相应长度的数据
+            int value = inputStream.read(bytes); //从输入流中读取数据，没数据的时候该方面被阻塞
             if (value == -1) {
                 connectionManager.disconnect(new Boolean(true)); //断开重连
                 throw new SocketReadExeption("读取数据的包头失败，在" + value + "位置断开了，可能是因为socket跟服务器断开了连接");
@@ -203,21 +202,23 @@ public class EasyReader implements IReader<EasySocketOptions> {
     }
 
     private void readBodyFromStream(ByteBuffer byteBuffer) throws IOException {
-        //body大小是缓存buffer是否还有剩余空间
+        //byteBuffer是否还有剩余空间
         while (byteBuffer.hasRemaining()) {
             try {
-                byte[] bufArray = new byte[socketOptions.getMaxReadBytes()]; //从服务器中单次读取的缓存数据大小
+                byte[] bufArray = new byte[socketOptions.getMaxReadBytes()]; //从服务器单次读取的最大数据
                 int len = inputStream.read(bufArray);
-                if (len == -1) {
+                if (len == -1) { //no more data
                     break;
                 }
                 int remaining = byteBuffer.remaining();
-                if (len > remaining) { //读多了
+                if (len > remaining) { //从stream读取的数据超过一个body的大小
+                    //保存一个body的数据到byteBuffer中
                     byteBuffer.put(bufArray, 0, remaining);
+                    //将多余的数据保存到remainingBuf中缓存，等下一次读取
                     remainingBuf = ByteBuffer.allocate(len - remaining);
                     remainingBuf.order(socketOptions.getReadOrder());
                     remainingBuf.put(bufArray, remaining, len - remaining);
-                } else { //还没够或者刚刚好
+                } else { //从stream读取的数据小于或等于一个body的大小
                     byteBuffer.put(bufArray, 0, len);
                 }
             } catch (Exception e) {

@@ -37,7 +37,7 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
      */
     private ISocketActionDispatch actionDispatch;
     /**
-     * 写入数据的线程
+     * 写数据线程
      */
     private Thread writerThread;
     /**
@@ -76,13 +76,12 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
     private Runnable writerTask = new Runnable() {
         @Override
         public void run() {
-            //循环写数据到socket中
+            //循环写数据到socket
             while (!isStop) {
                 try {
                     byte[] sender = packetsToSend.take();
                     write(sender);
                 } catch (InterruptedException e) {
-                    //取数据异常
                     e.printStackTrace();
                 }
             }
@@ -92,29 +91,29 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
     @Override
     public void write(byte[] sendBytes) {
         if (sendBytes != null) {
-            LogUtil.d("发送的数据=" + new String(sendBytes, Charset.forName("utf-8")));
+            LogUtil.d("发送数据=" + new String(sendBytes, Charset.forName("utf-8")));
             try {
-                int packageSize = socketOptions.getMaxWriteBytes(); //每次发送的数据包的大小
+                int packageSize = socketOptions.getMaxWriteBytes(); //每次可以发送的最大数据
                 int remainingCount = sendBytes.length;
-                ByteBuffer writeBuf = ByteBuffer.allocate(packageSize); //分配一个内存缓存
+                ByteBuffer writeBuf = ByteBuffer.allocate(packageSize);
                 writeBuf.order(socketOptions.getReadOrder());
                 int index = 0;
-                //如果要发送的数据大小大于每次发送的数据包的大小，则要分多次将数据发出去
+                //如果发送的数据大于单次可发送的最大数据，则分多次发送
                 while (remainingCount > 0) {
                     int realWriteLength = Math.min(packageSize, remainingCount);
                     writeBuf.clear(); //清空缓存
                     writeBuf.rewind(); //将position位置移到0
                     writeBuf.put(sendBytes, index, realWriteLength);
-                    writeBuf.flip(); //将position赋为0，limit赋为数据大小
+                    //
+                    writeBuf.flip();
                     byte[] writeArr = new byte[realWriteLength];
                     writeBuf.get(writeArr);
                     outputStream.write(writeArr);
-                    outputStream.flush(); //强制缓存中残留的数据写入清空
+                    outputStream.flush(); //强制写入缓存中残留数据
                     index += realWriteLength;
                     remainingCount -= realWriteLength;
                 }
             } catch (Exception e) {
-                //写数据异常
                 e.printStackTrace();
             }
         }
