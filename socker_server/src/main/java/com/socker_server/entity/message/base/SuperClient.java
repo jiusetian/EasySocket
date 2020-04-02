@@ -14,7 +14,7 @@ public class SuperClient implements IClient {
     /**
      * 回调标识
      */
-    private String callbackId;
+    private String mcallbackId;
 
     public String getMsgId() {
         return msgId;
@@ -26,10 +26,10 @@ public class SuperClient implements IClient {
 
 
     public String getCallbackId() {
-        return callbackId;
+        return mcallbackId;
     }
 
     public void setCallbackId(String callbakcId) {
-        this.callbackId = callbakcId;
+        this.mcallbackId = callbakcId;
     }
 }

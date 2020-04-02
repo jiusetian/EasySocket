@@ -88,7 +88,7 @@ public class ResponseDispatcher {
                         e.printStackTrace();
                     }
                     //继续循环
-                    if (!timeoutExecutor.isShutdown()) {
+                    if (timeoutExecutor!=null&&!timeoutExecutor.isShutdown()) {
                         run();
                     }
                 }
