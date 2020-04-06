@@ -38,6 +38,7 @@ public class HandlerIO {
             case MessageID.CALLBACK_MSG: //回调消息
                 superResponse =new CallbackResponse();
                 ( superResponse).setCallbackId(callbackId);
+                System.out.println("消息id="+callbackId);
                 superResponse.setMsgId(MessageID.CALLBACK_MSG);
                 ((CallbackResponse) superResponse).setFrom("server");
                 break;

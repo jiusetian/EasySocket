@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" addBOMForNewFiles="with NO BOM">
+  <component name="Encoding">
     <file url="file://$PROJECT_DIR$/easysocket/src/main/java/com/easysocket/config/EasySocketOptions.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/easysocket/src/main/java/com/easysocket/connection/dispatcher/ResponseDispatcher.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/easysocket/src/main/java/com/easysocket/entity/basemsg/SuperSender.java" charset="GBK" />
     <file url="file://$PROJECT_DIR$/socker_server/src/main/java/com/socker_server/entity/message/base/SuperResponse.java" charset="GBK" />
     <file url="PROJECT" charset="UTF-8" />
