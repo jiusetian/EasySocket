@@ -97,7 +97,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
             if (bodyLength > 0) {
                 if (bodyLength > socketOptions.getMaxResponseDataMb() * 1024 * 1024) { //是否大于最大的读取数
                     throw new SocketReadExeption("服务器返回的单次数据超过了规定的最大值，可能你的Socket消息的数据格式不对，本项目默认的消息格式" +
-                            "为：Header+Data，消息头Header保存消息的长度，一般长度为一个int，Data部分保存消息内容，为了防止内存溢出，请规范好相关协议");
+                            "为：Header+Body，消息头Header保存消息的长度，一般长度为一个int，Body保存消息内容，请规范好相关协议");
                 }
                 ByteBuffer byteBuffer = ByteBuffer.allocate(bodyLength);
                 byteBuffer.order(socketOptions.getReadOrder());
