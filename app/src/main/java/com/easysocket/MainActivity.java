@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(CallbackResponse response) {
                         LogUtil.d("回调消息=" + response.toString());
-                        Toast.makeText(MainActivity.this,response.toString(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this,"回调消息："+response.toString(),Toast.LENGTH_LONG).show();
                     }
 
                     @Override
