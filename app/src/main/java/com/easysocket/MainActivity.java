@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import com.easysocket.callback.ProgressDialogCallBack;
 import com.easysocket.callback.SimpleCallBack;
@@ -70,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
 
                             @Override
                             public void onResponse(String s) {
-
                                 LogUtil.d("进度条回调消息=" + s);
                             }
 
@@ -106,7 +106,8 @@ public class MainActivity extends AppCompatActivity {
                 .onCallBack(new SimpleCallBack<CallbackResponse>(sender.getCallbackId()) {
                     @Override
                     public void onResponse(CallbackResponse response) {
-                        LogUtil.d("回调消息=" + response.toString());
+                        LogUtil.d("回调消息=" + response.toString()+"，当前线程为："+Thread.currentThread().getName());
+                        Toast.makeText(MainActivity.this,response.toString(),Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -195,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
             super.onSocketResponse(socketAddress, originReadData);
-            LogUtil.d("socket监听器收到数据=" + originReadData.getBodyString());
+            LogUtil.d("socket监听器收到数据=" + originReadData.getBodyString()+"，当前线程为："+Thread.currentThread().getName());
         }
     };
 

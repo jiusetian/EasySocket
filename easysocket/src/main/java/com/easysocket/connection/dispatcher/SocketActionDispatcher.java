@@ -48,6 +48,10 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
      * 事件消费队列
      */
     private static final LinkedBlockingQueue<ActionBean> actions = new LinkedBlockingQueue();
+    /**
+     * 切换到UI线程
+     */
+    private MainThreadExecutor mainThreadExecutor=new MainThreadExecutor();
 
 
     public SocketActionDispatcher(IConnectionManager connectionManager, SocketAddress socketAddress) {
@@ -140,7 +144,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
      * @param content
      * @param actionListener
      */
-    private void dispatchActionToListener(String action, Serializable content, ISocketActionListener actionListener) {
+    private void dispatchActionToListener(String action, final Serializable content, final ISocketActionListener actionListener) {
         switch (action) {
 
             case ACTION_CONN_SUCCESS: //连接成功
@@ -156,7 +160,12 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                 break;
 
             case ACTION_READ_COMPLETE: //读取数据完成
-                actionListener.onSocketResponse(socketAddress, (OriginReadData) content);
+                mainThreadExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        actionListener.onSocketResponse(socketAddress, (OriginReadData) content);
+                    }
+                });
                 break;
         }
     }

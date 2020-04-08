@@ -335,7 +335,7 @@ public class EasySocketOptions {
         options.callbakcIdKeyFactory = null;
         options.requestTimeout = 10 * 1000; //默认十秒
         options.isOpenRequestTimeout = true; //默认开启
-        options.charsetName = "utf-8";
+        options.charsetName = "UTF-8";
         return options;
     }
 

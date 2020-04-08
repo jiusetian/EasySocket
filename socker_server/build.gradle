@@ -9,3 +9,8 @@ dependencies {
 
 sourceCompatibility = "7"
 targetCompatibility = "7"
+
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
