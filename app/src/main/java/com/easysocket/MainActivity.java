@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 .onCallBack(new SimpleCallBack<CallbackResponse>(sender.getCallbackId()) {
                     @Override
                     public void onResponse(CallbackResponse response) {
-                        LogUtil.d("回调消息=" + response.toString()+"，当前线程为："+Thread.currentThread().getName());
+                        LogUtil.d("回调消息=" + response.toString());
                         Toast.makeText(MainActivity.this,response.toString(),Toast.LENGTH_LONG).show();
                     }
 
@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
             super.onSocketResponse(socketAddress, originReadData);
-            LogUtil.d("socket监听器收到数据=" + originReadData.getBodyString()+"，当前线程为："+Thread.currentThread().getName());
+            LogUtil.d("socket监听器收到数据=" + originReadData.getBodyString());
         }
     };
 

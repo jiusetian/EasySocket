@@ -39,15 +39,7 @@ public class HandlerIO {
                 superResponse =new CallbackResponse();
                 ( superResponse).setCallbackId(callbackId);
                 superResponse.setMsgId(MessageID.CALLBACK_MSG);
-                ((CallbackResponse) superResponse).setFrom("server服务器分化我听后去华容我去换分配文化节安排核武器普通话品去黑头棚户区我图片黄文攀签" +
-                        "合同品去黑头棚户区普通话品去黑头怕文化馆屏切换给图片好横屏品问题和普通话盘盘害怕我股票哈苹果还骗我就怕为假牌关" +
-                        "键我扒鸡股票将盘品位怕我就天平架盘键盘合同品去黑头棚户区普通话品去黑头怕文化馆屏切换给图片好横屏品问题和普通话盘盘害怕我股票哈苹果还骗我就怕为假牌关" +
-                        "合同品去黑头棚户区普通话品去黑头怕文化馆屏切换给图片好横屏品问题和普通话盘盘害怕我股票哈苹果还骗我就怕为假牌关" +
-                        "合同品去黑头棚户区普通话品去黑头怕文化馆屏切换给图片好横屏品问题和普通话盘盘害怕我股票哈苹果还骗我就怕为假牌关" +
-                        "合同品去黑头棚户区普通话品去黑头怕文化馆屏切换给图片好横屏品问题和普通话盘盘害怕我股票哈苹果还骗我就怕为假牌关" +
-                        "合同品去黑头棚户区普通话品去黑头怕文化馆屏切换给图片好横屏品问题和普通话盘盘害怕我股票哈苹果还骗我就怕为假牌关" +
-                        "合同品去黑头棚户区普通话品去黑头怕文化馆屏切换给图片好横屏品问题和普通话盘盘害怕我股票哈苹果还骗我就怕为假牌关" +
-                        "合同品去黑头棚户区普通话品去黑头怕文化馆屏切换给图片好横屏品问题和普通话盘盘害怕我股票哈苹果还骗我就怕为假牌关");
+                ((CallbackResponse) superResponse).setFrom("我来自server");
                 break;
 
             case MessageID.TEST_MSG: //测试消息
@@ -76,9 +68,6 @@ public class HandlerIO {
 
         if (superResponse == null) return;
         System.out.println("send message:"+ convertObjectToJson(superResponse));
-
-        System.out.println("服务器");
-
         easyWriter.offer(superResponse.parse());
     }
 
