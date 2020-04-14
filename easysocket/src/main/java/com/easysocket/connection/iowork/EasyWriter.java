@@ -104,7 +104,6 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
                     writeBuf.clear(); //清空缓存
                     writeBuf.rewind(); //将position位置移到0
                     writeBuf.put(sendBytes, index, realWriteLength);
-                    //
                     writeBuf.flip();
                     byte[] writeArr = new byte[realWriteLength];
                     writeBuf.get(writeArr);
