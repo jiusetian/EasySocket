@@ -210,4 +210,12 @@ public class EasySocket {
         return connect;
     }
 
+    /**
+     * 设置是否为debug
+     * @param debug
+     */
+    public void setDebug(boolean debug){
+        EasySocketOptions.setIsDebug(debug);
+    }
+
 }

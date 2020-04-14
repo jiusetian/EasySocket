@@ -2,10 +2,12 @@ package com.easysocket.utils;
 
 import android.util.Log;
 
+import com.easysocket.EasySocket;
+
 
 public class LogUtil {
     public static final String LOGTAG = "easysocket";
-    public static boolean debugEnabled = true;
+    public static boolean debugEnabled = EasySocket.getInstance().getOptions().isDebug();
 
     public LogUtil() {
     }
