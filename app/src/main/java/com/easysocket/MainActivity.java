@@ -85,6 +85,14 @@ public class MainActivity extends AppCompatActivity {
                         });
             }
         });
+
+        //断开连接
+        findViewById(R.id.disconnect).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EasySocket.getInstance().closeConnection(false);
+            }
+        });
     }
 
     private IProgressDialog progressDialog = new IProgressDialog() {

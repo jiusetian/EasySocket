@@ -87,12 +87,12 @@ public class EasySocket {
     }
 
     /**
-     * 销毁连接
-     *
+     * 关闭连接
+     * @param isNeedReconnect 是否需要重连
      * @return
      */
-    public EasySocket destroyConnection() {
-        getConnection().disconnect(new Boolean(false));
+    public EasySocket closeConnection(boolean isNeedReconnect) {
+        getConnection().disconnect(new Boolean(isNeedReconnect));
         return this;
     }
 

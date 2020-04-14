@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * Date：2019/6/4
  * Note：回调消息分发器
  */
-public class ResponseDispatcher {
+public class CallbackResponseDispatcher {
     /**
      * 保存回调监听实例,key为请求回调标识callbackId
      */
@@ -49,7 +49,7 @@ public class ResponseDispatcher {
     private EasySocketOptions socketOptions;
 
 
-    public ResponseDispatcher(IConnectionManager connectionManager) {
+    public CallbackResponseDispatcher(IConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
         socketOptions = connectionManager.getOptions();
         //注册监听
@@ -119,14 +119,17 @@ public class ResponseDispatcher {
             try {
                 String callbackIdKey = socketOptions.getCallbakcIdKeyFactory().getCallbackIdKey();
                 JSONObject data = new JSONObject(originReadData.getBodyString());
-                String callbackId = data.getString(callbackIdKey);
-                //获取signer对应的callback
-                SuperCallBack callBack = callbacks.get(callbackId);
-                if (callBack != null) {
-                    //回调
-                    callBack.onSuccess(originReadData.getBodyString());
-                    callbacks.remove(callbackId); //移除完成任务的callback
-                    LogUtil.d("移除的callbackId=" + callbackId );
+                //是否为回调消息
+                if (data.has(callbackIdKey)){
+                    String callbackId = data.getString(callbackIdKey);
+                    //获取signer对应的callback
+                    SuperCallBack callBack = callbacks.get(callbackId);
+                    if (callBack != null) {
+                        //回调
+                        callBack.onSuccess(originReadData.getBodyString());
+                        callbacks.remove(callbackId); //移除完成任务的callback
+                        LogUtil.d("移除的callbackId=" + callbackId );
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -4,7 +4,7 @@ import com.easysocket.callback.SuperCallBack;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.action.SocketAction;
 import com.easysocket.connection.action.SocketStatus;
-import com.easysocket.connection.dispatcher.ResponseDispatcher;
+import com.easysocket.connection.dispatcher.CallbackResponseDispatcher;
 import com.easysocket.connection.dispatcher.SocketActionDispatcher;
 import com.easysocket.connection.heartbeat.HeartManager;
 import com.easysocket.connection.iowork.IOManager;
@@ -63,7 +63,7 @@ public abstract class SuperConnection implements IConnectionManager {
     /**
      * socket回调消息的分发器
      */
-    private ResponseDispatcher responseDispatcher;
+    private CallbackResponseDispatcher callbackResponseDispatcher;
     /**
      * 连接切换的监听
      */
@@ -96,8 +96,8 @@ public abstract class SuperConnection implements IConnectionManager {
         if (heartManager != null)
             heartManager.setOptions(socketOptions);
 
-        if (responseDispatcher != null)
-            responseDispatcher.setSocketOptions(socketOptions);
+        if (callbackResponseDispatcher != null)
+            callbackResponseDispatcher.setSocketOptions(socketOptions);
 
         //更改了重连器
         if (reconnection != null && !reconnection.equals(socketOptions.getReconnectionManager())) {
@@ -174,8 +174,8 @@ public abstract class SuperConnection implements IConnectionManager {
                 if (ioManager != null)
                     ioManager.closeIO();
                 //关闭回调分发器线程
-                if (responseDispatcher != null)
-                    responseDispatcher.stopThread();
+                if (callbackResponseDispatcher != null)
+                    callbackResponseDispatcher.stopThread();
                 //关闭连接线程
                 if (connectThread != null && connectThread.isAlive() && !connectThread.isInterrupted()) {
                     connectThread.interrupt();
@@ -228,7 +228,7 @@ public abstract class SuperConnection implements IConnectionManager {
 
     //开启管理器
     private void startManager() {
-        responseDispatcher = new ResponseDispatcher(this);
+        callbackResponseDispatcher = new CallbackResponseDispatcher(this);
         ioManager = new IOManager(this, actionDispatcher);
         ioManager.startIO();
     }
@@ -293,7 +293,7 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public void onCallBack(SuperCallBack callBack) {
-        responseDispatcher.addSocketCallback(callBack);
+        callbackResponseDispatcher.addSocketCallback(callBack);
     }
 
 
@@ -317,7 +317,7 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public synchronized IConnectionManager upCallbackMessage(SuperCallbackSender sender) {
-        responseDispatcher.checkCallbackSender(sender);
+        callbackResponseDispatcher.checkCallbackSender(sender);
         sendBytes(sender.parse());
         return this;
     }
