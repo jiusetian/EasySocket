@@ -80,8 +80,10 @@ public class EasySocket {
         if (options.getBackupAddress() != null) {
             socketAddress.setBackupAddress(options.getBackupAddress());
         }
-        connection = connectionHolder.getConnection(socketAddress,
-                options == null ? EasySocketOptions.getDefaultOptions() : options);
+        if (connection==null){
+            connection = connectionHolder.getConnection(socketAddress,
+                    options == null ? EasySocketOptions.getDefaultOptions() : options);
+        }
         connection.connect(); //进行连接
         return this;
     }
