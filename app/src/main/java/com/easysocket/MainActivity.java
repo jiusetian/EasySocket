@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     //是否已连接
     private boolean isConnected;
-    //控制连接的按钮
+    //连接或断开连接的按钮
     private Button controlConnect;
 
 
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         controlConnect=findViewById(R.id.control_conn);
 
-        //创建一个socket连接
+        //创建socket连接
         findViewById(R.id.create_conn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,9 +71,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         //有进度条的消息
         findViewById(R.id.progress_msg).setOnClickListener(new View.OnClickListener() {
+            //进度条接口
+            private IProgressDialog progressDialog = new IProgressDialog() {
+                @Override
+                public Dialog getDialog() {
+                    Dialog dialog = new Dialog(MainActivity.this);
+                    dialog.setTitle("正在加载...");
+                    return dialog;
+                }
+            };
             @Override
             public void onClick(View v) {
                 CallbackSender sender = new CallbackSender();
@@ -82,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
                 EasySocket.getInstance()
                         .upCallbackMessage(sender)
                         .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender.getCallbackId()) {
-
                             @Override
                             public void onResponse(String s) {
                                 LogUtil.d("进度条回调消息=" + s);
@@ -117,15 +124,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-    private IProgressDialog progressDialog = new IProgressDialog() {
-        @Override
-        public Dialog getDialog() {
-            Dialog dialog = new Dialog(MainActivity.this);
-            dialog.setTitle("正在加载...");
-            return dialog;
-        }
-    };
 
 
     /**
@@ -246,7 +244,6 @@ public class MainActivity extends AppCompatActivity {
      * 初始化EasySocket
      */
     private void initEasySocket() {
-
         //socket配置
         EasySocketOptions options = new EasySocketOptions.Builder()
                 .setSocketAddress(new SocketAddress("192.168.3.9", 9999)) //主机地址
