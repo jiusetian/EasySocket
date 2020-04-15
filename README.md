@@ -1,4 +1,4 @@
-# EasySocket
+ # EasySocket
 
  博客地址：https://blog.csdn.net/liuxingrong666/article/details/91579548
 
@@ -45,6 +45,8 @@ allprojects {
 
 ### 二、EasySocket的基本功能使用
        
+1、创建Socket连接
+
 一般在项目的Application中对EasySocket进行全局化配置，下面是一个最简单的配置
 
         /**
@@ -63,7 +65,10 @@ allprojects {
                     .buildConnection();//创建一个socket连接
         }
 
-这里主要设置了IP和端口，其他的配置参数都使用了默认值，来看看框架的简单使用
+这里主要设置了IP和端口，其他的配置参数都使用了默认值，然后创建一个Socket连接
+
+
+2、注册Socket的监听
 
 定义一个socket行为的监听器，如下
 
@@ -119,6 +124,9 @@ allprojects {
             //监听socket相关行为
             EasySocket.getInstance().subscribeSocketAction(socketActionListener);
 
+
+3、发送Socket消息
+
 演示发送一个消息
 
     /**
@@ -142,6 +150,22 @@ allprojects {
 
 可以看到注册的监听器监收到了服务器的响应消息
 
+
+4、断开Socket连接
+
+    //断开当前的Socket连接，参数false表示当前断开不需要自动重连
+    EasySocket.getInstance().disconnect(false);
+     
+    //连接Socket
+    EasySocket.getInstance().connect();
+    
+    
+5、销毁连接
+
+    EasySocket.getInstance().destroyConnection();
+    
+destroyConnection()代表销毁整个连接状态，跟disconnect()不一样，如果此时要进行socket连接需要重新创建一个连接
+    
     
 测试的话，可以运行本项目提供的服务端程序socket_server，在Android studio要先将服务端程序添加配置上去，具体怎么操作可以参考我的博客，地址：https://blog.csdn.net/liuxingrong666/article/details/91579548
 
