@@ -51,7 +51,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
     /**
      * 切换到UI线程
      */
-    private MainThreadExecutor mainThreadExecutor=new MainThreadExecutor();
+    private MainThreadExecutor mainThreadExecutor = new MainThreadExecutor();
 
 
     public SocketActionDispatcher(IConnectionManager connectionManager, SocketAddress socketAddress) {
@@ -148,15 +148,32 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
         switch (action) {
 
             case ACTION_CONN_SUCCESS: //连接成功
-                actionListener.onSocketConnSuccess(socketAddress);
+                mainThreadExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        actionListener.onSocketConnSuccess(socketAddress);
+                    }
+                });
+
                 break;
 
             case ACTION_CONN_FAIL: //连接失败
-                actionListener.onSocketConnFail(socketAddress, (Boolean) content);
+                mainThreadExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        actionListener.onSocketConnFail(socketAddress, (Boolean) content);
+                    }
+                });
+
                 break;
 
             case ACTION_DISCONNECTION: //连接断开
-                actionListener.onSocketDisconnect(socketAddress, (Boolean) content);
+                mainThreadExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        actionListener.onSocketDisconnect(socketAddress, (Boolean) content);
+                    }
+                });
                 break;
 
             case ACTION_READ_COMPLETE: //读取数据完成

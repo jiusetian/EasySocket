@@ -55,7 +55,7 @@ public class CallbackResponseDispatcher {
         //注册监听
         connectionManager.subscribeSocketAction(socketActionListener);
         //开始超时检测线程
-        startTimeoutThread();
+        engineThread();
     }
 
     /**
@@ -70,7 +70,7 @@ public class CallbackResponseDispatcher {
     /**
      * 超时检测线程
      */
-    private void startTimeoutThread() {
+    public void engineThread() {
         if (timeoutExecutor == null || timeoutExecutor.isShutdown()) {
             timeoutExecutor = Executors.newSingleThreadExecutor();
             timeoutExecutor.execute(new Runnable() {
@@ -99,7 +99,7 @@ public class CallbackResponseDispatcher {
     /**
      * 关闭线程
      */
-    public void stopThread() {
+    public void shutdownThread() {
         if (timeoutExecutor != null && !timeoutExecutor.isShutdown()) {
             //shutdown和shutdownNow的主要区别是前者中断未执行的线程，后者中断所有线程
             timeoutExecutor.shutdownNow();

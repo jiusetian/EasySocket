@@ -67,11 +67,11 @@ public class EasySocket {
     }
 
     /**
-     * 建立一个socket连接
+     * 创建连接对象
      *
      * @return
      */
-    public EasySocket buildConnection() {
+    public EasySocket createConnection() {
         SocketAddress socketAddress = options.getSocketAddress();
         if (options.getSocketAddress() == null) {
             throw new InitialExeption("请在EasySocketOptions中设置SocketAddress");
@@ -87,12 +87,33 @@ public class EasySocket {
     }
 
     /**
-     * 关闭连接
+     * 连接socket
+     * @return
+     */
+    public EasySocket connect(){
+        getConnection().connect();
+        return this;
+    }
+    /**
+     * 关闭连接，此时连接对象还在，只是关闭了socket和相关线程
      * @param isNeedReconnect 是否需要重连
      * @return
      */
-    public EasySocket closeConnection(boolean isNeedReconnect) {
+    public EasySocket disconnect(boolean isNeedReconnect) {
         getConnection().disconnect(new Boolean(isNeedReconnect));
+        return this;
+    }
+
+    /**
+     * 销毁连接对象
+     * @return
+     */
+    public EasySocket destroyConnection(){
+        //首先断开连接
+        getConnection().disconnect(new Boolean(false));
+        //移除连接对象
+        connectionHolder.removeConnection(options.getSocketAddress());
+        connection=null;
         return this;
     }
 

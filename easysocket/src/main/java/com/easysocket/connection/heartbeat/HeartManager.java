@@ -50,11 +50,11 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
      * 心跳频率
      */
     private long freq;
-
     /**
-     * 是否激活了心跳功能
+     * 是否激活了心跳
      */
-    private boolean isActityHeart;
+    private boolean isActivate;
+
 
     /**
      * 心跳包接收监听
@@ -93,26 +93,17 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     public void startHeartbeat(SuperSender clientHeart, HeartbeatListener listener) {
         this.clientHeart = clientHeart;
         this.heartbeatListener = listener;
-        isActityHeart = true;
+        isActivate=true;
         startHeartThread();
     }
 
     //启动心跳线程
     private void startHeartThread() {
-        if (!isActityHeart) return; //只有激活了心跳功能才启动线程
         freq = socketOptions.getHeartbeatFreq(); //心跳频率
         // 启动线程发送心跳
         if (heartExecutor == null || heartExecutor.isShutdown()) {
             heartExecutor = Executors.newSingleThreadScheduledExecutor();
             heartExecutor.scheduleWithFixedDelay(beatTask, 0, freq, TimeUnit.MILLISECONDS);
-        }
-    }
-    //停止心跳线程
-    private void stopHeartThread(){
-        if (heartExecutor != null && !heartExecutor.isShutdown()) {
-            heartExecutor.shutdownNow();
-            heartExecutor = null;
-            resetLoseTimes(); //重置
         }
     }
 
@@ -121,7 +112,12 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
      */
     @Override
     public void stopHeartbeat() {
-        isActityHeart=false;
+        isActivate=false;
+        startHeartThread();
+    }
+
+    //停止心跳线程
+    private void stopHeartThread(){
         if (heartExecutor != null && !heartExecutor.isShutdown()) {
             heartExecutor.shutdownNow();
             heartExecutor = null;
@@ -142,17 +138,21 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
 
     @Override
     public void onSocketConnSuccess(SocketAddress socketAddress) {
+        if (isActivate)
         startHeartThread();
     }
 
     @Override
     public void onSocketConnFail(SocketAddress socketAddress, Boolean isNeedReconnect) {
-        stopHeartThread();
+        //如果不需要重连，则停止心跳频率线程
+        if (!isNeedReconnect)
+            stopHeartThread();
     }
 
     @Override
     public void onSocketDisconnect(SocketAddress socketAddress, Boolean isNeedReconnect) {
-        stopHeartThread();
+        if (!isNeedReconnect)
+            stopHeartThread();
     }
 
     @Override

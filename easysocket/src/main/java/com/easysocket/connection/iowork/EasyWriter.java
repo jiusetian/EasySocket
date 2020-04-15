@@ -58,7 +58,8 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
 
     @Override
     public void openWriter() {
-        if (!isStop) {
+        if (writerThread == null) {
+            outputStream=connectionManager.getOutStream();
             isStop=false;
             writerThread = new Thread(writerTask, "writer thread");
             writerThread.start();
@@ -120,6 +121,7 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
 
     @Override
     public void offer(byte[] sender) {
+        if (!isStop)
         packetsToSend.offer(sender);
     }
 
@@ -128,6 +130,7 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
         try {
             if (outputStream != null)
                 outputStream.close();
+            outputStream=null;
             shutDownThread();
         } catch (IOException e) {
             e.printStackTrace();

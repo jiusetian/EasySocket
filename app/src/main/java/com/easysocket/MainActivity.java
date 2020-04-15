@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.easysocket.callback.ProgressDialogCallBack;
@@ -22,6 +23,10 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
+    //是否已连接
+    private boolean isConnected;
+    //控制连接的按钮
+    private Button controlConnect;
 
 
     @Override
@@ -29,12 +34,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        controlConnect=findViewById(R.id.control_conn);
 
-        //初始化socket
-        initEasySocket();
-
-        //监听socket行为
-        EasySocket.getInstance().subscribeSocketAction(socketActionListener);
+        //创建一个socket连接
+        findViewById(R.id.create_conn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //初始化socket
+                initEasySocket();
+                //监听socket行为
+                EasySocket.getInstance().subscribeSocketAction(socketActionListener);
+            }
+        });
 
         //发送一个消息
         findViewById(R.id.send_msg).setOnClickListener(new View.OnClickListener() {
@@ -86,11 +97,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //断开连接
-        findViewById(R.id.disconnect).setOnClickListener(new View.OnClickListener() {
+        //连接或断开连接
+        controlConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EasySocket.getInstance().closeConnection(false);
+                if (isConnected){
+                    EasySocket.getInstance().disconnect(false);
+                }else {
+                    EasySocket.getInstance().connect();
+                }
+            }
+        });
+
+        //销毁socket连接
+        findViewById(R.id.destroy_conn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EasySocket.getInstance().destroyConnection();
             }
         });
     }
@@ -177,6 +200,8 @@ public class MainActivity extends AppCompatActivity {
         public void onSocketConnSuccess(SocketAddress socketAddress) {
             super.onSocketConnSuccess(socketAddress);
             LogUtil.d("连接成功");
+            controlConnect.setText("socket已连接，点击断开连接");
+            isConnected=true;
         }
 
         /**
@@ -187,6 +212,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSocketConnFail(SocketAddress socketAddress, Boolean isNeedReconnect) {
             super.onSocketConnFail(socketAddress, isNeedReconnect);
+            controlConnect.setText("socket连接被断开，点击进行连接");
+            isConnected=false;
         }
 
         /**
@@ -197,6 +224,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSocketDisconnect(SocketAddress socketAddress, Boolean isNeedReconnect) {
             super.onSocketDisconnect(socketAddress, isNeedReconnect);
+            LogUtil.d("socket断开连接，是否需要重连："+isNeedReconnect);
+            controlConnect.setText("socket连接被断开，点击进行连接");
+            isConnected=false;
         }
 
         /**
@@ -226,6 +256,6 @@ public class MainActivity extends AppCompatActivity {
         //初始化EasySocket
         EasySocket.getInstance()
                 .options(options) //项目配置
-                .buildConnection();//创建一个socket连接
+                .createConnection();//创建一个socket连接
     }
 }

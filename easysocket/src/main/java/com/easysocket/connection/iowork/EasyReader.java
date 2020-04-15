@@ -169,7 +169,8 @@ public class EasyReader implements IReader<EasySocketOptions> {
 
     @Override
     public void openReader() {
-        if (!stopThread) {
+        if (readerThread==null) {
+            inputStream=connectionManager.getInputStream();
             readerThread = new Thread(readerTask, "reader thread");
             stopThread = false;
             readerThread.start();
@@ -234,6 +235,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
         try {
             if (inputStream != null)
                 inputStream.close();
+            inputStream=null;
             shutDownThread();
         } catch (IOException e) {
             e.printStackTrace();
@@ -245,6 +247,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
         this.socketOptions = socketOptions;
     }
 
+    //关闭读数据线程
     private void shutDownThread() {
         if (readerThread != null && readerThread.isAlive() && !readerThread.isInterrupted()) {
             stopThread = true;

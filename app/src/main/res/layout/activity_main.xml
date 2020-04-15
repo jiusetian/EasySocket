@@ -11,6 +11,13 @@
     >
 
     <Button
+        android:id="@+id/create_conn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="创建socket连接"
+        />
+
+    <Button
         android:id="@+id/send_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,11 +47,19 @@
 
 
     <Button
-        android:id="@+id/disconnect"
+        android:id="@+id/control_conn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="断开连接"
+        android:text="连接的控制"
         />
+
+    <Button
+        android:id="@+id/destroy_conn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="销毁socket连接"
+        />
+
 
 
 </LinearLayout>

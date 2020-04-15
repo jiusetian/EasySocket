@@ -107,4 +107,11 @@ public class Util {
             e.printStackTrace();
         }
     }
+
+    public static void throwNotNull(Object object,String emsg) throws Exception {
+
+            if (object==null){
+                throw new Exception(emsg);
+            }
+    }
 }

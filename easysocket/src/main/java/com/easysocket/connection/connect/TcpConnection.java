@@ -69,7 +69,6 @@ public class TcpConnection extends SuperConnection {
         if (socketOptions.getSocketFactory() != null) {
             return socketOptions.getSocketFactory().createSocket(socketAddress, socketOptions);
         }
-
         //默认操作
         SocketSSLConfig config = socketOptions.getEasySSLConfig();
         if (config == null) {

@@ -175,7 +175,7 @@ public abstract class SuperConnection implements IConnectionManager {
                     ioManager.closeIO();
                 //关闭回调分发器线程
                 if (callbackResponseDispatcher != null)
-                    callbackResponseDispatcher.stopThread();
+                    callbackResponseDispatcher.shutdownThread();
                 //关闭连接线程
                 if (connectThread != null && connectThread.isAlive() && !connectThread.isInterrupted()) {
                     connectThread.interrupt();
@@ -223,13 +223,17 @@ public abstract class SuperConnection implements IConnectionManager {
         LogUtil.d("socket连接成功");
         actionDispatcher.dispatchAction(SocketAction.ACTION_CONN_SUCCESS);
         connectionStatus.set(SocketStatus.SOCKET_CONNECTED);
-        startManager();
+        openSocketManager();
     }
 
-    //开启管理器
-    private void startManager() {
-        callbackResponseDispatcher = new CallbackResponseDispatcher(this);
-        ioManager = new IOManager(this, actionDispatcher);
+    //开启socket相关管理器
+    private void openSocketManager() {
+        if (callbackResponseDispatcher == null)
+            callbackResponseDispatcher = new CallbackResponseDispatcher(this);
+        if (ioManager == null)
+            ioManager = new IOManager(this, actionDispatcher);
+        //启动相关线程
+        callbackResponseDispatcher.engineThread();
         ioManager.startIO();
     }
 
