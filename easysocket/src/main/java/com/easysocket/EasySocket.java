@@ -14,7 +14,7 @@ import com.easysocket.interfaces.conn.ISocketActionListener;
 /**
  * Author：Alex
  * Date：2019/6/4
- * Note：EasySocket api
+ * Note：EasySocket API
  */
 public class EasySocket {
 

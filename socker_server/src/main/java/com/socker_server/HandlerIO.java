@@ -25,25 +25,26 @@ public class HandlerIO {
 
     /**
      * 处理接收的信息
+     *
      * @param receiver
      */
     public void handReceiveMsg(String receiver) {
-        System.out.println("receive message:"+receiver);
-        SuperClient clientMsg =new Gson().fromJson(receiver, SuperClient.class);
+        System.out.println("receive message:" + receiver);
+        SuperClient clientMsg = new Gson().fromJson(receiver, SuperClient.class);
         String id = clientMsg.getMsgId(); //消息ID
-        String callbackId =clientMsg.getCallbackId(); //回调ID
+        String callbackId = clientMsg.getCallbackId(); //回调ID
         SuperResponse superResponse = null;
 
         switch (id) {
             case MessageID.CALLBACK_MSG: //回调消息
-                superResponse =new CallbackResponse();
-                ( superResponse).setCallbackId(callbackId);
+                superResponse = new CallbackResponse();
+                (superResponse).setCallbackId(callbackId);
                 superResponse.setMsgId(MessageID.CALLBACK_MSG);
                 ((CallbackResponse) superResponse).setFrom("我来自server");
                 break;
 
             case MessageID.TEST_MSG: //测试消息
-                superResponse =new TestResponse();
+                superResponse = new TestResponse();
                 superResponse.setMsgId(MessageID.TEST_MSG);
                 ((TestResponse) superResponse).setFrom("server");
                 break;
@@ -54,12 +55,12 @@ public class HandlerIO {
                 break;
 
             case MessageID.DELAY_MSG: //延时消息
-                superResponse =new DelayResponse();
-                ( superResponse).setCallbackId(callbackId);
+                superResponse = new DelayResponse();
+                (superResponse).setCallbackId(callbackId);
                 superResponse.setMsgId(MessageID.DELAY_MSG);
                 ((DelayResponse) superResponse).setFrom("server");
                 try {
-                    Thread.sleep(1000*5);
+                    Thread.sleep(1000 * 5);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -67,15 +68,14 @@ public class HandlerIO {
         }
 
         if (superResponse == null) return;
-        System.out.println("send message:"+ convertObjectToJson(superResponse));
+        System.out.println("send message:" + convertObjectToJson(superResponse));
         easyWriter.offer(superResponse.parse());
     }
 
 
-
-    private  String convertObjectToJson(Object object){
-        Gson gson=new Gson();
-        String json=gson.toJson(object);
+    private String convertObjectToJson(Object object) {
+        Gson gson = new Gson();
+        String json = gson.toJson(object);
         return json;
     }
 

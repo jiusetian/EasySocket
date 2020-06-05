@@ -1,5 +1,4 @@
 package com.easysocket.utils;
-
 import android.util.Log;
 
 import com.easysocket.EasySocket;

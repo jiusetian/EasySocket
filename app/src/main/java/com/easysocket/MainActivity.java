@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
     private void initEasySocket() {
         //socket配置
         EasySocketOptions options = new EasySocketOptions.Builder()
-                .setSocketAddress(new SocketAddress("192.168.3.9", 9999)) //主机地址
+                .setSocketAddress(new SocketAddress("192.168.3.19", 9999)) //主机地址
                 .setCallbackIdKeyFactory(new CallbackIdKeyFactoryImpl())
                 .build();
 

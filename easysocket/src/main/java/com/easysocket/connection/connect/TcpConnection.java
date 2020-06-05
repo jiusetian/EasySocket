@@ -42,6 +42,7 @@ public class TcpConnection extends SuperConnection {
             connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED); //设置为未连接状态
             throw new RuntimeException("创建socket失败");
         }
+
         //进行socket连接
         socket.connect(new InetSocketAddress(socketAddress.getIp(), socketAddress.getPort()), socketOptions.getConnectTimeout());
 

@@ -31,9 +31,9 @@ public class IOManager implements IIOManager {
 
     //≥ı ºªØio
     private void initIO(Socket socket) throws IOException {
-        writer = new EasyWriter(socket.getOutputStream(),socket); //–¥
-        HandlerIO handlerIO=new HandlerIO(writer);
-        reader = new EasyReader(socket.getInputStream(),socket,handlerIO); //∂¡
+        writer = new EasyWriter(socket.getOutputStream(), socket); //–¥
+        HandlerIO handlerIO = new HandlerIO(writer);
+        reader = new EasyReader(socket.getInputStream(), socket, handlerIO); //∂¡
     }
 
     @Override

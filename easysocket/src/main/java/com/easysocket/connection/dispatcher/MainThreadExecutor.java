@@ -11,7 +11,9 @@ import java.util.concurrent.Executor;
  * Note：切换到主线程
  */
 public class MainThreadExecutor implements Executor {
+
     private final Handler handler = new Handler(Looper.getMainLooper());
+
     @Override
     public void execute(Runnable r) {
         handler.post(r);

@@ -44,8 +44,7 @@ public class MainClass {
 
         public Service(Socket socket) {
             this.socket = socket;
-            System.out.println("connect server sucessful ");
-
+            System.out.println("connect server sucessful: "+  socket.getInetAddress().getHostAddress());
         }
 
         @Override
