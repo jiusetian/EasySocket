@@ -10,7 +10,7 @@ import com.easysocket.EasySocket;
 public class SuperSender implements ISender {
 
     @Override
-    public final byte[] parse() {
-        return EasySocket.getInstance().getOptions().getMessageProtocol().parse(this);
+    public final byte[] pack() {
+        return EasySocket.getInstance().getOptions().getMessageProtocol().pack(this);
     }
 }

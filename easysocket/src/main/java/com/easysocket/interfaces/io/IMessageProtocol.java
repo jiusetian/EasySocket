@@ -5,7 +5,7 @@ import com.easysocket.entity.basemsg.ISender;
 import java.nio.ByteOrder;
 
 /**
- * 包头数据格式
+ * 消息数据格式
  */
 public interface IMessageProtocol {
 
@@ -25,5 +25,5 @@ public interface IMessageProtocol {
      * @param sender
      * @return
      */
-    byte[] parse(ISender sender);
+    byte[] pack(ISender sender);
 }

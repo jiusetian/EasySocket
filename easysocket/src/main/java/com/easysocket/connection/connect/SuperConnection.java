@@ -315,14 +315,14 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public synchronized IConnectionManager upObject(ISender sender) {
-        sendBytes(sender.parse());
+        sendBytes(sender.pack());
         return this;
     }
 
     @Override
     public synchronized IConnectionManager upCallbackMessage(SuperCallbackSender sender) {
         callbackResponseDispatcher.checkCallbackSender(sender);
-        sendBytes(sender.parse());
+        sendBytes(sender.pack());
         return this;
     }
 

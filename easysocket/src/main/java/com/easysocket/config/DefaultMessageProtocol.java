@@ -31,7 +31,7 @@ public class DefaultMessageProtocol implements IMessageProtocol {
     }
 
     @Override
-    public byte[] parse(ISender sender) {
+    public byte[] pack(ISender sender) {
         // 默认为utf-8 Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())
         byte[] body = new Gson().toJson(sender).getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName()));
         // 消息头的长度，指多少个byte
