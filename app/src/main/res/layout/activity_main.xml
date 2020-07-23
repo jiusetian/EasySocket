@@ -18,6 +18,13 @@
         />
 
     <Button
+        android:id="@+id/control_conn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Socket未连接"
+        />
+
+    <Button
         android:id="@+id/send_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,13 +52,6 @@
         android:text="带进度条的请求"
         />
 
-
-    <Button
-        android:id="@+id/control_conn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="连接的控制"
-        />
 
     <Button
         android:id="@+id/destroy_conn"

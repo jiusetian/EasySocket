@@ -52,9 +52,9 @@ public class CallbackResponseDispatcher {
     public CallbackResponseDispatcher(IConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
         socketOptions = connectionManager.getOptions();
-        //注册监听
+        // 注册监听
         connectionManager.subscribeSocketAction(socketActionListener);
-        //开始超时检测线程
+        // 开始超时检测线程
         engineThread();
     }
 
@@ -77,7 +77,7 @@ public class CallbackResponseDispatcher {
                 @Override
                 public void run() {
                     try {
-                        //只有超时的元素才会被取出，没有的话会被等待
+                        // 只有超时的元素才会被取出，没有的话会被等待
                         timeoutItem item = timeoutQueue.take();
                         if (item != null) {
                             SuperCallBack callBack = callbacks.remove(item.callbackId);
@@ -87,7 +87,7 @@ public class CallbackResponseDispatcher {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    //继续循环
+                    // 继续循环
                     if (timeoutExecutor!=null&&!timeoutExecutor.isShutdown()) {
                         run();
                     }
@@ -101,7 +101,7 @@ public class CallbackResponseDispatcher {
      */
     public void shutdownThread() {
         if (timeoutExecutor != null && !timeoutExecutor.isShutdown()) {
-            //shutdown和shutdownNow的主要区别是前者中断未执行的线程，后者中断所有线程
+            // shutdown和shutdownNow的主要区别是前者中断未执行的线程，后者中断所有线程
             timeoutExecutor.shutdownNow();
             timeoutExecutor = null;
         }
@@ -119,15 +119,15 @@ public class CallbackResponseDispatcher {
             try {
                 String callbackIdKey = socketOptions.getCallbakcIdKeyFactory().getCallbackIdKey();
                 JSONObject data = new JSONObject(originReadData.getBodyString());
-                //是否为回调消息
+                // 是否为回调消息
                 if (data.has(callbackIdKey)){
                     String callbackId = data.getString(callbackIdKey);
-                    //获取signer对应的callback
+                    // 获取signer对应的callback
                     SuperCallBack callBack = callbacks.get(callbackId);
                     if (callBack != null) {
-                        //回调
+                        // 回调
                         callBack.onSuccess(originReadData.getBodyString());
-                        callbacks.remove(callbackId); //移除完成任务的callback
+                        callbacks.remove(callbackId); // 移除完成任务的callback
                         LogUtil.d("移除的callbackId=" + callbackId );
                     }
                 }
@@ -146,7 +146,7 @@ public class CallbackResponseDispatcher {
      */
     public void addSocketCallback(SuperCallBack superCallBack) {
         callbacks.put(superCallBack.getCallbackId(), superCallBack);
-        //放入延时队列
+        // 放入延时队列
         long delayTime = socketOptions == null ?
                 EasySocketOptions.getDefaultOptions().getRequestTimeout() : socketOptions.getRequestTimeout();
         timeoutQueue.add(new timeoutItem(superCallBack.getCallbackId(), delayTime, TimeUnit.MILLISECONDS));
@@ -157,8 +157,8 @@ public class CallbackResponseDispatcher {
      */
     class timeoutItem implements Delayed {
 
-        String callbackId; //当前callback的callbackId
-        long executeTime; //触发时间
+        String callbackId; // 当前callback的callbackId
+        long executeTime; // 触发时间
 
         public timeoutItem(String callbackId, long delayTime, TimeUnit timeUnit) {
             this.callbackId = callbackId;

@@ -5,7 +5,6 @@ import com.easysocket.connection.heartbeat.HeartManager;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.basemsg.ISender;
 import com.easysocket.entity.basemsg.SuperCallbackSender;
-import com.easysocket.entity.basemsg.SuperSender;
 import com.easysocket.entity.exception.InitialExeption;
 import com.easysocket.entity.exception.NoNullException;
 import com.easysocket.interfaces.conn.IConnectionManager;
@@ -177,7 +176,7 @@ public class EasySocket {
      * @param clientHeart
      * @return
      */
-    public EasySocket startHeartBeat(SuperSender clientHeart, HeartManager.HeartbeatListener listener) {
+    public EasySocket startHeartBeat(ISender clientHeart, HeartManager.HeartbeatListener listener) {
         getConnection().getHeartManager().startHeartbeat(clientHeart, listener);
         return this;
     }
@@ -225,7 +224,7 @@ public class EasySocket {
      * @param sender
      * @param socketAddress
      */
-    public IConnectionManager upToSpecifyConnection(SuperSender sender, SocketAddress socketAddress) {
+    public IConnectionManager upToSpecifyConnection(ISender sender, SocketAddress socketAddress) {
         IConnectionManager connect = getSpecifyConnection(socketAddress);
         if (connect != null) {
             connect.upObject(sender);

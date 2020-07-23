@@ -3,7 +3,7 @@ package com.easysocket.connection.heartbeat;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.basemsg.SuperSender;
+import com.easysocket.entity.basemsg.ISender;
 import com.easysocket.interfaces.config.IOptions;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.IHeartManager;
@@ -34,7 +34,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     /**
      * 客户端心跳包
      */
-    private SuperSender clientHeart;
+    private ISender clientHeart;
 
     /**
      * 心跳包发送线程
@@ -90,7 +90,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
      * 启动心跳检测
      */
     @Override
-    public void startHeartbeat(SuperSender clientHeart, HeartbeatListener listener) {
+    public void startHeartbeat(ISender clientHeart, HeartbeatListener listener) {
         this.clientHeart = clientHeart;
         this.heartbeatListener = listener;
         isActivate=true;

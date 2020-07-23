@@ -1,5 +1,7 @@
 package com.easysocket.interfaces.io;
 
+import com.easysocket.entity.basemsg.ISender;
+
 import java.nio.ByteOrder;
 
 /**
@@ -16,4 +18,12 @@ public interface IMessageProtocol {
      * 获取数据包体的长度，根据协议这个长度应该写在包头中，在读取数据的时候会用到
      */
     int getBodyLength(byte[] header, ByteOrder byteOrder);
+
+    /**
+     * 封装消息格式，返回socket发送的byte数组
+     * 根据自己定义的消息格式来实现
+     * @param sender
+     * @return
+     */
+    byte[] parse(ISender sender);
 }

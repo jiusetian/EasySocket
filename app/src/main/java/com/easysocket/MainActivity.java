@@ -1,6 +1,7 @@
 package com.easysocket;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -23,9 +24,9 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-    //是否已连接
+    // 是否已连接
     private boolean isConnected;
-    //连接或断开连接的按钮
+    // 连接或断开连接的按钮
     private Button controlConnect;
 
 
@@ -36,18 +37,18 @@ public class MainActivity extends AppCompatActivity {
 
         controlConnect=findViewById(R.id.control_conn);
 
-        //创建socket连接
+        // 创建socket连接
         findViewById(R.id.create_conn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //初始化socket
+                // 初始化socket
                 initEasySocket();
-                //监听socket行为
+                // 监听socket行为
                 EasySocket.getInstance().subscribeSocketAction(socketActionListener);
             }
         });
 
-        //发送一个消息
+        // 发送一个消息
         findViewById(R.id.send_msg).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //发送有回调功能的消息
+        // 发送有回调功能的消息
         findViewById(R.id.callback_msg).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //启动心跳检测
+        // 启动心跳检测
         findViewById(R.id.start_heart).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,17 +72,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //有进度条的消息
+        // 有进度条的消息
         findViewById(R.id.progress_msg).setOnClickListener(new View.OnClickListener() {
-            //进度条接口
+            // 进度条接口
             private IProgressDialog progressDialog = new IProgressDialog() {
                 @Override
                 public Dialog getDialog() {
-                    Dialog dialog = new Dialog(MainActivity.this);
+                    ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+                    dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                     dialog.setTitle("正在加载...");
                     return dialog;
                 }
             };
+
             @Override
             public void onClick(View v) {
                 CallbackSender sender = new CallbackSender();
@@ -104,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //连接或断开连接
+        // 连接或断开连接
         controlConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //销毁socket连接
+        // 销毁socket连接
         findViewById(R.id.destroy_conn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,9 +153,9 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    //启动心跳检测功能
+    // 启动心跳检测功能
     private void startHeartbeat() {
-        //心跳实例
+        // 心跳实例
         ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
         clientHeartBeat.setMsgId("heart_beat");
         clientHeartBeat.setFrom("client");
@@ -181,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
         TestMsg testMsg = new TestMsg();
         testMsg.setMsgId("test_msg");
         testMsg.setFrom("android");
-        //发送
+        // 发送
         EasySocket.getInstance().upObject(testMsg);
     }
 
@@ -244,15 +247,15 @@ public class MainActivity extends AppCompatActivity {
      * 初始化EasySocket
      */
     private void initEasySocket() {
-        //socket配置
+        // socket配置
         EasySocketOptions options = new EasySocketOptions.Builder()
-                .setSocketAddress(new SocketAddress("192.168.3.19", 9999)) //主机地址
+                .setSocketAddress(new SocketAddress("192.168.1.101", 9999)) // 主机地址
                 .setCallbackIdKeyFactory(new CallbackIdKeyFactoryImpl())
                 .build();
 
-        //初始化EasySocket
+        // 初始化EasySocket
         EasySocket.getInstance()
-                .options(options) //项目配置
-                .createConnection();//创建一个socket连接
+                .options(options) // 项目配置
+                .createConnection();// 创建一个socket连接
     }
 }
