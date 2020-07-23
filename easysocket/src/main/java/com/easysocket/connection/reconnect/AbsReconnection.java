@@ -29,7 +29,7 @@ public abstract class AbsReconnection implements ISocketActionListener, IReconnL
         }
         isDetach = false;
         connectionManager = iConnectionManager;
-        connectionManager.subscribeSocketAction(this); //监听socket行为
+        connectionManager.subscribeSocketAction(this); // 监听socket行为
     }
 
     @Override
@@ -41,6 +41,6 @@ public abstract class AbsReconnection implements ISocketActionListener, IReconnL
 
     @Override
     public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
-        //donothing
+        // donothing
     }
 }

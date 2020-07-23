@@ -63,7 +63,7 @@ public class ConnectionHolder {
      */
     public IConnectionManager getConnection(SocketAddress info, EasySocketOptions socketOptions) {
         IConnectionManager manager = mConnectionManagerMap.get(createKey(info));
-        if (manager != null) { //有缓存
+        if (manager != null) { // 有缓存
             manager.setOptions(socketOptions);
             return manager;
         } else {
@@ -79,14 +79,14 @@ public class ConnectionHolder {
      * @return
      */
     private IConnectionManager createNewManagerAndCache(SocketAddress info, EasySocketOptions socketOptions) {
-        SuperConnection manager = new TcpConnection(info); //创建连接管理器
-        manager.setOptions(socketOptions); //设置参数
-        //连接主机的切换监听
+        SuperConnection manager = new TcpConnection(info); // 创建连接管理器
+        manager.setOptions(socketOptions); // 设置参数
+        // 连接主机的切换监听
         manager.setOnConnectionSwitchListener(new IConnectionSwitchListener() {
             @Override
             public void onSwitchConnectionInfo(IConnectionManager manager, SocketAddress oldAddress,
                                                SocketAddress newAddress) {
-                //切换了另外一个主机的连接，所以删除旧的连接，添加新的连接
+                // 切换了另外一个主机的连接，所以删除旧的连接，添加新的连接
                 synchronized (mConnectionManagerMap) {
                     mConnectionManagerMap.remove(createKey(oldAddress));
                     mConnectionManagerMap.put(createKey(newAddress), manager);

@@ -6,10 +6,10 @@ package com.easysocket.connection.action;
  * Note：
  */
 public interface SocketAction {
-    //连接成功
+    // 连接成功
     String ACTION_CONN_SUCCESS="action_conn_success";
-    //连接失败
+    // 连接失败
     String ACTION_CONN_FAIL="action_conn_fail";
-    //断开连接
+    // 断开连接
     String ACTION_DISCONNECTION="action_disconnection";
 }

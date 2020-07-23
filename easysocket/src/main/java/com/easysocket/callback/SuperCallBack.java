@@ -41,9 +41,9 @@ public abstract class SuperCallBack<T> implements IType<T> {
     public void onSuccess(String s) {
         onCompleted();
         Class<?> clazz = getGenericityClazz();
-        if (clazz.equals(String.class)) { //泛型是String类型
+        if (clazz.equals(String.class)) { // 泛型是String类型
             onResponse((T) s);
-        } else { //非String
+        } else { // 非String
             Gson gson = new Gson();
             T result = (T) gson.fromJson(s, clazz);
             onResponse(result);
@@ -69,6 +69,6 @@ public abstract class SuperCallBack<T> implements IType<T> {
      */
     @Override
     public Class<?> getGenericityClazz() {
-        return (Class<?>) getType(); //转为泛型参数的class对象
+        return (Class<?>) getType(); // 转为泛型参数的class对象
     }
 }

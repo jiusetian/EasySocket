@@ -72,7 +72,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
 
     @Override
     public void dispatchAction(String action, Serializable serializable) {
-        //将接收到的socket行为封装入列
+        // 将接收到的socket行为封装入列
         ActionBean actionBean = new ActionBean(action, serializable, this);
         actions.offer(actionBean);
     }
@@ -100,7 +100,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
 
         @Override
         public void run() {
-            //循环处理socket的行为信息
+            // 循环处理socket的行为信息
             while (!isStop) {
                 try {
                     ActionBean actionBean = actions.take();
@@ -108,7 +108,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                         SocketActionDispatcher actionDispatcher = actionBean.mDispatcher;
                         List<ISocketActionListener> copyListeners = new ArrayList<>(actionDispatcher.actionListeners);
                         Iterator<ISocketActionListener> listeners = copyListeners.iterator();
-                        //逐一通知
+                        // 逐一通知
                         while (listeners.hasNext()) {
                             ISocketActionListener listener = listeners.next();
                             actionDispatcher.dispatchActionToListener(actionBean.mAction, actionBean.arg, listener);
@@ -147,7 +147,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
     private void dispatchActionToListener(String action, final Serializable content, final ISocketActionListener actionListener) {
         switch (action) {
 
-            case ACTION_CONN_SUCCESS: //连接成功
+            case ACTION_CONN_SUCCESS: // 连接成功
                 mainThreadExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -157,7 +157,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
 
                 break;
 
-            case ACTION_CONN_FAIL: //连接失败
+            case ACTION_CONN_FAIL: // 连接失败
                 mainThreadExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -167,7 +167,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
 
                 break;
 
-            case ACTION_DISCONNECTION: //连接断开
+            case ACTION_DISCONNECTION: // 连接断开
                 mainThreadExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -176,7 +176,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                 });
                 break;
 
-            case ACTION_READ_COMPLETE: //读取数据完成
+            case ACTION_READ_COMPLETE: // 读取数据完成
                 mainThreadExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -187,7 +187,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
         }
     }
 
-    //开始分发线程
+    // 开始分发线程
     private void startDispatchThread() {
         if (!isStop) {
             isStop = false;

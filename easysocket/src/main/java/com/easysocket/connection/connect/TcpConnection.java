@@ -39,16 +39,16 @@ public class TcpConnection extends SuperConnection {
             socket = getSocketByConfig();
         } catch (Exception e) {
             e.printStackTrace();
-            connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED); //设置为未连接状态
+            connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED); // 设置为未连接状态
             throw new RuntimeException("创建socket失败");
         }
 
-        //进行socket连接
+        // 进行socket连接
         socket.connect(new InetSocketAddress(socketAddress.getIp(), socketAddress.getPort()), socketOptions.getConnectTimeout());
 
-        //关闭Nagle算法,无论TCP数据报大小,立即发送
+        // 关闭Nagle算法,无论TCP数据报大小,立即发送
         socket.setTcpNoDelay(true);
-        //连接已经打开
+        // 连接已经打开
         if (socket.isConnected() && !socket.isClosed()) {
             onConnectionOpened();
         }
@@ -66,16 +66,16 @@ public class TcpConnection extends SuperConnection {
      * @return
      */
     private synchronized Socket getSocketByConfig() throws Exception {
-        //自定义的socket生成工厂
+        // 自定义的socket生成工厂
         if (socketOptions.getSocketFactory() != null) {
             return socketOptions.getSocketFactory().createSocket(socketAddress, socketOptions);
         }
-        //默认操作
+        // 默认操作
         SocketSSLConfig config = socketOptions.getEasySSLConfig();
         if (config == null) {
             return new Socket();
         }
-        //获取SSL配置工厂
+        // 获取SSL配置工厂
         SSLSocketFactory factory = config.getCustomSSLFactory();
         if (factory == null) {
             String protocol = "SSL";
@@ -85,7 +85,7 @@ public class TcpConnection extends SuperConnection {
 
             TrustManager[] trustManagers = config.getTrustManagers();
             if (trustManagers == null || trustManagers.length == 0) {
-                //缺省信任所有证书
+                // 缺省信任所有证书
                 trustManagers = new TrustManager[]{new DefaultX509ProtocolTrustManager()};
             }
 

@@ -40,11 +40,11 @@ public class IOManager implements IIOManager, IOptions {
         initIO();
     }
 
-    //初始化io
+    //  初始化io
     private void initIO() {
         makesureHeaderProtocolNotEmpty();
-        reader = new EasyReader(connectionManager, actionDispatch); //读
-        writer = new EasyWriter(connectionManager, actionDispatch); //写
+        reader = new EasyReader(connectionManager, actionDispatch); //  读
+        writer = new EasyWriter(connectionManager, actionDispatch); //  写
     }
 
     @Override

@@ -65,7 +65,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     public HeartManager(IConnectionManager iConnectionManager, ISocketActionDispatch actionDispatch) {
         this.connectionManager = iConnectionManager;
         socketOptions = iConnectionManager.getOptions();
-        actionDispatch.subscribe(this); //注册监听
+        actionDispatch.subscribe(this); // 注册监听
     }
 
     /**
@@ -74,12 +74,12 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     private final Runnable beatTask = new Runnable() {
         @Override
         public void run() {
-            //心跳丢失次数判断，心跳包丢失了一定的次数则会进行socket的断开重连
+            // 心跳丢失次数判断，心跳包丢失了一定的次数则会进行socket的断开重连
             if (socketOptions.getMaxHeartbeatLoseTimes() != -1 && loseTimes.incrementAndGet() >= socketOptions.getMaxHeartbeatLoseTimes()) {
-                //断开重连
+                // 断开重连
                 connectionManager.disconnect(new Boolean(true));
                 resetLoseTimes();
-            } else { //发送心跳包
+            } else { // 发送心跳包
                 connectionManager.upObject(clientHeart);
             }
         }
@@ -97,10 +97,10 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
         startHeartThread();
     }
 
-    //启动心跳线程
+    // 启动心跳线程
     private void startHeartThread() {
-        freq = socketOptions.getHeartbeatFreq(); //心跳频率
-        // 启动线程发送心跳
+        freq = socketOptions.getHeartbeatFreq(); // 心跳频率
+        //  启动线程发送心跳
         if (heartExecutor == null || heartExecutor.isShutdown()) {
             heartExecutor = Executors.newSingleThreadScheduledExecutor();
             heartExecutor.scheduleWithFixedDelay(beatTask, 0, freq, TimeUnit.MILLISECONDS);
@@ -116,12 +116,12 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
         startHeartThread();
     }
 
-    //停止心跳线程
+    // 停止心跳线程
     private void stopHeartThread(){
         if (heartExecutor != null && !heartExecutor.isShutdown()) {
             heartExecutor.shutdownNow();
             heartExecutor = null;
-            resetLoseTimes(); //重置
+            resetLoseTimes(); // 重置
         }
     }
 
@@ -144,7 +144,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
 
     @Override
     public void onSocketConnFail(SocketAddress socketAddress, Boolean isNeedReconnect) {
-        //如果不需要重连，则停止心跳频率线程
+        // 如果不需要重连，则停止心跳频率线程
         if (!isNeedReconnect)
             stopHeartThread();
     }
@@ -158,7 +158,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     @Override
     public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
         if (heartbeatListener != null && heartbeatListener.isServerHeartbeat(originReadData)) {
-            //接收到服务器心跳
+            // 接收到服务器心跳
             onReceiveHeartBeat();
         }
     }
@@ -168,7 +168,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     public Object setOptions(EasySocketOptions socketOptions) {
         this.socketOptions = socketOptions;
         freq = socketOptions.getHeartbeatFreq();
-        freq = freq < 1000 ? 1000 : freq; //不能小于一秒
+        freq = freq < 1000 ? 1000 : freq; // 不能小于一秒
         return this;
     }
 
@@ -178,7 +178,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     }
 
     public interface HeartbeatListener {
-        //是否为服务器心跳
+        // 是否为服务器心跳
         boolean isServerHeartbeat(OriginReadData originReadData);
     }
 

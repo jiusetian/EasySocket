@@ -104,7 +104,7 @@ public class EasySocketOptions {
     public static class Builder {
         EasySocketOptions socketOptions;
 
-        //首先获得一个默认的配置
+        // 首先获得一个默认的配置
         public Builder() {
             this(getDefaultOptions());
         }
@@ -323,7 +323,7 @@ public class EasySocketOptions {
         options.heartbeatFreq = 5 * 1000;
         options.messageProtocol = new DefaultMessageProtocol();
         options.maxResponseDataMb = 5;
-        options.connectTimeout = 5 * 1000; //连接超时默认5秒
+        options.connectTimeout = 5 * 1000; // 连接超时默认5秒
         options.maxWriteBytes = 100;
         options.maxReadBytes = 50;
         options.readOrder = ByteOrder.BIG_ENDIAN;
@@ -333,8 +333,8 @@ public class EasySocketOptions {
         options.easySSLConfig = null;
         options.socketFactory = null;
         options.callbakcIdKeyFactory = null;
-        options.requestTimeout = 10 * 1000; //默认十秒
-        options.isOpenRequestTimeout = true; //默认开启
+        options.requestTimeout = 10 * 1000; // 默认十秒
+        options.isOpenRequestTimeout = true; // 默认开启
         options.charsetName = "UTF-8";
         return options;
     }

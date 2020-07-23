@@ -77,7 +77,7 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
     private Runnable writerTask = new Runnable() {
         @Override
         public void run() {
-            //循环写数据到socket
+            // 循环写数据到socket
             while (!isStop) {
                 try {
                     byte[] sender = packetsToSend.take();
@@ -94,22 +94,22 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
         if (sendBytes != null) {
             LogUtil.d("发送数据=" + new String(sendBytes, Charset.forName("utf-8")));
             try {
-                int packageSize = socketOptions.getMaxWriteBytes(); //每次可以发送的最大数据
+                int packageSize = socketOptions.getMaxWriteBytes(); // 每次可以发送的最大数据
                 int remainingCount = sendBytes.length;
                 ByteBuffer writeBuf = ByteBuffer.allocate(packageSize);
                 writeBuf.order(socketOptions.getReadOrder());
                 int index = 0;
-                //如果发送的数据大于单次可发送的最大数据，则分多次发送
+                // 如果发送的数据大于单次可发送的最大数据，则分多次发送
                 while (remainingCount > 0) {
                     int realWriteLength = Math.min(packageSize, remainingCount);
-                    writeBuf.clear(); //清空缓存
-                    writeBuf.rewind(); //将position位置移到0
+                    writeBuf.clear(); // 清空缓存
+                    writeBuf.rewind(); // 将position位置移到0
                     writeBuf.put(sendBytes, index, realWriteLength);
                     writeBuf.flip();
                     byte[] writeArr = new byte[realWriteLength];
                     writeBuf.get(writeArr);
                     outputStream.write(writeArr);
-                    outputStream.flush(); //强制写入缓存中残留数据
+                    outputStream.flush(); // 强制写入缓存中残留数据
                     index += realWriteLength;
                     remainingCount -= realWriteLength;
                 }

@@ -22,7 +22,7 @@ public class EasySocket {
      */
     private static ConnectionHolder connectionHolder = ConnectionHolder.getInstance();
 
-    private volatile static EasySocket singleton = null; //加了volatile更加安全
+    private volatile static EasySocket singleton = null; // 加了volatile更加安全
     /**
      * 连接参数
      */
@@ -75,7 +75,7 @@ public class EasySocket {
         if (options.getSocketAddress() == null) {
             throw new InitialExeption("请在EasySocketOptions中设置SocketAddress");
         }
-        //如果有备用主机则设置
+        // 如果有备用主机则设置
         if (options.getBackupAddress() != null) {
             socketAddress.setBackupAddress(options.getBackupAddress());
         }
@@ -83,7 +83,7 @@ public class EasySocket {
             connection = connectionHolder.getConnection(socketAddress,
                     options == null ? EasySocketOptions.getDefaultOptions() : options);
         }
-        connection.connect(); //进行连接
+        connection.connect(); // 进行连接
         return this;
     }
 
@@ -110,9 +110,9 @@ public class EasySocket {
      * @return
      */
     public EasySocket destroyConnection(){
-        //首先断开连接
+        // 首先断开连接
         getConnection().disconnect(new Boolean(false));
-        //移除连接对象
+        // 移除连接对象
         connectionHolder.removeConnection(options.getSocketAddress());
         connection=null;
         return this;

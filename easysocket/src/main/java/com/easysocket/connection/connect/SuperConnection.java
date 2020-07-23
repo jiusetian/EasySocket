@@ -99,7 +99,7 @@ public abstract class SuperConnection implements IConnectionManager {
         if (callbackResponseDispatcher != null)
             callbackResponseDispatcher.setSocketOptions(socketOptions);
 
-        //更改了重连器
+        // 更改了重连器
         if (reconnection != null && !reconnection.equals(socketOptions.getReconnectionManager())) {
             reconnection.detach();
             reconnection = socketOptions.getReconnectionManager();
@@ -116,7 +116,7 @@ public abstract class SuperConnection implements IConnectionManager {
     @Override
     public synchronized void connect() {
         LogUtil.d("开始socket连接");
-        //检查当前连接状态
+        // 检查当前连接状态
         if (connectionStatus.get() != SocketStatus.SOCKET_DISCONNECTED) {
             LogUtil.d("socket已连接");
             return;
@@ -125,18 +125,18 @@ public abstract class SuperConnection implements IConnectionManager {
         if (socketAddress.getIp() == null) {
             throw new NoNullException("连接参数有误，请检查是否设置了IP");
         }
-        //心跳管理器
+        // 心跳管理器
         if (heartManager == null)
             heartManager = new HeartManager(this, actionDispatcher);
 
-        //重连管理器
+        // 重连管理器
         if (reconnection != null)
             reconnection.detach();
         reconnection = socketOptions.getReconnectionManager();
         if (reconnection != null)
             reconnection.attach(this);
 
-        //开启连接线程
+        // 开启连接线程
         connectThread = new ConnectThread("connect thread for" + socketAddress);
         connectThread.setDaemon(true);
         connectThread.start();
@@ -149,7 +149,7 @@ public abstract class SuperConnection implements IConnectionManager {
         }
         connectionStatus.set(SocketStatus.SOCKET_DISCONNECTING);
 
-        //开启断开连接线程
+        // 开启断开连接线程
         String info = socketAddress.getIp() + " : " + socketAddress.getPort();
         Thread disconnThread = new DisconnectThread(isNeedReconnect, "disconn thread：" + info);
         disconnThread.setDaemon(true);
@@ -160,7 +160,7 @@ public abstract class SuperConnection implements IConnectionManager {
      * 断开连接线程
      */
     private class DisconnectThread extends Thread {
-        Boolean isNeedReconnect; //当前连接的断开是否需要自动重连
+        Boolean isNeedReconnect; // 当前连接的断开是否需要自动重连
 
         public DisconnectThread(Boolean isNeedReconnect, String name) {
             super(name);
@@ -170,18 +170,18 @@ public abstract class SuperConnection implements IConnectionManager {
         @Override
         public void run() {
             try {
-                //关闭io线程
+                // 关闭io线程
                 if (ioManager != null)
                     ioManager.closeIO();
-                //关闭回调分发器线程
+                // 关闭回调分发器线程
                 if (callbackResponseDispatcher != null)
                     callbackResponseDispatcher.shutdownThread();
-                //关闭连接线程
+                // 关闭连接线程
                 if (connectThread != null && connectThread.isAlive() && !connectThread.isInterrupted()) {
                     connectThread.interrupt();
                 }
                 LogUtil.d("关闭socket连接");
-                //关闭连接
+                // 关闭连接
                 closeConnection();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -206,11 +206,11 @@ public abstract class SuperConnection implements IConnectionManager {
             try {
                 openConnection();
             } catch (Exception e) {
-                //连接异常
+                // 连接异常
                 e.printStackTrace();
                 LogUtil.d("socket连接失败");
                 connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED);
-                actionDispatcher.dispatchAction(SocketAction.ACTION_CONN_FAIL, new Boolean(true)); //第二个参数指需要重连
+                actionDispatcher.dispatchAction(SocketAction.ACTION_CONN_FAIL, new Boolean(true)); // 第二个参数指需要重连
 
             }
         }
@@ -226,18 +226,18 @@ public abstract class SuperConnection implements IConnectionManager {
         openSocketManager();
     }
 
-    //开启socket相关管理器
+    // 开启socket相关管理器
     private void openSocketManager() {
         if (callbackResponseDispatcher == null)
             callbackResponseDispatcher = new CallbackResponseDispatcher(this);
         if (ioManager == null)
             ioManager = new IOManager(this, actionDispatcher);
-        //启动相关线程
+        // 启动相关线程
         callbackResponseDispatcher.engineThread();
         ioManager.startIO();
     }
 
-    //切换了主机IP和端口
+    // 切换了主机IP和端口
     @Override
     public synchronized void switchHost(SocketAddress socketAddress) {
         if (socketAddress != null) {
@@ -246,7 +246,7 @@ public abstract class SuperConnection implements IConnectionManager {
 
             if (actionDispatcher != null)
                 actionDispatcher.setSocketAddress(socketAddress);
-            //切换主机
+            // 切换主机
             if (connectionSwitchListener != null) {
                 connectionSwitchListener.onSwitchConnectionInfo(this, oldAddress, socketAddress);
             }
@@ -260,7 +260,7 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public boolean isConnectViable() {
-        //当前socket是否处于可连接状态
+        // 当前socket是否处于可连接状态
         return connectionStatus.get() == SocketStatus.SOCKET_DISCONNECTED;
     }
 
