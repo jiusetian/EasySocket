@@ -170,7 +170,67 @@ destroyConnection()代表销毁整个连接状态，跟disconnect()不一样，�
 测试的话，可以运行本项目提供的服务端程序socket_server，在Android studio要先将服务端程序添加配置上去，具体怎么操作可以参考我的博客，地址：https://blog.csdn.net/liuxingrong666/article/details/91579548
 
 
-### 三、EasySocket启动心跳机制
+### 三、EasySocket消息协议的定义
+
+    网络传输中消息协议的格式一般采用：“消息头+消息体”的模式，EasySocket消息格式的基本框架也是如此，即 Header+Body，header一般保存消息的长度、类型等信息，body一般保存消息体
+
+    因为每个人的协议可能都不一样，所以框架不可能去统一格式，EasySocket提供了一个协议接口，如下
+
+       public interface IMessageProtocol {
+
+        /**
+         * 获取包头的长度
+         */
+        int getHeaderLength();
+
+        /**
+         * 获取数据包体的长度，根据协议这个长度应该写在包头中，在读取数据的时候会用到
+         */
+        int getBodyLength(byte[] header, ByteOrder byteOrder);
+
+        /**
+         * 封装消息格式，返回socket发送的byte数组
+         * 根据自己定义的消息格式来实现
+         * @param sender
+         * @return
+         */
+        byte[] pack(ISender sender);
+       }
+
+    实现自己的消息协议需要实现接口的这三个方法，其中pack是定义如何打包消息，只有定义好了自己的协议才知道如何打包消息，可以参考框架默认的消息协议，如下
+
+    public class DefaultMessageProtocol implements IMessageProtocol {
+        @Override
+        public int getHeaderLength() {
+            return 4; // 包头的长度，用来保存body的长度值
+        }
+
+        @Override
+        public int getBodyLength(byte[] header, ByteOrder byteOrder) {
+            if (header == null || header.length < getHeaderLength()) {
+                return 0;
+            }
+            ByteBuffer bb = ByteBuffer.wrap(header);
+            bb.order(byteOrder);
+            return bb.getInt(); // body的长度以int的形式写在header那里
+        }
+
+        @Override
+        public byte[] pack(ISender sender) {
+            // 默认为utf-8 Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())
+            byte[] body = new Gson().toJson(sender).getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName()));
+            // 消息头的长度，指多少个byte
+            int headerLength = getHeaderLength();
+            ByteBuffer bb = ByteBuffer.allocate(headerLength + body.length);
+            bb.order(ByteOrder.BIG_ENDIAN);
+            bb.putInt(body.length); // header，保存body的length
+            bb.put(body); // body
+            return bb.array();
+        }
+    }
+
+
+### 四、EasySocket启动心跳机制
 
 Socket的连接监听一般用心跳包去检测，EasySocket启动心跳机制非常简单， 下面是实例代码
 
@@ -203,7 +263,7 @@ Socket的连接监听一般用心跳包去检测，EasySocket启动心跳机制�
 启动心跳机制关键要定义一个心跳包实例作为Socket发送给服务端的心跳，然后实现一个接口，用来识别当前收到的消息是否为服务器的心跳，这个要根据自己的现实情况来实现，其实也挺简单的
 
 
-### 四、EasySocket的请求回调功能
+### 五、EasySocket的请求回调功能
 
 EasySocket的最大特点是实现了消息的回调功能，即当发送一个带有回调标识的消息给服务器的时候，我们可以准确地接收到这个消息的响应。启用回调功能需要用户实现如下步骤
 
@@ -383,7 +443,7 @@ EasySocket的最大特点是实现了消息的回调功能，即当发送一个�
 
 以上演示了EasySocket的基本使用方法，欢迎start
 
-### 五、EasySocket的配置信息说明（EasySocketOptions）
+### 六、EasySocket的配置信息说明（EasySocketOptions）
       
     /**
      * 框架是否是调试模式
