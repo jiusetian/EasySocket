@@ -172,9 +172,9 @@ destroyConnection()代表销毁整个连接状态，跟disconnect()不一样，�
 
 ### 三、EasySocket消息协议的定义
 
-    网络传输中消息协议的格式一般采用：“消息头+消息体”的模式，EasySocket消息格式的基本框架也是如此，即 Header+Body，header一般保存消息的长度、类型等信息，body一般保存消息体
+网络传输中消息协议的格式一般采用：“消息头+消息体”的模式，EasySocket消息格式的基本框架也是如此，即 Header+Body，header一般保存消息的长度、类型等信息，body一般保存消息体
 
-    因为每个人的协议可能都不一样，所以框架不可能去统一格式，EasySocket提供了一个协议接口，如下
+因为每个人的协议可能都不一样，所以框架不可能去统一格式，EasySocket提供了一个协议接口，如下
 
        public interface IMessageProtocol {
 
@@ -197,9 +197,9 @@ destroyConnection()代表销毁整个连接状态，跟disconnect()不一样，�
         byte[] pack(ISender sender);
        }
 
-    实现自己的消息协议需要实现接口的这三个方法，其中pack是定义如何打包消息，只有定义好了自己的协议才知道如何打包消息，可以参考框架默认的消息协议，如下
+实现自己的消息协议需要实现接口的这三个方法，其中pack是定义如何打包消息，只有定义好了自己的协议才知道如何打包消息，可以参考框架默认的消息协议，如下
 
-    public class DefaultMessageProtocol implements IMessageProtocol {
+     public class DefaultMessageProtocol implements IMessageProtocol {
         @Override
         public int getHeaderLength() {
             return 4; // 包头的长度，用来保存body的长度值
