@@ -57,6 +57,8 @@ allprojects {
             //socket配置
             EasySocketOptions options = new EasySocketOptions.Builder()
                     .setSocketAddress(new SocketAddress("192.168.3.9", 9999)) //主机地址
+                    // 强烈建议定义一个消息协议，方便解决 socket黏包、分包的问题
+                    // .setReaderProtocol(new DefaultMessageProtocol()) // 默认的消息协议
                     .build();
      
             //初始化EasySocket
@@ -172,7 +174,11 @@ destroyConnection()代表销毁整个连接状态，跟disconnect()不一样，�
 
 ### 三、EasySocket消息协议的定义
 
-网络传输中消息协议的格式一般采用：“消息头+消息体”的模式，EasySocket消息格式的基本框架也是如此，即 Header+Body，header一般保存消息的长度、类型等信息，body一般保存消息体
+之前框架严格定义了消息结构必须是Header+Body，收到很多网友的反馈，很多人想让框架兼容所有的消息格式，其实兼容是可以做到的，我不做消息格式的打包，直接发送即可，接收也是每一次socket读取的数据算一个消息。我强烈不建议这么做，因为这种形式当消息出现黏包和分包的时候，就会出现解析错误
+
+但是太多人希望框架可以兼容所有消息格式，所以我还是满足了大家，所以现在框架默认情况下是兼容所有消息格式的，如果要定义消息格式，只需要设置消息协议即可
+
+其实网络传输中消息协议的格式一般采用：“消息头+消息体”，EasySocket消息格式的基本框架也是如此，即 Header+Body，header一般保存消息的长度、类型等信息，body一般保存消息体
 
 因为每个人的协议可能都不一样，所以框架不可能去统一格式，EasySocket提供了一个协议接口，如下
 
@@ -197,7 +203,7 @@ destroyConnection()代表销毁整个连接状态，跟disconnect()不一样，�
         byte[] pack(ISender sender);
        }
 
-实现自己的消息协议需要实现接口的这三个方法，其中pack是定义如何打包消息，只有定义好了自己的协议才知道如何打包消息，可以参考框架默认的消息协议，如下
+实现自己的消息协议需要实现接口的这三个方法，其中pack是定义如何打包消息，还有一定要定义好包头的长度和消息体的长度，可以参考框架默认的消息协议，如下
 
      public class DefaultMessageProtocol implements IMessageProtocol {
         @Override
