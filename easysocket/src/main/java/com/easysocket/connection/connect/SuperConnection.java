@@ -1,5 +1,6 @@
 package com.easysocket.connection.connect;
 
+import com.easysocket.EasySocket;
 import com.easysocket.callback.SuperCallBack;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.action.SocketAction;
@@ -17,8 +18,10 @@ import com.easysocket.interfaces.config.IConnectionSwitchListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
 import com.easysocket.utils.LogUtil;
+import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -290,8 +293,13 @@ public abstract class SuperConnection implements IConnectionManager {
      * @return
      */
     private IConnectionManager sendBytes(byte[] bytes) {
+        byte[] sender = bytes;
+        // 如果有消息协议，则进行打包
+        if (socketOptions.getMessageProtocol() != null) {
+            sender = socketOptions.getMessageProtocol().pack(bytes);
+        }
         if (ioManager != null)
-            ioManager.sendBytes(bytes);
+            ioManager.sendBytes(sender);
         return this;
     }
 
@@ -309,20 +317,20 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public synchronized IConnectionManager upString(String sender) {
-        sendBytes(sender.getBytes());
+        sendBytes(sender.getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())));
         return this;
     }
 
     @Override
     public synchronized IConnectionManager upObject(ISender sender) {
-        sendBytes(sender.pack());
+        sendBytes(new Gson().toJson(sender).getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())));
         return this;
     }
 
     @Override
     public synchronized IConnectionManager upCallbackMessage(SuperCallbackSender sender) {
         callbackResponseDispatcher.checkCallbackSender(sender);
-        sendBytes(sender.pack());
+        sendBytes(new Gson().toJson(sender).getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())));
         return this;
     }
 

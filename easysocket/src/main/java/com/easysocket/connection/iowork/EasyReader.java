@@ -61,6 +61,13 @@ public class EasyReader implements IReader<EasySocketOptions> {
     public void read() {
         OriginReadData originalData = new OriginReadData();
         IMessageProtocol messageProtocol = socketOptions.getMessageProtocol();
+        // 如果消息协议为null，则直接读取原始消息，不建议这样使用，因为会发生黏包、分包的问题
+        if (messageProtocol == null) {
+            readOriginDataFromSteam(originalData);
+            return;
+        }
+
+        // 定义了固定的消息协议
         int headerLength = messageProtocol.getHeaderLength(); // 包头长度
         ByteBuffer headBuf = ByteBuffer.allocate(headerLength); // 读取数据包头的buffer
         headBuf.order(socketOptions.getReadOrder());
@@ -169,8 +176,8 @@ public class EasyReader implements IReader<EasySocketOptions> {
 
     @Override
     public void openReader() {
-        if (readerThread==null) {
-            inputStream=connectionManager.getInputStream();
+        if (readerThread == null) {
+            inputStream = connectionManager.getInputStream();
             readerThread = new Thread(readerTask, "reader thread");
             stopThread = false;
             readerThread.start();
@@ -200,6 +207,26 @@ public class EasyReader implements IReader<EasySocketOptions> {
 
             }
             headBuf.put(bytes);
+        }
+    }
+
+    // 直接读取原始数据，适合于所有数据格式
+    private void readOriginDataFromSteam(OriginReadData readData) {
+        try {
+            byte[] bufArray = new byte[1024 * 4]; // 从服务器单次读取的最大数据
+            int len = inputStream.read(bufArray);
+            if (len == -1) { // no more data
+                return;
+            }
+            // bytes的复制
+            ByteBuffer data = ByteBuffer.allocate(len);
+            data.put(bufArray, 0, len);
+            readData.setBodyData(data.array());
+            LogUtil.d("接收的原始数据=" + readData.getBodyString());
+            // 分发数据
+            actionDispatch.dispatchAction(IOAction.ACTION_READ_COMPLETE, readData);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -235,7 +262,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
         try {
             if (inputStream != null)
                 inputStream.close();
-            inputStream=null;
+            inputStream = null;
             shutDownThread();
         } catch (IOException e) {
             e.printStackTrace();

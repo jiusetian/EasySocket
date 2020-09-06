@@ -321,7 +321,7 @@ public class EasySocketOptions {
         options.socketAddress = null;
         options.backupAddress = null;
         options.heartbeatFreq = 5 * 1000;
-        options.messageProtocol = new DefaultMessageProtocol();
+        options.messageProtocol = null;
         options.maxResponseDataMb = 5;
         options.connectTimeout = 5 * 1000; // 连接超时默认5秒
         options.maxWriteBytes = 100;

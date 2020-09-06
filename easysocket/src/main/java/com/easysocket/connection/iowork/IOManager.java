@@ -1,13 +1,11 @@
 package com.easysocket.connection.iowork;
 
 import com.easysocket.config.EasySocketOptions;
-import com.easysocket.entity.exception.NoNullException;
 import com.easysocket.interfaces.config.IOptions;
-import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.conn.IConnectionManager;
+import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.io.IIOManager;
 import com.easysocket.interfaces.io.IReader;
-import com.easysocket.interfaces.io.IMessageProtocol;
 import com.easysocket.interfaces.io.IWriter;
 
 /**
@@ -42,7 +40,7 @@ public class IOManager implements IIOManager, IOptions {
 
     //  初始化io
     private void initIO() {
-        makesureHeaderProtocolNotEmpty();
+        //makesureHeaderProtocolNotEmpty();
         reader = new EasyReader(connectionManager, actionDispatch); //  读
         writer = new EasyWriter(connectionManager, actionDispatch); //  写
     }
@@ -71,7 +69,7 @@ public class IOManager implements IIOManager, IOptions {
 
     @Override
     public Object setOptions(EasySocketOptions socketOptions) {
-        makesureHeaderProtocolNotEmpty();
+        //makesureHeaderProtocolNotEmpty();
         if (writer != null)
             writer.setOption(socketOptions);
         if (reader != null)
@@ -87,14 +85,14 @@ public class IOManager implements IIOManager, IOptions {
     /**
      * 确保包结构协议不为空
      */
-    private void makesureHeaderProtocolNotEmpty() {
-        IMessageProtocol protocol = connectionManager.getOptions().getMessageProtocol();
-        if (protocol == null) {
-            throw new NoNullException("The reader protocol can not be Null.");
-        }
-
-        if (protocol.getHeaderLength() == 0) {
-            throw new NoNullException("The header length can not be zero.");
-        }
-    }
+//    private void makesureHeaderProtocolNotEmpty() {
+//        IMessageProtocol protocol = connectionManager.getOptions().getMessageProtocol();
+//        if (protocol == null) {
+//            throw new NoNullException("The reader protocol can not be Null.");
+//        }
+//
+//        if (protocol.getHeaderLength() == 0) {
+//            throw new NoNullException("The header length can not be zero.");
+//        }
+//    }
 }

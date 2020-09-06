@@ -1,8 +1,8 @@
 package com.socker_server.iowork;
 
 import com.socker_server.HandlerIO;
-import com.socker_server.entity.DefaultReaderProtocol;
-import com.socker_server.entity.IReaderProtocol;
+import com.socker_server.ServerConfig;
+import com.socker_server.entity.IMessageProtocol;
 import com.socker_server.entity.OriginReadData;
 
 import java.io.IOException;
@@ -48,8 +48,14 @@ public class EasyReader implements IReader {
     @Override
     public void read() {
         OriginReadData originalData = new OriginReadData();
-        IReaderProtocol headerProtocol = new DefaultReaderProtocol();
-        int headerLength = headerProtocol.getHeaderLength(); //默认的包头长度是4个字节
+        IMessageProtocol readerProtocol = ServerConfig.getInstance().getMessageProtocol();
+        // 如果消息协议为null，则直接读取原始消息，不建议这样使用，因为会发生黏包、分包的问题
+        if (readerProtocol == null) {
+            readOriginDataFromSteam(originalData);
+            return;
+        }
+
+        int headerLength = readerProtocol.getHeaderLength(); //默认的包头长度是4个字节
         ByteBuffer headBuf = ByteBuffer.allocate(headerLength); //读取数据包头的缓存
         headBuf.order(ByteOrder.BIG_ENDIAN);
 
@@ -79,7 +85,7 @@ public class EasyReader implements IReader {
             originalData.setHeaderData(headBuf.array());
 
             // 开始读取body数据=====>>>
-            int bodyLength = headerProtocol.getBodyLength(originalData.getHeaderData(), ByteOrder.BIG_ENDIAN);
+            int bodyLength = readerProtocol.getBodyLength(originalData.getHeaderData(), ByteOrder.BIG_ENDIAN);
 
             if (bodyLength > 0) {
                 if (bodyLength > 5 * 1024 * 1024) { //是否大于最大的读取数
@@ -169,14 +175,31 @@ public class EasyReader implements IReader {
         }
     };
 
+    // 直接读取原始数据，适合于所有数据格式
+    private void readOriginDataFromSteam(OriginReadData readData) {
+        try {
+            byte[] bufArray = new byte[4096]; // 从服务器单次读取的最大数据
+            int len = inputStream.read(bufArray);
+            if (len == -1) { // no more data
+                return;
+            }
+            ByteBuffer data=ByteBuffer.allocate(len);
+            data.put(bufArray,0,len);
+            readData.setBodyData(data.array());
+            System.out.println("字符串大小"+readData.getBodyString().length());
+            // 分发数据
+            handlerIO.handReceiveMsg(readData.getBodyString().trim());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void readHeaderFromSteam(ByteBuffer headBuf, int readLength) throws IOException {
         for (int i = 0; i < readLength; i++) {
             byte[] bytes = new byte[1];
             int value = inputStream.read(bytes); //从输入流中读取相应长度的数据
             if (value == -1) {
-                throw new RuntimeException("读取数据的包头失败，在" + value + "位置断开了，可能是因为socket跟服务器断开了连接");
-            }
+             }
             headBuf.put(bytes);
         }
     }
@@ -218,7 +241,6 @@ public class EasyReader implements IReader {
 
     @Override
     public void setOption(Object o) {
-
     }
 
     private void shutDownThread() {

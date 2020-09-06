@@ -119,16 +119,6 @@ public class EasySocket {
     }
 
     /**
-     * 发送一个对象
-     *
-     * @param sender
-     */
-    public IConnectionManager upObject(ISender sender) {
-        getConnection().upObject(sender);
-        return connection;
-    }
-
-    /**
      * 发送一个有回调的消息
      *
      * @param sender
@@ -136,6 +126,16 @@ public class EasySocket {
      */
     public IConnectionManager upCallbackMessage(SuperCallbackSender sender) {
         getConnection().upCallbackMessage(sender);
+        return connection;
+    }
+
+    /**
+     * 发送一个对象
+     *
+     * @param sender
+     */
+    public IConnectionManager upObject(ISender sender) {
+        getConnection().upObject(sender);
         return connection;
     }
 

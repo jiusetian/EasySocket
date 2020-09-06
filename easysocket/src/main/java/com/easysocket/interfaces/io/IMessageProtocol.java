@@ -1,7 +1,5 @@
 package com.easysocket.interfaces.io;
 
-import com.easysocket.entity.basemsg.ISender;
-
 import java.nio.ByteOrder;
 
 /**
@@ -25,5 +23,5 @@ public interface IMessageProtocol {
      * @param sender
      * @return
      */
-    byte[] pack(ISender sender);
+    byte[] pack(byte[] sender);
 }

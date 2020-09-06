@@ -1,11 +1,5 @@
 package com.socker_server.entity.message.base;
 
-import com.google.gson.Gson;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.charset.Charset;
-
 /**
  * Author：Alex
  * Date：2019/12/6
@@ -39,14 +33,4 @@ public class SuperClient implements IClient {
         this.callbackId = callbakcId;
     }
 
-    @Override
-    public byte[] parse() {
-        //默认为utf-8 Charset.forName("UTF-8")
-        byte[] body = new Gson().toJson(this).getBytes(Charset.forName("UTF-8"));
-        ByteBuffer bb = ByteBuffer.allocate(4 + body.length);
-        bb.order(ByteOrder.BIG_ENDIAN);
-        bb.putInt(body.length); //header，保存body的length
-        bb.put(body); //body
-        return bb.array();
-    }
 }

@@ -116,6 +116,7 @@ public class CallbackResponseDispatcher {
         public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
             if (callbacks.size() == 0) return;
             if (socketOptions.getCallbakcIdKeyFactory() == null) return;
+
             try {
                 String callbackIdKey = socketOptions.getCallbakcIdKeyFactory().getCallbackIdKey();
                 JSONObject data = new JSONObject(originReadData.getBodyString());

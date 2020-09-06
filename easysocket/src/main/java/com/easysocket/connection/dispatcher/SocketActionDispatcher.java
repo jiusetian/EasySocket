@@ -108,7 +108,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                         SocketActionDispatcher actionDispatcher = actionBean.mDispatcher;
                         List<ISocketActionListener> copyListeners = new ArrayList<>(actionDispatcher.actionListeners);
                         Iterator<ISocketActionListener> listeners = copyListeners.iterator();
-                        // 逐一通知
+                        // 通知所有监听者
                         while (listeners.hasNext()) {
                             ISocketActionListener listener = listeners.next();
                             actionDispatcher.dispatchActionToListener(actionBean.mAction, actionBean.arg, listener);

@@ -8,11 +8,4 @@ import java.io.Serializable;
  * Note：发送数据的接口
  */
 public interface ISender extends Serializable {
-
-    /**
-     * 打包要发送的数据
-     * @return
-     */
-    byte[] pack();
-
 }

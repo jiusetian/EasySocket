@@ -6,5 +6,4 @@ package com.socker_server.entity.message.base;
  * Note：
  */
 public  interface IClient {
-    byte[] parse();
 }

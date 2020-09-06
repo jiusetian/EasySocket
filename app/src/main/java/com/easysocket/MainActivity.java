@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        controlConnect=findViewById(R.id.control_conn);
+        controlConnect = findViewById(R.id.control_conn);
 
         // 创建socket连接
         findViewById(R.id.create_conn).setOnClickListener(new View.OnClickListener() {
@@ -48,11 +48,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 发送一个消息
+        // 发送一个object
         findViewById(R.id.send_msg).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendMessage();
+            }
+        });
+
+        // 发送一个string
+        findViewById(R.id.send_string).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EasySocket.getInstance().upString("hey rich woman，i love you");
             }
         });
 
@@ -111,9 +119,9 @@ public class MainActivity extends AppCompatActivity {
         controlConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isConnected){
+                if (isConnected) {
                     EasySocket.getInstance().disconnect(false);
-                }else {
+                } else {
                     EasySocket.getInstance().connect();
                 }
             }
@@ -142,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(CallbackResponse response) {
                         LogUtil.d("回调消息=" + response.toString());
-                        Toast.makeText(MainActivity.this,"回调消息："+response.toString(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, "回调消息：" + response.toString(), Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -202,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
             super.onSocketConnSuccess(socketAddress);
             LogUtil.d("连接成功");
             controlConnect.setText("socket已连接，点击断开连接");
-            isConnected=true;
+            isConnected = true;
         }
 
         /**
@@ -214,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
         public void onSocketConnFail(SocketAddress socketAddress, Boolean isNeedReconnect) {
             super.onSocketConnFail(socketAddress, isNeedReconnect);
             controlConnect.setText("socket连接被断开，点击进行连接");
-            isConnected=false;
+            isConnected = false;
         }
 
         /**
@@ -225,9 +233,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSocketDisconnect(SocketAddress socketAddress, Boolean isNeedReconnect) {
             super.onSocketDisconnect(socketAddress, isNeedReconnect);
-            LogUtil.d("socket断开连接，是否需要重连："+isNeedReconnect);
+            LogUtil.d("socket断开连接，是否需要重连：" + isNeedReconnect);
             controlConnect.setText("socket连接被断开，点击进行连接");
-            isConnected=false;
+            isConnected = false;
         }
 
         /**
@@ -249,8 +257,10 @@ public class MainActivity extends AppCompatActivity {
     private void initEasySocket() {
         // socket配置
         EasySocketOptions options = new EasySocketOptions.Builder()
-                .setSocketAddress(new SocketAddress("192.168.1.101", 9999)) // 主机地址
+                .setSocketAddress(new SocketAddress("192.168.1.102", 9999)) // 主机地址
                 .setCallbackIdKeyFactory(new CallbackIdKeyFactoryImpl())
+                // 最好定义一个消息协议，方便解决 socket黏包、分包的问题
+                // .setReaderProtocol(new DefaultMessageProtocol()) // 默认的消息协议
                 .build();
 
         // 初始化EasySocket

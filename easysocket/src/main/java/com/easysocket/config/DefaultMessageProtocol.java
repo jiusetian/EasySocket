@@ -1,13 +1,9 @@
 package com.easysocket.config;
 
-import com.easysocket.EasySocket;
-import com.easysocket.entity.basemsg.ISender;
 import com.easysocket.interfaces.io.IMessageProtocol;
-import com.google.gson.Gson;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
 
 /**
  * Author：Alex
@@ -31,9 +27,7 @@ public class DefaultMessageProtocol implements IMessageProtocol {
     }
 
     @Override
-    public byte[] pack(ISender sender) {
-        // 默认为utf-8 Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())
-        byte[] body = new Gson().toJson(sender).getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName()));
+    public byte[] pack(byte[] body) {
         // 消息头的长度，指多少个byte
         int headerLength = getHeaderLength();
         ByteBuffer bb = ByteBuffer.allocate(headerLength + body.length);
