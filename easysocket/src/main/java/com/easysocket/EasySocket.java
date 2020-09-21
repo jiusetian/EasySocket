@@ -181,6 +181,28 @@ public class EasySocket {
         return this;
     }
 
+    /**
+     * 开启心跳管理器
+     *
+     * @param clientHeart
+     * @return
+     */
+    public EasySocket startHeartBeat(String clientHeart, HeartManager.HeartbeatListener listener) {
+        getConnection().getHeartManager().startHeartbeat(clientHeart, listener);
+        return this;
+    }
+
+    /**
+     * 开启心跳管理器
+     *
+     * @param clientHeart
+     * @return
+     */
+    public EasySocket startHeartBeat(byte[] clientHeart, HeartManager.HeartbeatListener listener) {
+        getConnection().getHeartManager().startHeartbeat(clientHeart, listener);
+        return this;
+    }
+
 
     /**
      * 获取连接

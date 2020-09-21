@@ -1,5 +1,6 @@
 package com.easysocket.connection.heartbeat;
 
+import com.easysocket.EasySocket;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
@@ -9,7 +10,9 @@ import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.IHeartManager;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.conn.ISocketActionListener;
+import com.google.gson.Gson;
 
+import java.nio.charset.Charset;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +37,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     /**
      * 客户端心跳包
      */
-    private ISender clientHeart;
+    private byte[] clientHeart;
 
     /**
      * 心跳包发送线程
@@ -80,7 +83,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
                 connectionManager.disconnect(new Boolean(true));
                 resetLoseTimes();
             } else { // 发送心跳包
-                connectionManager.upObject(clientHeart);
+                connectionManager.upBytes(clientHeart);
             }
         }
     };
@@ -91,10 +94,20 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
      */
     @Override
     public void startHeartbeat(ISender clientHeart, HeartbeatListener listener) {
+        startHeartbeat(new Gson().toJson(clientHeart).getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())), listener);
+    }
+
+    @Override
+    public void startHeartbeat(byte[] clientHeart, HeartbeatListener listener) {
         this.clientHeart = clientHeart;
         this.heartbeatListener = listener;
-        isActivate=true;
+        isActivate = true;
         startHeartThread();
+    }
+
+    @Override
+    public void startHeartbeat(String clientHeart, HeartbeatListener listener) {
+        startHeartbeat(clientHeart.getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())), listener);
     }
 
     // 启动心跳线程
@@ -112,12 +125,12 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
      */
     @Override
     public void stopHeartbeat() {
-        isActivate=false;
+        isActivate = false;
         startHeartThread();
     }
 
     // 停止心跳线程
-    private void stopHeartThread(){
+    private void stopHeartThread() {
         if (heartExecutor != null && !heartExecutor.isShutdown()) {
             heartExecutor.shutdownNow();
             heartExecutor = null;
@@ -131,7 +144,6 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     }
 
 
-
     private void resetLoseTimes() {
         loseTimes.set(-1);
     }
@@ -139,7 +151,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     @Override
     public void onSocketConnSuccess(SocketAddress socketAddress) {
         if (isActivate)
-        startHeartThread();
+            startHeartThread();
     }
 
     @Override
