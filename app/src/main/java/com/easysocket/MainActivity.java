@@ -167,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
         ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
         clientHeartBeat.setMsgId("heart_beat");
         clientHeartBeat.setFrom("client");
+        // 心跳包类型可以是object、String、byte[]
         EasySocket.getInstance().startHeartBeat(clientHeartBeat, new HeartManager.HeartbeatListener() {
             @Override
             public boolean isServerHeartbeat(OriginReadData originReadData) {
