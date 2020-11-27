@@ -531,3 +531,7 @@ EasySocket的最大特点是实现了消息的回调功能，即当发送一个�
     private String charsetName;
        
 Demo中还有socket服务端的测试代码，大家可以用本地IP地址对本框架进行测试，欢迎点评交流
+
+### 关于混淆请加上：
+   -keep class com.easysocket.entity.basemsg.** { *; }
+   -keep class com.easysocket.entity.OriginReadData
