@@ -534,4 +534,5 @@ Demo中还有socket服务端的测试代码，大家可以用本地IP地址对�
 
 ### 关于混淆请加上：
    -keep class com.easysocket.entity.basemsg.** { *; }
+  
    -keep class com.easysocket.entity.OriginReadData
