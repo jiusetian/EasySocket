@@ -171,6 +171,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
             actionDispatch.dispatchAction(IOAction.ACTION_READ_COMPLETE, originalData);
         } catch (Exception e) {
             e.printStackTrace();
+            connectionManager.disconnect(new Boolean(true)); // 断开重连
         }
     }
 
@@ -200,6 +201,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
     private void readHeaderFromSteam(ByteBuffer headBuf, int readLength) throws IOException {
         for (int i = 0; i < readLength; i++) {
             byte[] bytes = new byte[1];
+            if (inputStream==null) return;
             int value = inputStream.read(bytes); // 从输入流中读取数据，没数据的时候该方面被阻塞
             if (value == -1) {
                 connectionManager.disconnect(new Boolean(true)); // 断开重连
@@ -214,6 +216,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
     private void readOriginDataFromSteam(OriginReadData readData) {
         try {
             byte[] bufArray = new byte[1024 * 4]; // 从服务器单次读取的最大数据
+            if (inputStream==null) return;
             int len = inputStream.read(bufArray);
             if (len == -1) { // no more data
                 return;
@@ -227,32 +230,29 @@ public class EasyReader implements IReader<EasySocketOptions> {
             actionDispatch.dispatchAction(IOAction.ACTION_READ_COMPLETE, readData);
         } catch (IOException e) {
             e.printStackTrace();
+            connectionManager.disconnect(new Boolean(true)); // 断开重连
         }
     }
 
-    private void readBodyFromStream(ByteBuffer byteBuffer) throws IOException {
+    private void readBodyFromStream(ByteBuffer byteBuffer) throws Exception {
         // byteBuffer是否还有剩余空间
         while (byteBuffer.hasRemaining()) {
-            try {
-                byte[] bufArray = new byte[socketOptions.getMaxReadBytes()]; // 从服务器单次读取的最大数据
-                int len = inputStream.read(bufArray);
-                if (len == -1) { // no more data
-                    break;
-                }
-                int remaining = byteBuffer.remaining();
-                if (len > remaining) { // 从stream读取的数据超过一个body的大小
-                    // 保存一个body的数据到byteBuffer中
-                    byteBuffer.put(bufArray, 0, remaining);
-                    // 将多余的数据保存到remainingBuf中缓存，等下一次读取
-                    remainingBuf = ByteBuffer.allocate(len - remaining);
-                    remainingBuf.order(socketOptions.getReadOrder());
-                    remainingBuf.put(bufArray, remaining, len - remaining);
-                } else { // 从stream读取的数据小于或等于一个body的大小
-                    byteBuffer.put(bufArray, 0, len);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw e;
+            byte[] bufArray = new byte[socketOptions.getMaxReadBytes()]; // 从服务器单次读取的最大数据
+            if (inputStream==null) return;
+            int len = inputStream.read(bufArray);
+            if (len == -1) { // no more data
+                break;
+            }
+            int remaining = byteBuffer.remaining();
+            if (len > remaining) { // 从stream读取的数据超过一个body的大小
+                // 保存一个body的数据到byteBuffer中
+                byteBuffer.put(bufArray, 0, remaining);
+                // 将多余的数据保存到remainingBuf中缓存，等下一次读取
+                remainingBuf = ByteBuffer.allocate(len - remaining);
+                remainingBuf.order(socketOptions.getReadOrder());
+                remainingBuf.put(bufArray, remaining, len - remaining);
+            } else { // 从stream读取的数据小于或等于一个body的大小
+                byteBuffer.put(bufArray, 0, len);
             }
         }
     }

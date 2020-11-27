@@ -258,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
     private void initEasySocket() {
         // socket配置
         EasySocketOptions options = new EasySocketOptions.Builder()
-                .setSocketAddress(new SocketAddress("192.168.1.102", 9999)) // 主机地址
+                .setSocketAddress(new SocketAddress("192.168.1.103", 9999)) // 主机地址
                 .setCallbackIdKeyFactory(new CallbackIdKeyFactoryImpl())
                 // 最好定义一个消息协议，方便解决 socket黏包、分包的问题
                 // .setReaderProtocol(new DefaultMessageProtocol()) // 默认的消息协议

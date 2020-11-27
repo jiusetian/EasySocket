@@ -19,6 +19,7 @@ public class ServerConfig {
     }
 
     private ServerConfig() {
+
     }
 
     public IMessageProtocol getMessageProtocol() {
