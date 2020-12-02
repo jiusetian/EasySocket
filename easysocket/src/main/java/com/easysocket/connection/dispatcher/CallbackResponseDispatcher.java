@@ -115,10 +115,10 @@ public class CallbackResponseDispatcher {
         @Override
         public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
             if (callbacks.size() == 0) return;
-            if (socketOptions.getCallbakcIdKeyFactory() == null) return;
+            if (socketOptions.getCallbakcKeyFactory() == null) return;
 
             try {
-                String callbackIdKey = socketOptions.getCallbakcIdKeyFactory().getCallbackIdKey();
+                String callbackIdKey = socketOptions.getCallbakcKeyFactory().getCallbackKey();
                 JSONObject data = new JSONObject(originReadData.getBodyString());
                 // 是否为回调消息
                 if (data.has(callbackIdKey)){
@@ -185,7 +185,7 @@ public class CallbackResponseDispatcher {
      */
     public void checkCallbackSender(SuperCallbackSender callbackSender) {
 
-        Util.checkNotNull(socketOptions.getCallbakcIdKeyFactory(), "要想实现EasySocket的回调功能，CallbackIdFactory不能为null，" +
+        Util.checkNotNull(socketOptions.getCallbakcKeyFactory(), "要想实现EasySocket的回调功能，CallbackIdFactory不能为null，" +
                 "请实现一个CallbackIdFactory并在初始化的时候通过EasySocketOptions的setCallbackIdKeyFactory进行配置");
         String callbackId = callbackSender.getCallbackId();
         if (callbacks.containsKey(callbackId)) {

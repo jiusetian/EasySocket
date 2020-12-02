@@ -78,7 +78,7 @@ public class EasySocketOptions {
      * 实现回调功能需要callbackID，而callbackID是保存在发送消息和返回消息中的，此工厂用来获取socket消息中
      * 保存callbackID值的键，即key，比如json格式中的key-value中的key
      */
-    private CallbakcIdKeyFactory callbakcIdKeyFactory;
+    private CallbakcKeyFactory callbakcKeyFactory;
     /**
      * 请求超时时间，单位毫秒
      */
@@ -160,10 +160,10 @@ public class EasySocketOptions {
         /**
          * 设置请求ack的工厂
          *
-         * @param callbakcIdKeyFactory
+         * @param callbakcKeyFactory
          */
-        public Builder setCallbackIdKeyFactory(CallbakcIdKeyFactory callbakcIdKeyFactory) {
-            socketOptions.callbakcIdKeyFactory = callbakcIdKeyFactory;
+        public Builder setCallbackKeyFactory(CallbakcKeyFactory callbakcKeyFactory) {
+            socketOptions.callbakcKeyFactory = callbakcKeyFactory;
             return this;
         }
 
@@ -332,7 +332,7 @@ public class EasySocketOptions {
         options.reconnectionManager = new DefaultReConnection();
         options.easySSLConfig = null;
         options.socketFactory = null;
-        options.callbakcIdKeyFactory = null;
+        options.callbakcKeyFactory = null;
         options.requestTimeout = 10 * 1000; // 默认十秒
         options.isOpenRequestTimeout = true; // 默认开启
         options.charsetName = "UTF-8";
@@ -399,8 +399,8 @@ public class EasySocketOptions {
         return isOpenRequestTimeout;
     }
 
-    public CallbakcIdKeyFactory getCallbakcIdKeyFactory() {
-        return callbakcIdKeyFactory;
+    public CallbakcKeyFactory getCallbakcKeyFactory() {
+        return callbakcKeyFactory;
     }
 
     /**
@@ -459,8 +459,8 @@ public class EasySocketOptions {
         this.socketFactory = socketFactory;
     }
 
-    public void setCallbakcIdKeyFactory(CallbakcIdKeyFactory callbakcIdKeyFactory) {
-        this.callbakcIdKeyFactory = callbakcIdKeyFactory;
+    public void setCallbakcKeyFactory(CallbakcKeyFactory callbakcKeyFactory) {
+        this.callbakcKeyFactory = callbakcKeyFactory;
     }
 
     public void setRequestTimeout(long requestTimeout) {

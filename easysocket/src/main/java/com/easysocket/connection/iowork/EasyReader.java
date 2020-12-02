@@ -201,7 +201,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
     private void readHeaderFromSteam(ByteBuffer headBuf, int readLength) throws IOException {
         for (int i = 0; i < readLength; i++) {
             byte[] bytes = new byte[1];
-            if (inputStream==null) return;
+            if (inputStream == null) return;
             int value = inputStream.read(bytes); // 从输入流中读取数据，没数据的时候该方面被阻塞
             if (value == -1) {
                 connectionManager.disconnect(new Boolean(true)); // 断开重连
@@ -216,7 +216,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
     private void readOriginDataFromSteam(OriginReadData readData) {
         try {
             byte[] bufArray = new byte[1024 * 4]; // 从服务器单次读取的最大数据
-            if (inputStream==null) return;
+            if (inputStream == null) return;
             int len = inputStream.read(bufArray);
             if (len == -1) { // no more data
                 return;
@@ -238,7 +238,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
         // byteBuffer是否还有剩余空间
         while (byteBuffer.hasRemaining()) {
             byte[] bufArray = new byte[socketOptions.getMaxReadBytes()]; // 从服务器单次读取的最大数据
-            if (inputStream==null) return;
+            if (inputStream == null) return;
             int len = inputStream.read(bufArray);
             if (len == -1) { // no more data
                 break;
