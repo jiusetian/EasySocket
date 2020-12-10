@@ -22,7 +22,7 @@ public interface IConnectionManager extends ISubscribeSocketAction, IOptions<ICo
      * 关闭连接
      * @param isNeedReconnect 是否需要重连
      */
-    void disconnect(Boolean isNeedReconnect);
+    void disconnect(boolean isNeedReconnect);
 
 
     /**

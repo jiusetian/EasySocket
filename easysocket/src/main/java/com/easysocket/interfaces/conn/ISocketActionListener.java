@@ -20,14 +20,14 @@ public interface ISocketActionListener {
      * @param socketAddress
      * @param isNeedReconnect 是否需要重连
      */
-    void onSocketConnFail(SocketAddress socketAddress, Boolean isNeedReconnect);
+    void onSocketConnFail(SocketAddress socketAddress, boolean isNeedReconnect);
 
     /**
      * 断开socket连接
      * @param socketAddress
      * @param isNeedReconnect 是否需要重连
      */
-    void onSocketDisconnect(SocketAddress socketAddress, Boolean isNeedReconnect);
+    void onSocketDisconnect(SocketAddress socketAddress, boolean isNeedReconnect);
 
     /**
      * socket读数据反馈

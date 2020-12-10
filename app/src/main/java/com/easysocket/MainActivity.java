@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
          * @param isNeedReconnect 是否需要重连
          */
         @Override
-        public void onSocketConnFail(SocketAddress socketAddress, Boolean isNeedReconnect) {
+        public void onSocketConnFail(SocketAddress socketAddress, boolean isNeedReconnect) {
             super.onSocketConnFail(socketAddress, isNeedReconnect);
             controlConnect.setText("socket连接被断开，点击进行连接");
             isConnected = false;
@@ -232,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
          * @param isNeedReconnect 是否需要重连
          */
         @Override
-        public void onSocketDisconnect(SocketAddress socketAddress, Boolean isNeedReconnect) {
+        public void onSocketDisconnect(SocketAddress socketAddress, boolean isNeedReconnect) {
             super.onSocketDisconnect(socketAddress, isNeedReconnect);
             LogUtil.d("socket断开连接，是否需要重连：" + isNeedReconnect);
             controlConnect.setText("socket连接被断开，点击进行连接");

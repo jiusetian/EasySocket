@@ -21,8 +21,8 @@ public class EasySocket {
      * 连接管理器
      */
     private static ConnectionHolder connectionHolder = ConnectionHolder.getInstance();
-
-    private volatile static EasySocket singleton = null; // 加了volatile更加安全
+    // 单例
+    private volatile static EasySocket singleton = null;
     /**
      * 连接参数
      */
@@ -101,7 +101,7 @@ public class EasySocket {
      * @return
      */
     public EasySocket disconnect(boolean isNeedReconnect) {
-        getConnection().disconnect(new Boolean(isNeedReconnect));
+        getConnection().disconnect(isNeedReconnect);
         return this;
     }
 
@@ -111,7 +111,7 @@ public class EasySocket {
      */
     public EasySocket destroyConnection(){
         // 首先断开连接
-        getConnection().disconnect(new Boolean(false));
+        getConnection().disconnect(false);
         // 移除连接对象
         connectionHolder.removeConnection(options.getSocketAddress());
         connection=null;

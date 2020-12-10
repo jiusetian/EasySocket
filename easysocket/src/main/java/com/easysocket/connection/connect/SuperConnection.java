@@ -146,7 +146,7 @@ public abstract class SuperConnection implements IConnectionManager {
     }
 
     @Override
-    public synchronized void disconnect(Boolean isNeedReconnect) {
+    public synchronized void disconnect(boolean isNeedReconnect) {
         if (connectionStatus.get() == SocketStatus.SOCKET_DISCONNECTING) {
             return;
         }
@@ -163,9 +163,9 @@ public abstract class SuperConnection implements IConnectionManager {
      * 断开连接线程
      */
     private class DisconnectThread extends Thread {
-        Boolean isNeedReconnect; // 当前连接的断开是否需要自动重连
+        boolean isNeedReconnect; // 当前连接的断开是否需要自动重连
 
-        public DisconnectThread(Boolean isNeedReconnect, String name) {
+        public DisconnectThread(boolean isNeedReconnect, String name) {
             super(name);
             this.isNeedReconnect = isNeedReconnect;
         }
@@ -190,7 +190,7 @@ public abstract class SuperConnection implements IConnectionManager {
                 e.printStackTrace();
             } finally {
                 connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED);
-                actionDispatcher.dispatchAction(SocketAction.ACTION_DISCONNECTION, isNeedReconnect);
+                actionDispatcher.dispatchAction(SocketAction.ACTION_DISCONNECTION, new Boolean(isNeedReconnect));
             }
         }
     }
@@ -213,7 +213,8 @@ public abstract class SuperConnection implements IConnectionManager {
                 e.printStackTrace();
                 LogUtil.d("socket连接失败");
                 connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED);
-                actionDispatcher.dispatchAction(SocketAction.ACTION_CONN_FAIL, new Boolean(true)); // 第二个参数指需要重连
+                // 第二个参数指需要重连
+                actionDispatcher.dispatchAction(SocketAction.ACTION_CONN_FAIL, new Boolean(true));
 
             }
         }
