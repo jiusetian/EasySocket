@@ -22,7 +22,7 @@ public class DefaultReConnection extends AbsReconnection {
      */
     private int connectionFailedTimes = 0;
     /**
-     * 重连的时间不能小于10秒
+     * 重连间隔不能小于10秒
      */
     private long reconnectTimeDelay = 10 * 1000;
     /**
@@ -60,6 +60,7 @@ public class DefaultReConnection extends AbsReconnection {
      * 进行重连
      */
     private void reconnect() {
+        // 如果没有启动重连机制，则启动，否则就让重连机制去处理连接失败的问题
         if (reConnExecutor == null || reConnExecutor.isShutdown()) {
             reConnExecutor = Executors.newSingleThreadScheduledExecutor();
             reConnExecutor.scheduleWithFixedDelay(RcConnTask, 0, reconnectTimeDelay, TimeUnit.MILLISECONDS);
@@ -88,19 +89,20 @@ public class DefaultReConnection extends AbsReconnection {
     }
 
     @Override
-    public void onSocketConnFail(SocketAddress socketAddress, Boolean isNeedReconnect) {
-        // 如果连接失败，但不需要重连，则关闭
-        if (!isNeedReconnect.booleanValue()) {
+    public void onSocketConnFail(SocketAddress socketAddress, boolean isNeedReconnect) {
+        // 不需要重连，则关闭重连线程
+        if (!isNeedReconnect) {
             shutDown();
             return;
         }
         connectionFailedTimes++;
+
         // 如果大于最大连接次数并且有备用host,则轮流切换两个host
         if (connectionFailedTimes > MAX_CONNECTION_FAILED_TIMES && socketAddress.getBackupAddress() != null) {
             connectionFailedTimes = 0; // 归零
             SocketAddress backupAddress = socketAddress.getBackupAddress();
-            SocketAddress bbAddress = new SocketAddress(socketAddress.getIp(), socketAddress.getPort());
-            backupAddress.setBackupAddress(bbAddress);
+            SocketAddress nowAddress = new SocketAddress(socketAddress.getIp(), socketAddress.getPort());
+            backupAddress.setBackupAddress(nowAddress);
             if (connectionManager.isConnectViable()) {
                 connectionManager.switchHost(backupAddress);
                 // 切换主机地址，重新连接
@@ -113,9 +115,9 @@ public class DefaultReConnection extends AbsReconnection {
     }
 
     @Override
-    public void onSocketDisconnect(SocketAddress socketAddress, Boolean isNeedReconnect) {
+    public void onSocketDisconnect(SocketAddress socketAddress, boolean isNeedReconnect) {
         // 是否需要重连
-        if (!isNeedReconnect.booleanValue()) {
+        if (!isNeedReconnect) {
             shutDown();
             return;
         }

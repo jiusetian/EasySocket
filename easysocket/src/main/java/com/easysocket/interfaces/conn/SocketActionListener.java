@@ -23,7 +23,7 @@ public abstract class SocketActionListener implements ISocketActionListener{
      * @param isNeedReconnect 是否需要重连
      */
     @Override
-    public void onSocketConnFail(SocketAddress socketAddress, Boolean isNeedReconnect) {
+    public void onSocketConnFail(SocketAddress socketAddress, boolean isNeedReconnect) {
 
     }
     /**
@@ -32,7 +32,7 @@ public abstract class SocketActionListener implements ISocketActionListener{
      * @param isNeedReconnect 是否需要重连
      */
     @Override
-    public void onSocketDisconnect(SocketAddress socketAddress, Boolean isNeedReconnect) {
+    public void onSocketDisconnect(SocketAddress socketAddress, boolean isNeedReconnect) {
 
     }
     /**

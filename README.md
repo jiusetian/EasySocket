@@ -515,7 +515,7 @@ EasySocket的最大特点是实现了消息的回调功能，即当发送一个�
      * 实现回调功能需要callbackID，而callbackID是保存在发送消息和返回消息中的，此工厂用来获取socket消息中
      * 保存callbackID值的键，即key，比如json格式中的key-value中的key
      */
-    private CallbakcIdKeyFactory callbakcIdKeyFactory;
+    private CallbakcIdKeyFactory callbakcKeyFactory;
     /**
      * 请求超时时间，单位毫秒
      */

@@ -34,14 +34,16 @@ public class ConnectionHolder {
 
     /**
      * 移除某个连接缓存
+     *
      * @param socketAddress
      */
-    public void removeConnection(SocketAddress socketAddress){
+    public void removeConnection(SocketAddress socketAddress) {
         mConnectionManagerMap.remove(createKey(socketAddress));
     }
 
     /**
      * 获取指定host的连接器，option为默认
+     *
      * @param info
      * @return
      */
@@ -57,6 +59,7 @@ public class ConnectionHolder {
 
     /**
      * 获取指定host和参数opiton的连接器
+     *
      * @param info
      * @param socketOptions
      * @return
@@ -88,11 +91,14 @@ public class ConnectionHolder {
                                                SocketAddress newAddress) {
                 // 切换了另外一个主机的连接，所以删除旧的连接，添加新的连接
                 synchronized (mConnectionManagerMap) {
+                    // 首先要断开连接，销毁相关线程和资源
+                    mConnectionManagerMap.get(createKey(oldAddress)).disconnect(false);
                     mConnectionManagerMap.remove(createKey(oldAddress));
                     mConnectionManagerMap.put(createKey(newAddress), manager);
                 }
             }
         });
+
         synchronized (mConnectionManagerMap) {
             mConnectionManagerMap.put(createKey(info), manager);
         }
@@ -103,8 +109,8 @@ public class ConnectionHolder {
      * @param socketAddress
      * @return
      */
-    private String createKey(SocketAddress socketAddress){
-        return socketAddress.getIp()+":"+ socketAddress.getPort();
+    private String createKey(SocketAddress socketAddress) {
+        return socketAddress.getIp() + ":" + socketAddress.getPort();
     }
 
 }

@@ -80,7 +80,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
             // 心跳丢失次数判断，心跳包丢失了一定的次数则会进行socket的断开重连
             if (socketOptions.getMaxHeartbeatLoseTimes() != -1 && loseTimes.incrementAndGet() >= socketOptions.getMaxHeartbeatLoseTimes()) {
                 // 断开重连
-                connectionManager.disconnect(new Boolean(true));
+                connectionManager.disconnect(true);
                 resetLoseTimes();
             } else { // 发送心跳包
                 connectionManager.upBytes(clientHeart);
@@ -155,14 +155,14 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     }
 
     @Override
-    public void onSocketConnFail(SocketAddress socketAddress, Boolean isNeedReconnect) {
+    public void onSocketConnFail(SocketAddress socketAddress, boolean isNeedReconnect) {
         // 如果不需要重连，则停止心跳频率线程
         if (!isNeedReconnect)
             stopHeartThread();
     }
 
     @Override
-    public void onSocketDisconnect(SocketAddress socketAddress, Boolean isNeedReconnect) {
+    public void onSocketDisconnect(SocketAddress socketAddress, boolean isNeedReconnect) {
         if (!isNeedReconnect)
             stopHeartThread();
     }

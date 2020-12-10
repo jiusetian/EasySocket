@@ -161,7 +161,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                 mainThreadExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        actionListener.onSocketConnFail(socketAddress, (Boolean) content);
+                        actionListener.onSocketConnFail(socketAddress, ((Boolean) content).booleanValue());
                     }
                 });
 
@@ -171,7 +171,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                 mainThreadExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        actionListener.onSocketDisconnect(socketAddress, (Boolean) content);
+                        actionListener.onSocketDisconnect(socketAddress, ((Boolean) content).booleanValue());
                     }
                 });
                 break;
