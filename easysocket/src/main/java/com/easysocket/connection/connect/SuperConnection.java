@@ -22,6 +22,8 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -38,7 +40,7 @@ public abstract class SuperConnection implements IConnectionManager {
     /**
      * 连接线程
      */
-    private Thread connectThread;
+    private ExecutorService connExecutor;
     /**
      * socket地址信息
      */
@@ -140,14 +142,22 @@ public abstract class SuperConnection implements IConnectionManager {
             reconnection.attach(this);
 
         // 开启连接线程
-        connectThread = new ConnectThread("connect thread for" + socketAddress);
-        connectThread.setDaemon(true);
-        connectThread.start();
+        if (connExecutor == null || connExecutor.isShutdown()) {
+            // 核心线程数为0，非核心线程数可以有Integer.MAX_VALUE个，存活时间为60秒，适合于在不断进行连接的情况下，避免重复创建和销毁线程
+            connExecutor = Executors.newCachedThreadPool();
+        }
+        // 执行连接任务
+        connExecutor.execute(connTask);
     }
 
     @Override
     public synchronized void disconnect(boolean isNeedReconnect) {
+
         if (connectionStatus.get() == SocketStatus.SOCKET_DISCONNECTING) {
+            return;
+        }
+        // 正在重连中
+        if (reconnection.isReconning()) {
             return;
         }
         connectionStatus.set(SocketStatus.SOCKET_DISCONNECTING);
@@ -180,8 +190,9 @@ public abstract class SuperConnection implements IConnectionManager {
                 if (callbackResponseDispatcher != null)
                     callbackResponseDispatcher.shutdownThread();
                 // 关闭连接线程
-                if (connectThread != null && connectThread.isAlive() && !connectThread.isInterrupted()) {
-                    connectThread.interrupt();
+                if (connExecutor != null && !connExecutor.isShutdown()) {
+                    connExecutor.shutdown();
+                    connExecutor = null;
                 }
                 LogUtil.d("关闭socket连接");
                 // 关闭连接
@@ -195,15 +206,8 @@ public abstract class SuperConnection implements IConnectionManager {
         }
     }
 
-    /**
-     * 连接线程
-     */
-    private class ConnectThread extends Thread {
-
-        public ConnectThread(String name) {
-            super(name);
-        }
-
+    // 连接任务
+    private Runnable connTask = new Runnable() {
         @Override
         public void run() {
             try {
@@ -218,7 +222,7 @@ public abstract class SuperConnection implements IConnectionManager {
 
             }
         }
-    }
+    };
 
     /**
      * 连接成功

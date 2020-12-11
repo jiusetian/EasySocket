@@ -79,7 +79,7 @@ public class EasySocket {
         if (options.getBackupAddress() != null) {
             socketAddress.setBackupAddress(options.getBackupAddress());
         }
-        if (connection==null){
+        if (connection == null) {
             connection = connectionHolder.getConnection(socketAddress,
                     options == null ? EasySocketOptions.getDefaultOptions() : options);
         }
@@ -89,14 +89,17 @@ public class EasySocket {
 
     /**
      * 连接socket
+     *
      * @return
      */
-    public EasySocket connect(){
+    public EasySocket connect() {
         getConnection().connect();
         return this;
     }
+
     /**
      * 关闭连接，此时连接对象还在，只是关闭了socket和相关线程
+     *
      * @param isNeedReconnect 是否需要重连
      * @return
      */
@@ -107,14 +110,15 @@ public class EasySocket {
 
     /**
      * 销毁连接对象
+     *
      * @return
      */
-    public EasySocket destroyConnection(){
+    public EasySocket destroyConnection() {
         // 首先断开连接
         getConnection().disconnect(false);
         // 移除连接对象
         connectionHolder.removeConnection(options.getSocketAddress());
-        connection=null;
+        connection = null;
         return this;
     }
 
@@ -256,9 +260,10 @@ public class EasySocket {
 
     /**
      * 设置是否为debug
+     *
      * @param debug
      */
-    public void setDebug(boolean debug){
+    public void setDebug(boolean debug) {
         EasySocketOptions.setIsDebug(debug);
     }
 

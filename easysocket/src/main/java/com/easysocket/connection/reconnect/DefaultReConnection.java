@@ -123,4 +123,9 @@ public class DefaultReConnection extends AbsReconnection {
         }
         reconnect();
     }
+
+    @Override
+    public boolean isReconning() {
+        return reConnExecutor != null && !reConnExecutor.isShutdown();
+    }
 }

@@ -130,17 +130,19 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
         try {
             if (outputStream != null)
                 outputStream.close();
-            outputStream=null;
             shutDownThread();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+        }finally {
+            outputStream=null;
         }
     }
 
-    private void shutDownThread() {
+    private void shutDownThread() throws InterruptedException {
         if (writerThread != null && writerThread.isAlive() && !writerThread.isInterrupted()) {
             isStop = true;
             writerThread.interrupt();
+            writerThread.join();
             writerThread = null;
         }
     }

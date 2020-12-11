@@ -28,27 +28,22 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
      * 连接器
      */
     private IConnectionManager connectionManager;
-
     /**
      * 连接参数
      */
     private EasySocketOptions socketOptions;
-
     /**
      * 客户端心跳包
      */
     private byte[] clientHeart;
-
     /**
      * 心跳包发送线程
      */
     private ScheduledExecutorService heartExecutor;
-
     /**
      * 记录心跳的失联次数
      */
     private AtomicInteger loseTimes = new AtomicInteger(-1);
-
     /**
      * 心跳频率
      */
@@ -78,7 +73,8 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
         @Override
         public void run() {
             // 心跳丢失次数判断，心跳包丢失了一定的次数则会进行socket的断开重连
-            if (socketOptions.getMaxHeartbeatLoseTimes() != -1 && loseTimes.incrementAndGet() >= socketOptions.getMaxHeartbeatLoseTimes()) {
+            if (socketOptions.getMaxHeartbeatLoseTimes() != -1 &&
+                    loseTimes.incrementAndGet() >= socketOptions.getMaxHeartbeatLoseTimes()) {
                 // 断开重连
                 connectionManager.disconnect(true);
                 resetLoseTimes();
@@ -102,7 +98,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
         this.clientHeart = clientHeart;
         this.heartbeatListener = listener;
         isActivate = true;
-        startHeartThread();
+        openThread();
     }
 
     @Override
@@ -111,7 +107,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     }
 
     // 启动心跳线程
-    private void startHeartThread() {
+    private void openThread() {
         freq = socketOptions.getHeartbeatFreq(); // 心跳频率
         //  启动线程发送心跳
         if (heartExecutor == null || heartExecutor.isShutdown()) {
@@ -126,11 +122,11 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     @Override
     public void stopHeartbeat() {
         isActivate = false;
-        stopHeartThread();
+        closeThread();
     }
 
     // 停止心跳线程
-    private void stopHeartThread() {
+    private void closeThread() {
         if (heartExecutor != null && !heartExecutor.isShutdown()) {
             heartExecutor.shutdownNow();
             heartExecutor = null;
@@ -150,21 +146,25 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
 
     @Override
     public void onSocketConnSuccess(SocketAddress socketAddress) {
-        if (isActivate)
-            startHeartThread();
+        if (isActivate) {
+            openThread();
+        }
     }
 
     @Override
     public void onSocketConnFail(SocketAddress socketAddress, boolean isNeedReconnect) {
         // 如果不需要重连，则停止心跳频率线程
-        if (!isNeedReconnect)
-            stopHeartThread();
+        if (!isNeedReconnect) {
+            closeThread();
+        }
     }
 
     @Override
     public void onSocketDisconnect(SocketAddress socketAddress, boolean isNeedReconnect) {
-        if (!isNeedReconnect)
-            stopHeartThread();
+        // 如果不需要重连，则停止心跳检测
+        if (!isNeedReconnect) {
+            closeThread();
+        }
     }
 
     @Override

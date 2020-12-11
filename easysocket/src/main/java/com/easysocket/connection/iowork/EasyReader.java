@@ -262,10 +262,11 @@ public class EasyReader implements IReader<EasySocketOptions> {
         try {
             if (inputStream != null)
                 inputStream.close();
-            inputStream = null;
             shutDownThread();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+        }finally {
+            inputStream = null;
         }
     }
 
@@ -275,10 +276,11 @@ public class EasyReader implements IReader<EasySocketOptions> {
     }
 
     // 关闭读数据线程
-    private void shutDownThread() {
+    private void shutDownThread() throws InterruptedException {
         if (readerThread != null && readerThread.isAlive() && !readerThread.isInterrupted()) {
             stopThread = true;
             readerThread.interrupt();
+            readerThread.join();
             readerThread = null;
         }
     }

@@ -43,4 +43,10 @@ public abstract class AbsReconnection implements ISocketActionListener, IReconnL
     public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
         // donothing
     }
+
+    /**
+     * 是否正在重连
+     * @return
+     */
+    public abstract boolean isReconning();
 }
