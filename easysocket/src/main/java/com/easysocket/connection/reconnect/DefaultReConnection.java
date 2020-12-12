@@ -1,6 +1,7 @@
 package com.easysocket.connection.reconnect;
 
 import com.easysocket.entity.SocketAddress;
+import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.utils.LogUtil;
 
 import java.util.concurrent.Executors;
@@ -33,6 +34,14 @@ public class DefaultReConnection extends AbsReconnection {
     public DefaultReConnection() {
     }
 
+    @Override
+    public synchronized void attach(IConnectionManager iConnectionManager) {
+        super.attach(iConnectionManager);
+        if (reconnectTimeDelay < connectionManager.getOptions().getConnectTimeout()) {
+            reconnectTimeDelay = connectionManager.getOptions().getConnectTimeout();
+        }
+    }
+
     /**
      * 重连任务
      */
@@ -49,8 +58,6 @@ public class DefaultReConnection extends AbsReconnection {
                 shutDown();
                 return;
             }
-            if (reconnectTimeDelay < connectionManager.getOptions().getConnectTimeout())
-                reconnectTimeDelay = connectionManager.getOptions().getConnectTimeout();
             // 连接
             connectionManager.connect();
         }

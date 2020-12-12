@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  * Date：2019/6/1
  * Note：
  */
-public class EasyWriter implements IWriter {
+public class ServerWriter implements IWriter {
 
     /**
      * 输出流
@@ -34,7 +34,7 @@ public class EasyWriter implements IWriter {
 
     private Socket socket;
 
-    public EasyWriter(OutputStream outputStream, Socket socket) {
+    public ServerWriter(OutputStream outputStream, Socket socket) {
         this.outputStream = outputStream;
         this.socket = socket;
     }

@@ -13,7 +13,7 @@ import com.easysocket.connection.reconnect.AbsReconnection;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.basemsg.ISender;
 import com.easysocket.entity.basemsg.SuperCallbackSender;
-import com.easysocket.entity.exception.NoNullException;
+import com.easysocket.entity.exception.NotNullException;
 import com.easysocket.interfaces.config.IConnectionSwitchListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class SuperConnection implements IConnectionManager {
 
     /**
-     * 连接状态
+     * 连接状态，默认是断开连接的
      */
     protected final AtomicInteger connectionStatus = new AtomicInteger(SocketStatus.SOCKET_DISCONNECTED);
     /**
@@ -121,15 +121,17 @@ public abstract class SuperConnection implements IConnectionManager {
     @Override
     public synchronized void connect() {
         LogUtil.d("开始socket连接");
-        // 检查当前连接状态
+        // 检查当前连接状态，只有在连接已断开的时候才能进行socket的连接
         if (connectionStatus.get() != SocketStatus.SOCKET_DISCONNECTED) {
-            LogUtil.d("socket已连接");
+            LogUtil.e("socket不是出于断开连接的状态，不能进行连接");
             return;
         }
-        connectionStatus.set(SocketStatus.SOCKET_CONNECTING);
         if (socketAddress.getIp() == null) {
-            throw new NoNullException("连接参数有误，请检查是否设置了IP");
+            throw new NotNullException("请检查是否设置了IP地址");
         }
+        // 正在连接
+        connectionStatus.set(SocketStatus.SOCKET_CONNECTING);
+
         // 心跳管理器
         if (heartManager == null)
             heartManager = new HeartManager(this, actionDispatcher);
@@ -152,14 +154,15 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public synchronized void disconnect(boolean isNeedReconnect) {
-
-        if (connectionStatus.get() == SocketStatus.SOCKET_DISCONNECTING) {
+        // 只有在已连接的状态下才能断开连接
+        if (connectionStatus.get() != SocketStatus.SOCKET_CONNECTED) {
             return;
         }
         // 正在重连中
         if (reconnection.isReconning()) {
             return;
         }
+        // 正在断开连接
         connectionStatus.set(SocketStatus.SOCKET_DISCONNECTING);
 
         // 开启断开连接线程
@@ -197,11 +200,11 @@ public abstract class SuperConnection implements IConnectionManager {
                 LogUtil.d("关闭socket连接");
                 // 关闭连接
                 closeConnection();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
                 connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED);
                 actionDispatcher.dispatchAction(SocketAction.ACTION_DISCONNECTION, new Boolean(isNeedReconnect));
+            } catch (IOException e) {
+                // 断开连接发生异常
+                e.printStackTrace();
             }
         }
     }

@@ -10,7 +10,7 @@ public interface IReader<T> {
     /**
      * 读数据
      */
-    void read();
+    void read() throws Exception;
 
     /**
      * 打开数据的读取

@@ -1,6 +1,6 @@
 package com.socker_server;
 
-import com.socker_server.iowork.IOManager;
+import com.socker_server.iowork.ServerIOManager;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -45,7 +45,7 @@ public class MainClass {
 
     class Service implements Runnable {
         private Socket socket;
-        IOManager ioManager;
+        ServerIOManager serverIoManager;
 
         public Service(Socket socket) {
             this.socket = socket;
@@ -54,8 +54,8 @@ public class MainClass {
 
         @Override
         public void run() {
-            ioManager = new IOManager(socket);
-            ioManager.startIO();
+            serverIoManager = new ServerIOManager(socket);
+            serverIoManager.startIO();
         }
     }
 

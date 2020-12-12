@@ -5,8 +5,8 @@ package com.easysocket.entity.exception;
  * Date：2019/6/5
  * Note：非空异常
  */
-public class NoNullException extends RuntimeException {
-    public NoNullException(String e) {
+public class NotNullException extends RuntimeException {
+    public NotNullException(String e) {
         super(e);
     }
 }

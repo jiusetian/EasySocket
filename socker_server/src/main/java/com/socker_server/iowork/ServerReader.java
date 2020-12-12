@@ -16,7 +16,7 @@ import java.nio.ByteOrder;
  * Date：2019/6/1
  * Note：
  */
-public class EasyReader implements IReader {
+public class ServerReader implements IReader {
     /**
      * 输入流
      */
@@ -39,7 +39,7 @@ public class EasyReader implements IReader {
      */
     private HandlerIO handlerIO;
 
-    public EasyReader(InputStream inputStream, Socket socket,HandlerIO handlerIO) {
+    public ServerReader(InputStream inputStream, Socket socket, HandlerIO handlerIO) {
         this.inputStream = inputStream;
         this.socket = socket;
         this.handlerIO=handlerIO;
@@ -89,7 +89,7 @@ public class EasyReader implements IReader {
 
             if (bodyLength > 0) {
                 if (bodyLength > 5 * 1024 * 1024) { //是否大于最大的读取数
-                    throw new RuntimeException("服务器返回的单次数据的大小已经超过了规定的最大值，为了防止内存溢出，请规范好相关协议");
+                    throw new Exception("服务器返回的单次数据的大小已经超过了规定的最大值，为了防止内存溢出，请规范好相关协议");
                 }
                 ByteBuffer byteBuffer = ByteBuffer.allocate(bodyLength);
                 byteBuffer.order(ByteOrder.BIG_ENDIAN);
@@ -145,7 +145,7 @@ public class EasyReader implements IReader {
                     }
                 }
             } else if (bodyLength < 0) {
-                throw new RuntimeException("读取失败，读取到的数据长度小于0，可能是读取的过程中跟socket跟服务器断开了连接");
+                throw new Exception("读取失败，读取到的数据长度小于0，可能是读取的过程中跟socket跟服务器断开了连接");
             }
             //将读取到一个完整数据发布出去
             handlerIO.handReceiveMsg(originalData.getBodyString());

@@ -10,7 +10,7 @@ import java.net.Socket;
  * Date£∫2019/5/28
  * Note£∫
  */
-public class IOManager implements IIOManager {
+public class ServerIOManager implements IIOManager {
 
     /**
      * io–¥
@@ -21,7 +21,7 @@ public class IOManager implements IIOManager {
      */
     private IReader reader;
 
-    public IOManager(Socket socket) {
+    public ServerIOManager(Socket socket) {
         try {
             initIO(socket);
         } catch (IOException e) {
@@ -31,9 +31,9 @@ public class IOManager implements IIOManager {
 
     //≥ı ºªØio
     private void initIO(Socket socket) throws IOException {
-        writer = new EasyWriter(socket.getOutputStream(), socket); //–¥
+        writer = new ServerWriter(socket.getOutputStream(), socket); //–¥
         HandlerIO handlerIO = new HandlerIO(writer);
-        reader = new EasyReader(socket.getInputStream(), socket, handlerIO); //∂¡
+        reader = new ServerReader(socket.getInputStream(), socket, handlerIO); //∂¡
     }
 
     @Override

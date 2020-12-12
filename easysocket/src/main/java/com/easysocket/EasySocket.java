@@ -6,7 +6,7 @@ import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.basemsg.ISender;
 import com.easysocket.entity.basemsg.SuperCallbackSender;
 import com.easysocket.entity.exception.InitialExeption;
-import com.easysocket.entity.exception.NoNullException;
+import com.easysocket.entity.exception.NotNullException;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
 
@@ -73,7 +73,7 @@ public class EasySocket {
     public EasySocket createConnection() {
         SocketAddress socketAddress = options.getSocketAddress();
         if (options.getSocketAddress() == null) {
-            throw new InitialExeption("请在EasySocketOptions中设置SocketAddress");
+            throw new InitialExeption("请在初始化的时候设置SocketAddress");
         }
         // 如果有备用主机则设置
         if (options.getBackupAddress() != null) {
@@ -215,7 +215,7 @@ public class EasySocket {
      */
     public IConnectionManager getConnection() {
         if (connection == null) {
-            throw new NoNullException("请先创建socket连接");
+            throw new NotNullException("请先创建socket连接");
         }
         return connection;
     }
