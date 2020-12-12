@@ -36,7 +36,7 @@ public class TcpConnection extends SuperConnection {
     @Override
     protected void openConnection() throws Exception {
         try {
-            socket = getSocketByConfig();
+            socket = getSocket();
         } catch (Exception e) {
             e.printStackTrace();
             connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED); // 设置为未连接状态
@@ -65,7 +65,7 @@ public class TcpConnection extends SuperConnection {
      *
      * @return
      */
-    private synchronized Socket getSocketByConfig() throws Exception {
+    private synchronized Socket getSocket() throws Exception {
         // 自定义的socket生成工厂
         if (socketOptions.getSocketFactory() != null) {
             return socketOptions.getSocketFactory().createSocket(socketAddress, socketOptions);

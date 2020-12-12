@@ -256,7 +256,6 @@ public class EasyReader implements IReader<EasySocketOptions> {
     public void openReader() {
         init();
         if (readerThread == null || !readerThread.isAlive()) {
-            inputStream = connectionManager.getInputStream();
             readerThread = new Thread(readerTask, "reader thread");
             stopThread = false;
             readerThread.start();
@@ -298,6 +297,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
 
     // 初始化
     private void init() {
+        inputStream = connectionManager.getInputStream();
         // 没有定义消息协议
         if (socketOptions.getMessageProtocol() == null) {
             originBuf = ByteBuffer.allocate(1024 * 4);

@@ -52,14 +52,13 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
     public EasyWriter(IConnectionManager connectionManager, ISocketActionDispatch actionDispatch) {
         this.connectionManager = connectionManager;
         socketOptions = connectionManager.getOptions();
-        outputStream = connectionManager.getOutStream();
         this.actionDispatch = actionDispatch;
     }
 
     @Override
     public void openWriter() {
+        outputStream = connectionManager.getOutStream();
         if (writerThread == null) {
-            outputStream = connectionManager.getOutStream();
             isStop = false;
             writerThread = new Thread(writerTask, "writer thread");
             writerThread.start();

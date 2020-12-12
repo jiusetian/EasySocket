@@ -121,11 +121,6 @@ public abstract class SuperConnection implements IConnectionManager {
     @Override
     public synchronized void connect() {
         LogUtil.d("开始socket连接");
-        // 检查当前连接状态，只有在连接已断开的时候才能进行socket的连接
-        if (connectionStatus.get() != SocketStatus.SOCKET_DISCONNECTED) {
-            LogUtil.e("socket不处于断开连接的状态，所以无法进行连接");
-            return;
-        }
         if (socketAddress.getIp() == null) {
             throw new NotNullException("请检查是否设置了IP地址");
         }
