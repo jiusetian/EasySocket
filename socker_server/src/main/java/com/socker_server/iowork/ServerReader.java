@@ -42,25 +42,25 @@ public class ServerReader implements IReader {
     public ServerReader(InputStream inputStream, Socket socket, HandlerIO handlerIO) {
         this.inputStream = inputStream;
         this.socket = socket;
-        this.handlerIO=handlerIO;
+        this.handlerIO = handlerIO;
     }
 
     @Override
     public void read() {
         OriginReadData originalData = new OriginReadData();
         IMessageProtocol readerProtocol = ServerConfig.getInstance().getMessageProtocol();
-        // 如果消息协议为null，则直接读取原始消息，不建议这样使用，因为会发生黏包、分包的问题
-        if (readerProtocol == null) {
-            readOriginDataFromSteam(originalData);
-            return;
-        }
-
-        int headerLength = readerProtocol.getHeaderLength(); //默认的包头长度是4个字节
-        ByteBuffer headBuf = ByteBuffer.allocate(headerLength); //读取数据包头的缓存
-        headBuf.order(ByteOrder.BIG_ENDIAN);
-
-        //首先读取数据的header=====>>>
         try {
+            // 如果消息协议为null，则直接读取原始消息，不建议这样使用，因为会发生黏包、分包的问题
+            if (readerProtocol == null) {
+                readOriginDataFromSteam(originalData);
+                return;
+            }
+
+            int headerLength = readerProtocol.getHeaderLength(); //默认的包头长度是4个字节
+            ByteBuffer headBuf = ByteBuffer.allocate(headerLength); //读取数据包头的缓存
+            headBuf.order(ByteOrder.BIG_ENDIAN);
+
+            //首先读取数据的header=====>>>
             //有余留数据
             if (remainingBuf != null) {
                 //flip方法：buffer的容量不变，将limit移动到buffer的数据大小索引位置，将position置为0，这样就可以从0这个位置开始读取数据，直到limit大小的位置，limit就是buffer保存数据的大小
@@ -152,7 +152,8 @@ public class ServerReader implements IReader {
             //actionDispatch.dispatchAction(IOAction.ACTION_READ_COMPLETE, originalData);
         } catch (Exception e) {
             e.printStackTrace();
-            closeReader();
+            // 关闭
+            isShutdown = true;
         }
     }
 
@@ -169,61 +170,57 @@ public class ServerReader implements IReader {
     private Runnable readerTask = new Runnable() {
         @Override
         public void run() {
-            while (socket.isConnected() && !isShutdown) {
+            while (socket.isConnected() && !isShutdown && !socket.isClosed()) {
                 read();
+                System.out.println("服务端读数据" + socket.isClosed());
             }
         }
     };
 
     // 直接读取原始数据，适合于所有数据格式
-    private void readOriginDataFromSteam(OriginReadData readData) {
-        try {
-            byte[] bufArray = new byte[4096]; // 从服务器单次读取的最大数据
-            int len = inputStream.read(bufArray);
-            if (len == -1) { // no more data
-                return;
-            }
-            ByteBuffer data=ByteBuffer.allocate(len);
-            data.put(bufArray,0,len);
-            readData.setBodyData(data.array());
-            System.out.println("字符串大小"+readData.getBodyString().length());
-            // 分发数据
-            handlerIO.handReceiveMsg(readData.getBodyString().trim());
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void readOriginDataFromSteam(OriginReadData readData) throws Exception {
+
+        byte[] bufArray = new byte[4096]; // 从服务器单次读取的最大数据
+        int len = inputStream.read(bufArray);
+        if (len == -1) { // no more data
+            throw new Exception("可能客户端断开了连接");
         }
+        ByteBuffer data = ByteBuffer.allocate(len);
+        data.put(bufArray, 0, len);
+        readData.setBodyData(data.array());
+        System.out.println("字符串大小" + readData.getBodyString().length());
+        // 分发数据
+        handlerIO.handReceiveMsg(readData.getBodyString().trim());
     }
 
-    private void readHeaderFromSteam(ByteBuffer headBuf, int readLength) throws IOException {
+    private void readHeaderFromSteam(ByteBuffer headBuf, int readLength) throws Exception {
         for (int i = 0; i < readLength; i++) {
             byte[] bytes = new byte[1];
             int value = inputStream.read(bytes); //从输入流中读取相应长度的数据
             if (value == -1) {
-             }
+                throw new Exception("可能客户端断开了连接");
+            }
             headBuf.put(bytes);
         }
     }
 
-    private void readBodyFromStream(ByteBuffer byteBuffer) throws IOException {
+    private void readBodyFromStream(ByteBuffer byteBuffer) throws Exception {
         //body大小是缓存buffer是否还有剩余空间
         while (byteBuffer.hasRemaining()) {
-            try {
-                byte[] bufArray = new byte[50]; //从服务器中单次读取的缓存数据大小
-                int len = inputStream.read(bufArray);
-                if (len == -1) {
-                    break;
-                }
-                int remaining = byteBuffer.remaining();
-                if (len > remaining) { //读多了
-                    byteBuffer.put(bufArray, 0, remaining);
-                    remainingBuf = ByteBuffer.allocate(len - remaining);
-                    remainingBuf.order(ByteOrder.BIG_ENDIAN);
-                    remainingBuf.put(bufArray, remaining, len - remaining);
-                } else { //还没够或者刚刚好
-                    byteBuffer.put(bufArray, 0, len);
-                }
-            } catch (Exception e) {
-                throw e;
+
+            byte[] bufArray = new byte[50]; //从服务器中单次读取的缓存数据大小
+            int len = inputStream.read(bufArray);
+            if (len == -1) {
+                throw new Exception("可能客户端断开了连接");
+            }
+            int remaining = byteBuffer.remaining();
+            if (len > remaining) { //读多了
+                byteBuffer.put(bufArray, 0, remaining);
+                remainingBuf = ByteBuffer.allocate(len - remaining);
+                remainingBuf.order(ByteOrder.BIG_ENDIAN);
+                remainingBuf.put(bufArray, remaining, len - remaining);
+            } else { //还没够或者刚刚好
+                byteBuffer.put(bufArray, 0, len);
             }
         }
     }

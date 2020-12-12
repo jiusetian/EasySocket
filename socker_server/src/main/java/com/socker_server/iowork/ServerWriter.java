@@ -59,7 +59,7 @@ public class ServerWriter implements IWriter {
         @Override
         public void run() {
             //只要socket处于连接的状态，就一直活动
-            while (socket.isConnected() && !isShutdown) {
+            while (socket.isConnected() && !isShutdown && !socket.isClosed()) {
                 try {
                     byte[] sender = packetsToSend.take();
                     System.out.println("send message");
@@ -98,7 +98,7 @@ public class ServerWriter implements IWriter {
             } catch (Exception e) {
                 //写数据异常
                 e.printStackTrace();
-                closeWriter();
+                isShutdown = true;
             }
         }
     }
