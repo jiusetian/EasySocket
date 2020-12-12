@@ -170,7 +170,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
     @Override
     public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
         if (heartbeatListener != null && heartbeatListener.isServerHeartbeat(originReadData)) {
-            // 接收到服务器心跳
+            // 收到服务器心跳
             onReceiveHeartBeat();
         }
     }

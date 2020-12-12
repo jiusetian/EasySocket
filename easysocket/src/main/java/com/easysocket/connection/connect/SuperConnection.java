@@ -123,7 +123,7 @@ public abstract class SuperConnection implements IConnectionManager {
         LogUtil.d("开始socket连接");
         // 检查当前连接状态，只有在连接已断开的时候才能进行socket的连接
         if (connectionStatus.get() != SocketStatus.SOCKET_DISCONNECTED) {
-            LogUtil.e("socket不是出于断开连接的状态，不能进行连接");
+            LogUtil.e("socket不处于断开连接的状态，所以无法进行连接");
             return;
         }
         if (socketAddress.getIp() == null) {
@@ -197,9 +197,9 @@ public abstract class SuperConnection implements IConnectionManager {
                     connExecutor.shutdown();
                     connExecutor = null;
                 }
-                LogUtil.d("关闭socket连接");
                 // 关闭连接
                 closeConnection();
+                LogUtil.d("关闭socket连接");
                 connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED);
                 actionDispatcher.dispatchAction(SocketAction.ACTION_DISCONNECTION, new Boolean(isNeedReconnect));
             } catch (IOException e) {
@@ -241,8 +241,11 @@ public abstract class SuperConnection implements IConnectionManager {
     private void openSocketManager() {
         if (callbackResponseDispatcher == null)
             callbackResponseDispatcher = new CallbackResponseDispatcher(this);
-        if (ioManager == null)
+        if (ioManager == null){
             ioManager = new IOManager(this, actionDispatcher);
+        }
+        ioManager.startIO();
+
         // 启动相关线程
         callbackResponseDispatcher.engineThread();
         ioManager.startIO();
@@ -301,13 +304,15 @@ public abstract class SuperConnection implements IConnectionManager {
      * @return
      */
     private IConnectionManager sendBytes(byte[] bytes) {
+        if (ioManager == null || connectionStatus.get() != SocketStatus.SOCKET_CONNECTED) {
+            return this;
+        }
         byte[] sender = bytes;
         // 如果有消息协议，则进行打包
         if (socketOptions.getMessageProtocol() != null) {
             sender = socketOptions.getMessageProtocol().pack(bytes);
         }
-        if (ioManager != null)
-            ioManager.sendBytes(sender);
+        ioManager.sendBytes(sender);
         return this;
     }
 

@@ -60,6 +60,11 @@ public class IOManager implements IIOManager, IOptions {
     }
 
     @Override
+    public boolean isIOActive() {
+        return false;
+    }
+
+    @Override
     public void closeIO() {
         if (writer != null)
             writer.closeWriter();

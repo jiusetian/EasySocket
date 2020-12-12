@@ -1,5 +1,7 @@
 package com.easysocket.interfaces.io;
 
+import java.io.IOException;
+
 /**
  * Author：Alex
  * Date：2019/6/1
@@ -15,7 +17,7 @@ public interface IWriter<T> {
      * 写入数据
      * @param sender
      */
-    void write(byte[] sender);
+    void write(byte[] sender) throws IOException;
 
     /**
      * 关闭stream

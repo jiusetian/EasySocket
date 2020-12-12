@@ -9,7 +9,7 @@ import com.easysocket.interfaces.conn.IReconnListener;
 /**
  * Author：Alex
  * Date：2019/5/31
- * Note：抽象重连管理器
+ * Note：抽象重连器
  */
 public abstract class AbsReconnection implements ISocketActionListener, IReconnListener {
     /**

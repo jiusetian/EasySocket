@@ -189,6 +189,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
                     read();
                 }
             } catch (Exception e) {
+                LogUtil.e("读数据异常");
                 // 读异常
                 e.printStackTrace();
                 // 停止线程
@@ -254,7 +255,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
     @Override
     public void openReader() {
         init();
-        if (readerThread == null) {
+        if (readerThread == null || !readerThread.isAlive()) {
             inputStream = connectionManager.getInputStream();
             readerThread = new Thread(readerTask, "reader thread");
             stopThread = false;
@@ -281,6 +282,10 @@ public class EasyReader implements IReader<EasySocketOptions> {
         if (remainingBuf != null) {
             remainingBuf = null;
         }
+        if (readerThread != null && !readerThread.isAlive()) {
+            readerThread = null;
+        }
+
         try {
             if (inputStream != null)
                 inputStream.close();
@@ -310,7 +315,6 @@ public class EasyReader implements IReader<EasySocketOptions> {
             stopThread = true;
             readerThread.interrupt();
             readerThread.join();
-            readerThread = null;
         }
     }
 }

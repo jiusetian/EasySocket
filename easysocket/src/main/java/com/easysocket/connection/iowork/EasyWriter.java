@@ -29,7 +29,7 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
      */
     private IConnectionManager connectionManager;
     /**
-     * 连接参数
+     * socket参数
      */
     private EasySocketOptions socketOptions;
     /**
@@ -45,7 +45,7 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
      */
     private boolean isStop;
     /**
-     * 需要写入的数据
+     * 待写入数据
      */
     private LinkedBlockingDeque<byte[]> packetsToSend = new LinkedBlockingDeque<>();
 
@@ -59,8 +59,8 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
     @Override
     public void openWriter() {
         if (writerThread == null) {
-            outputStream=connectionManager.getOutStream();
-            isStop=false;
+            outputStream = connectionManager.getOutStream();
+            isStop = false;
             writerThread = new Thread(writerTask, "writer thread");
             writerThread.start();
         }
@@ -72,17 +72,17 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
     }
 
     /**
-     * io写任务
+     * 写任务
      */
     private Runnable writerTask = new Runnable() {
         @Override
         public void run() {
-            // 循环写数据到socket
+            // 循环写数据
             while (!isStop) {
                 try {
                     byte[] sender = packetsToSend.take();
                     write(sender);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException | IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -90,31 +90,28 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
     };
 
     @Override
-    public void write(byte[] sendBytes) {
+    public void write(byte[] sendBytes) throws IOException {
         if (sendBytes != null) {
             LogUtil.d("发送数据=" + new String(sendBytes, Charset.forName("utf-8")));
-            try {
-                int packageSize = socketOptions.getMaxWriteBytes(); // 每次可以发送的最大数据
-                int remainingCount = sendBytes.length;
-                ByteBuffer writeBuf = ByteBuffer.allocate(packageSize);
-                writeBuf.order(socketOptions.getReadOrder());
-                int index = 0;
-                // 如果发送的数据大于单次可发送的最大数据，则分多次发送
-                while (remainingCount > 0) {
-                    int realWriteLength = Math.min(packageSize, remainingCount);
-                    writeBuf.clear(); // 清空缓存
-                    writeBuf.rewind(); // 将position位置移到0
-                    writeBuf.put(sendBytes, index, realWriteLength);
-                    writeBuf.flip();
-                    byte[] writeArr = new byte[realWriteLength];
-                    writeBuf.get(writeArr);
-                    outputStream.write(writeArr);
-                    outputStream.flush(); // 强制写入缓存中残留数据
-                    index += realWriteLength;
-                    remainingCount -= realWriteLength;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+
+            int packageSize = socketOptions.getMaxWriteBytes(); // 每次可以发送的最大数据
+            int remainingCount = sendBytes.length;
+            ByteBuffer writeBuf = ByteBuffer.allocate(packageSize);
+            writeBuf.order(socketOptions.getReadOrder());
+            int index = 0;
+            // 如果发送的数据大于单次可发送的最大数据，则分多次发送
+            while (remainingCount > 0) {
+                int realWriteLength = Math.min(packageSize, remainingCount);
+                writeBuf.clear(); // 清空缓存
+                writeBuf.rewind(); // 将position位置移到0
+                writeBuf.put(sendBytes, index, realWriteLength);
+                writeBuf.flip();
+                byte[] writeArr = new byte[realWriteLength];
+                writeBuf.get(writeArr);
+                outputStream.write(writeArr);
+                outputStream.flush(); // 强制写入缓存中残留数据
+                index += realWriteLength;
+                remainingCount -= realWriteLength;
             }
         }
     }
@@ -122,7 +119,7 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
     @Override
     public void offer(byte[] sender) {
         if (!isStop)
-        packetsToSend.offer(sender);
+            packetsToSend.offer(sender);
     }
 
     @Override
@@ -133,8 +130,8 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
             shutDownThread();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
-        }finally {
-            outputStream=null;
+        } finally {
+            outputStream = null;
         }
     }
 

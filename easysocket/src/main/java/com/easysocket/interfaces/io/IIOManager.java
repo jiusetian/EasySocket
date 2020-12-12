@@ -9,6 +9,7 @@ public interface IIOManager {
 
     /**
      * 发送字节数组
+     *
      * @param bytes
      */
     void sendBytes(byte[] bytes);
@@ -22,4 +23,10 @@ public interface IIOManager {
      * 开启io操作
      */
     void startIO();
+
+    /**
+     * iO是否激活
+     * @return
+     */
+    boolean isIOActive();
 }

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Author：Alex
  * Date：2019/5/28
- * Note：默认的重连管理器
+ * Note：默认重连器
  */
 public class DefaultReConnection extends AbsReconnection {
     /**
@@ -91,7 +91,7 @@ public class DefaultReConnection extends AbsReconnection {
 
     @Override
     public void onSocketConnSuccess(SocketAddress socketAddress) {
-        // 连接成功则关闭重连线程
+        // 连接成功关闭重连线程
         shutDown();
     }
 
