@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.easysocket.callback.ProgressDialogCallBack;
 import com.easysocket.callback.SimpleCallBack;
+import com.easysocket.config.DefaultMessageProtocol;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.heartbeat.HeartManager;
 import com.easysocket.entity.OriginReadData;
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.send_string).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EasySocket.getInstance().upString("hey rich woman，i love you");
+                EasySocket.getInstance().upString("hey girl，how r u doing");
             }
         });
 
@@ -261,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                 .setSocketAddress(new SocketAddress("192.168.1.103", 9999)) // 主机地址
                 .setCallbackKeyFactory(new CallbackKeyFactoryImpl())
                 // 最好定义一个消息协议，方便解决 socket黏包、分包的问题
-                // .setReaderProtocol(new DefaultMessageProtocol()) // 默认的消息协议
+                 .setReaderProtocol(new DefaultMessageProtocol()) // 默认的消息协议
                 .build();
 
         // 初始化EasySocket

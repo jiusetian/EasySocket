@@ -81,6 +81,7 @@ public class HandlerIO {
             }
             easyWriter.offer(bytes);
         } catch (Exception e) {
+            System.out.println("可能收到非Json格式的数据");
             e.printStackTrace();
         }
     }
