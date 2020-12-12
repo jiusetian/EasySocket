@@ -42,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.create_conn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isConnected) {
+                    Toast.makeText(MainActivity.this, "Socket已连接", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 // 初始化socket
                 initEasySocket();
                 // 监听socket行为
