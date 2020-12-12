@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                 .setSocketAddress(new SocketAddress("192.168.1.103", 9999)) // 主机地址
                 .setCallbackKeyFactory(new CallbackKeyFactoryImpl())
                 // 最好定义一个消息协议，方便解决 socket黏包、分包的问题
-                 .setReaderProtocol(new DefaultMessageProtocol()) // 默认的消息协议
+                .setReaderProtocol(new DefaultMessageProtocol()) // 默认的消息协议
                 .build();
 
         // 初始化EasySocket

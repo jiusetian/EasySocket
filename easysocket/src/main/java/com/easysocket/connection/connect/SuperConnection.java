@@ -308,7 +308,7 @@ public abstract class SuperConnection implements IConnectionManager {
             return this;
         }
         byte[] sender = bytes;
-        // 如果有消息协议，则进行打包
+        // 如果有消息协议，则打包
         if (socketOptions.getMessageProtocol() != null) {
             sender = socketOptions.getMessageProtocol().pack(bytes);
         }
