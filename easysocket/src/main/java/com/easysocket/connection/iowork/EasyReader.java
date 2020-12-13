@@ -138,7 +138,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
                     // 保存body
                     originalData.setBodyData(bodyBuf.array());
 
-                    LogUtil.d("Socket接收的数据=" + originalData.getBodyString());
+                    LogUtil.d("Socket收到数据-->" + originalData.getBodyString());
                     // 分发数据
                     actionDispatch.dispatchAction(IOAction.ACTION_READ_COMPLETE, originalData);
 
@@ -171,7 +171,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
             throw new SocketReadExeption("数据body的长度不能小于0");
         }
 
-        LogUtil.d("Socket接收的数据=" + originalData.getBodyString());
+        LogUtil.d("Socket收到数据-->" + originalData.getBodyString());
         // 分发
         actionDispatch.dispatchAction(IOAction.ACTION_READ_COMPLETE, originalData);
 
@@ -224,7 +224,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
         byte[] data = new byte[len];
         originBuf.get(data, 0, len);
         readData.setBodyData(data);
-        LogUtil.d("Socket接收的数据=" + readData.getBodyString());
+        LogUtil.d("Socket收到数据-->" + readData.getBodyString());
         // 分发数据
         actionDispatch.dispatchAction(IOAction.ACTION_READ_COMPLETE, readData);
         // 相当于把指针重新指向positon=0

@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                         .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender.getCallbackId()) {
                             @Override
                             public void onResponse(String s) {
-                                LogUtil.d("进度条回调消息=" + s);
+                                LogUtil.d("进度条回调消息-->" + s);
                             }
 
                             @Override
@@ -154,8 +154,8 @@ public class MainActivity extends AppCompatActivity {
                 .onCallBack(new SimpleCallBack<CallbackResponse>(sender.getCallbackId()) {
                     @Override
                     public void onResponse(CallbackResponse response) {
-                        LogUtil.d("回调消息=" + response.toString());
-                        Toast.makeText(MainActivity.this, "回调消息：" + response.toString(), Toast.LENGTH_LONG).show();
+                        LogUtil.d("Socket应答消息-->" + response.toString());
+                        Toast.makeText(MainActivity.this, "应答消息：" + response.toString(), Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
             super.onSocketResponse(socketAddress, originReadData);
-            LogUtil.d("SocketActionListener收到数据=" + originReadData.getBodyString());
+            LogUtil.d("SocketActionListener收到数据-->" + originReadData.getBodyString());
         }
     };
 

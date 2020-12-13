@@ -129,7 +129,7 @@ public class CallbackResponseDispatcher {
                         // 回调
                         callBack.onSuccess(originReadData.getBodyString());
                         callbacks.remove(callbackId); // 移除完成任务的callback
-                        LogUtil.d("移除的callbackId=" + callbackId );
+                        LogUtil.d("移除的callbackId-->" + callbackId );
                     }
                 }
             } catch (JSONException e) {
