@@ -67,6 +67,7 @@ public class ServerWriter implements IWriter {
                 } catch (InterruptedException e) {
                     //取数据异常
                     e.printStackTrace();
+                    isShutdown = true;
                 }
             }
         }

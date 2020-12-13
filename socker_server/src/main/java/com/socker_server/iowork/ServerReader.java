@@ -172,7 +172,7 @@ public class ServerReader implements IReader {
         public void run() {
             while (socket.isConnected() && !isShutdown && !socket.isClosed()) {
                 read();
-                System.out.println("服务端读数据" + socket.isClosed());
+                System.out.println("服务端读数据， socket.isClosed()：" + socket.isClosed());
             }
         }
     };

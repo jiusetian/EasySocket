@@ -1,6 +1,5 @@
 package com.socker_server;
 
-import com.socker_server.entity.DefaultMessageProtocol;
 import com.socker_server.entity.IMessageProtocol;
 
 /**
@@ -20,8 +19,6 @@ public class ServerConfig {
     }
 
     private ServerConfig() {
-        // 数据协议
-        setMessageProtocol(new DefaultMessageProtocol());
     }
 
     public IMessageProtocol getMessageProtocol() {

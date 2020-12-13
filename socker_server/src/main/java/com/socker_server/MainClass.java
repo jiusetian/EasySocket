@@ -1,5 +1,6 @@
 package com.socker_server;
 
+import com.socker_server.entity.DefaultMessageProtocol;
 import com.socker_server.iowork.ServerIOManager;
 
 import java.net.ServerSocket;
@@ -25,7 +26,7 @@ public class MainClass {
         try {
             server = new ServerSocket(PORT);
             mExecutorService = Executors.newCachedThreadPool();
-            initConfig(); // 初始化配置信息
+            initConfig(); // 配置信息
             System.out.println("server is running");
             Socket client;
             while (true) {
@@ -40,7 +41,7 @@ public class MainClass {
 
     private void initConfig() {
         // 默认的消息协议
-        //ServerConfig.getInstance().setMessageProtocol(new DefaultMessageProtocol());
+        ServerConfig.getInstance().setMessageProtocol(new DefaultMessageProtocol());
     }
 
     class Service implements Runnable {
