@@ -195,11 +195,11 @@ public class MainActivity extends AppCompatActivity {
      * 发送一个的消息，
      */
     private void sendMessage() {
-        TestMsg testMsg = new TestMsg();
-        testMsg.setMsgId("test_msg");
-        testMsg.setFrom("android");
+        TestMessage testMessage = new TestMessage();
+        testMessage.setMsgId("test_msg");
+        testMessage.setFrom("android");
         // 发送
-        EasySocket.getInstance().upObject(testMsg);
+        EasySocket.getInstance().upObject(testMessage);
     }
 
 

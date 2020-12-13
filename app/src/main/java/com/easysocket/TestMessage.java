@@ -7,7 +7,7 @@ import com.easysocket.entity.basemsg.SuperSender;
  * Date：2019/12/6
  * Note：不带回调标识的消息
  */
-public class TestMsg extends SuperSender {
+public class TestMessage extends SuperSender {
 
     private String msgId;
     private String from;
