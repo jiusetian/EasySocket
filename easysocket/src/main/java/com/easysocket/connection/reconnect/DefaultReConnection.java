@@ -48,7 +48,7 @@ public class DefaultReConnection extends AbsReconnection {
     private final Runnable RcConnTask = new Runnable() {
         @Override
         public void run() {
-            LogUtil.d("执行重连");
+            LogUtil.d("---> 执行重连");
             if (isDetach) {
                 shutDown();
                 return;

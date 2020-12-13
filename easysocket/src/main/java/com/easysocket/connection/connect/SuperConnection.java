@@ -120,7 +120,7 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public synchronized void connect() {
-        LogUtil.d("开始socket连接");
+        LogUtil.d("---> socket开始连接");
         if (socketAddress.getIp() == null) {
             throw new NotNullException("请检查是否设置了IP地址");
         }
@@ -194,7 +194,7 @@ public abstract class SuperConnection implements IConnectionManager {
                 }
                 // 关闭连接
                 closeConnection();
-                LogUtil.d("关闭socket连接");
+                LogUtil.d("---> 关闭socket连接");
                 connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED);
                 actionDispatcher.dispatchAction(SocketAction.ACTION_DISCONNECTION, new Boolean(isNeedReconnect));
             } catch (IOException e) {
@@ -213,7 +213,7 @@ public abstract class SuperConnection implements IConnectionManager {
             } catch (Exception e) {
                 // 连接异常
                 e.printStackTrace();
-                LogUtil.d("socket连接失败");
+                LogUtil.d("---> socket连接失败");
                 connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED);
                 // 第二个参数指需要重连
                 actionDispatcher.dispatchAction(SocketAction.ACTION_CONN_FAIL, new Boolean(true));
@@ -226,7 +226,7 @@ public abstract class SuperConnection implements IConnectionManager {
      * 连接成功
      */
     protected void onConnectionOpened() {
-        LogUtil.d("socket连接成功");
+        LogUtil.d("---> socket连接成功");
         actionDispatcher.dispatchAction(SocketAction.ACTION_CONN_SUCCESS);
         connectionStatus.set(SocketStatus.SOCKET_CONNECTED);
         openSocketManager();

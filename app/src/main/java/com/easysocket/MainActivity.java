@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(msg);
                     if ("heart_beat".equals(jsonObject.getString("msgId"))) {
-                        LogUtil.d("收到服务端心跳");
+                        LogUtil.d("---> 收到服务端心跳");
                         return true;
                     }
                 } catch (JSONException e) {
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSocketConnSuccess(SocketAddress socketAddress) {
             super.onSocketConnSuccess(socketAddress);
-            LogUtil.d("连接成功");
+            LogUtil.d("---> 连接成功");
             controlConnect.setText("socket已连接，点击断开连接");
             isConnected = true;
         }
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSocketDisconnect(SocketAddress socketAddress, boolean isNeedReconnect) {
             super.onSocketDisconnect(socketAddress, isNeedReconnect);
-            LogUtil.d("socket断开连接，是否需要重连：" + isNeedReconnect);
+            LogUtil.d("---> socket断开连接，是否需要重连：" + isNeedReconnect);
             controlConnect.setText("socket连接被断开，点击进行连接");
             isConnected = false;
         }
