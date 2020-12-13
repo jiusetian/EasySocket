@@ -13,13 +13,12 @@ public interface IMessageProtocol {
     int getHeaderLength();
 
     /**
-     * 获取数据包体的长度，根据协议这个长度应该写在包头中，在读取数据的时候会用到
+     * 获取数据包体的长度，根据协议这个长度应该写在包头中，在读取数据时用到
      */
     int getBodyLength(byte[] header, ByteOrder byteOrder);
 
     /**
-     * 封装消息格式，返回socket发送的byte数组
-     * 根据自己定义的消息格式来实现
+     * 根据协议打包消息格式，返回byte数组
      * @param sender
      * @return
      */

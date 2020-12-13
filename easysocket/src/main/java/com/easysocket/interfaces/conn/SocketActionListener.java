@@ -6,7 +6,7 @@ import com.easysocket.entity.SocketAddress;
 /**
  * Author：Alex
  * Date：2019/6/4
- * Note：socket行为的抽象类，继承此类可以选择性地重写对应的方法
+ * Note：socket行为监听的抽象类，继承此类可以选择性地重写方法
  */
 public abstract class SocketActionListener implements ISocketActionListener{
     /**

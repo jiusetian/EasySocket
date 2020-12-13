@@ -18,7 +18,7 @@ import com.easysocket.interfaces.conn.ISocketActionListener;
 public class EasySocket {
 
     /**
-     * 连接管理器
+     * 连接的缓存
      */
     private static ConnectionHolder connectionHolder = ConnectionHolder.getInstance();
     // 单例
@@ -66,7 +66,7 @@ public class EasySocket {
     }
 
     /**
-     * 创建连接对象
+     * 创建连接
      *
      * @return
      */
@@ -83,7 +83,8 @@ public class EasySocket {
             connection = connectionHolder.getConnection(socketAddress,
                     options == null ? EasySocketOptions.getDefaultOptions() : options);
         }
-        connection.connect(); // 进行连接
+        // 执行连接
+        connection.connect();
         return this;
     }
 
@@ -98,7 +99,7 @@ public class EasySocket {
     }
 
     /**
-     * 关闭连接，此时连接对象还在，只是关闭了socket和相关线程
+     * 关闭连接
      *
      * @param isNeedReconnect 是否需要重连
      * @return
@@ -114,16 +115,16 @@ public class EasySocket {
      * @return
      */
     public EasySocket destroyConnection() {
-        // 首先断开连接
+        // 断开连接
         getConnection().disconnect(false);
-        // 移除连接对象
+        // 移除连接
         connectionHolder.removeConnection(options.getSocketAddress());
         connection = null;
         return this;
     }
 
     /**
-     * 发送一个有回调的消息
+     * 发送有回调的消息
      *
      * @param sender
      * @return
@@ -134,7 +135,7 @@ public class EasySocket {
     }
 
     /**
-     * 发送一个对象
+     * 发送对象
      *
      * @param sender
      */
@@ -175,7 +176,7 @@ public class EasySocket {
     }
 
     /**
-     * 开启心跳管理器
+     * 开启心跳检测
      *
      * @param clientHeart
      * @return
@@ -186,7 +187,7 @@ public class EasySocket {
     }
 
     /**
-     * 开启心跳管理器
+     * 开启心跳检测
      *
      * @param clientHeart
      * @return
@@ -197,7 +198,7 @@ public class EasySocket {
     }
 
     /**
-     * 开启心跳管理器
+     * 开启心跳检测
      *
      * @param clientHeart
      * @return
@@ -221,7 +222,7 @@ public class EasySocket {
     }
 
     /**
-     * 创建指定的socket连接
+     * 创建指定的连接
      *
      * @param socketAddress
      * @param socketOptions
@@ -259,7 +260,7 @@ public class EasySocket {
     }
 
     /**
-     * 设置是否为debug
+     * 是否为debug
      *
      * @param debug
      */

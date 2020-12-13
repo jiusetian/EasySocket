@@ -9,12 +9,12 @@ import java.io.IOException;
  */
 public interface IWriter<T> {
     /**
-     * 保存需要写入的数据
+     * 保存要写的数据
      */
     void offer(byte[] sender);
 
     /**
-     * 写入数据
+     * 写数据
      * @param sender
      */
     void write(byte[] sender) throws IOException;
@@ -25,7 +25,7 @@ public interface IWriter<T> {
     void closeWriter();
 
     /**
-     * 打开读取数据
+     * 开启写数据
      */
     void openWriter();
 

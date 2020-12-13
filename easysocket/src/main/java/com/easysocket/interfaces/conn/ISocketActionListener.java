@@ -30,7 +30,7 @@ public interface ISocketActionListener {
     void onSocketDisconnect(SocketAddress socketAddress, boolean isNeedReconnect);
 
     /**
-     * socket读数据反馈
+     * socket数据响应
      * @param socketAddress
      * @param originReadData
      */

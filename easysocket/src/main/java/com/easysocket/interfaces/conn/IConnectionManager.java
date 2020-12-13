@@ -14,7 +14,7 @@ import java.io.OutputStream;
  */
 public interface IConnectionManager extends ISubscribeSocketAction, IOptions<IConnectionManager>,ISend, ICallBack {
     /**
-     * 开始连接,开启连接线程
+     * 开始连接
      */
     void connect();
 

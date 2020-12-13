@@ -8,7 +8,7 @@ package com.easysocket.interfaces.conn;
 public interface IReconnListener {
 
     /**
-     * 关联某个连接器
+     * 关联连接器
      * @param iConnectionManager
      */
     void attach(IConnectionManager iConnectionManager);

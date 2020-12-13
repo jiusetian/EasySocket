@@ -33,7 +33,7 @@ public class ConnectionHolder {
     }
 
     /**
-     * 移除某个连接缓存
+     * 移除某个连接
      *
      * @param socketAddress
      */
@@ -42,7 +42,7 @@ public class ConnectionHolder {
     }
 
     /**
-     * 获取指定host的连接器，option为默认
+     * 获取指定SocketAddress的连接
      *
      * @param info
      * @return
@@ -58,7 +58,7 @@ public class ConnectionHolder {
     }
 
     /**
-     * 获取指定host和参数opiton的连接器
+     * 获取指定SocketAddress的连接
      *
      * @param info
      * @param socketOptions
@@ -75,7 +75,7 @@ public class ConnectionHolder {
     }
 
     /**
-     * 创建新的连接管理器并缓存
+     * 创建新的连接并缓存
      *
      * @param info
      * @param socketOptions
@@ -89,9 +89,9 @@ public class ConnectionHolder {
             @Override
             public void onSwitchConnectionInfo(IConnectionManager manager, SocketAddress oldAddress,
                                                SocketAddress newAddress) {
-                // 切换了另外一个主机的连接，所以删除旧的连接，添加新的连接
+                // 切换了另外一个主机的连接，删除旧的连接和添加新的连接
                 synchronized (mConnectionManagerMap) {
-                    // 首先要断开连接，销毁相关线程和资源
+                    // 首先断开连接，销毁相关线程和资源
                     mConnectionManagerMap.get(createKey(oldAddress)).disconnect(false);
                     mConnectionManagerMap.remove(createKey(oldAddress));
                     mConnectionManagerMap.put(createKey(newAddress), manager);

@@ -8,7 +8,7 @@ package com.easysocket.interfaces.io;
 public interface IIOManager {
 
     /**
-     * 发送字节数组
+     * 发送字节流
      *
      * @param bytes
      */
@@ -24,9 +24,4 @@ public interface IIOManager {
      */
     void startIO();
 
-    /**
-     * iO是否激活
-     * @return
-     */
-    boolean isIOActive();
 }
