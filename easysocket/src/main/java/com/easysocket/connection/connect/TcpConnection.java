@@ -39,7 +39,7 @@ public class TcpConnection extends SuperConnection {
             socket = getSocket();
         } catch (Exception e) {
             e.printStackTrace();
-            connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED); // 设置为未连接状态
+            connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED); // 设置为未连接
             throw new RuntimeException("创建socket失败");
         }
 

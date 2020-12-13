@@ -15,7 +15,7 @@ import java.nio.ByteOrder;
 public class EasySocketOptions {
 
     /**
-     * 框架是否是调试模式
+     * 是否调试模式
      */
     private static boolean isDebug = true;
     /**
@@ -35,7 +35,7 @@ public class EasySocketOptions {
      */
     private ByteOrder readOrder;
     /**
-     * 从socket读取数据时遵从数据包结构协议，在业务层进行定义
+     * 从socket读取数据时遵从的数据包结构协议，在业务层进行定义
      */
     private IMessageProtocol messageProtocol;
     /**
@@ -75,8 +75,8 @@ public class EasySocketOptions {
      */
     private SocketFactory socketFactory;
     /**
-     * 实现回调功能需要callbackID，而callbackID是保存在发送消息和返回消息中的，此工厂用来获取socket消息中
-     * 保存callbackID值的键，即key，比如json格式中的key-value中的key
+     * 实现回调功能需要callbackID，而callbackID是保存在发送消息和应答消息中的，此工厂用来获取socket消息中
+     * 保存callbackID值的key，比如json格式中的key-value中的key
      */
     private CallbakcKeyFactory callbakcKeyFactory;
     /**
@@ -402,10 +402,6 @@ public class EasySocketOptions {
     public CallbakcKeyFactory getCallbakcKeyFactory() {
         return callbakcKeyFactory;
     }
-
-    /**
-     * 各种set方法
-     */
 
     public static void setIsDebug(boolean isDebug) {
         EasySocketOptions.isDebug = isDebug;

@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     // 是否已连接
     private boolean isConnected;
-    // 连接或断开连接的按钮
+    // 连接或断开按钮
     private Button controlConnect;
 
 
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.send_string).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EasySocket.getInstance().upString("hey girl，how r u doing");
+                EasySocket.getInstance().upString("how r u doing");
             }
         });
 
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
         clientHeartBeat.setMsgId("heart_beat");
         clientHeartBeat.setFrom("client");
-        // 心跳包类型可以是object、String、byte[]，实现HeartbeatListener接口，用于判断接收的消息是不是服务端心跳
+        // 心跳包类型可以是object、String、byte[]，HeartbeatListener用于判断接收的消息是不是服务端心跳
         EasySocket.getInstance().startHeartBeat(clientHeartBeat, new HeartManager.HeartbeatListener() {
             @Override
             public boolean isServerHeartbeat(OriginReadData originReadData) {
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(msg);
                     if ("heart_beat".equals(jsonObject.getString("msgId"))) {
-                        LogUtil.d("收到服务器心跳");
+                        LogUtil.d("收到服务端心跳");
                         return true;
                     }
                 } catch (JSONException e) {
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
             super.onSocketResponse(socketAddress, originReadData);
-            LogUtil.d("socket监听器收到数据=" + originReadData.getBodyString());
+            LogUtil.d("SocketActionListener收到数据=" + originReadData.getBodyString());
         }
     };
 
@@ -265,11 +265,11 @@ public class MainActivity extends AppCompatActivity {
         EasySocketOptions options = new EasySocketOptions.Builder()
                 .setSocketAddress(new SocketAddress("192.168.1.103", 9999)) // 主机地址
                 .setCallbackKeyFactory(new CallbackKeyFactoryImpl())
-                // 最好定义一个消息协议，方便解决 socket黏包、分包的问题
-                .setReaderProtocol(new DefaultMessageProtocol()) // 默认的消息协议
+                // 定义消息协议，方便解决 socket黏包、分包的问题
+                .setReaderProtocol(new DefaultMessageProtocol())
                 .build();
 
-        // 初始化EasySocket
+        // 初始化
         EasySocket.getInstance()
                 .options(options) // 项目配置
                 .createConnection();// 创建一个socket连接

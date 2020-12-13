@@ -5,7 +5,7 @@ import com.easysocket.entity.basemsg.SuperSender;
 /**
  * Author：Alex
  * Date：2019/12/6
- * Note：不带回调标识singer的消息
+ * Note：不带回调标识的消息
  */
 public class TestMsg extends SuperSender {
 

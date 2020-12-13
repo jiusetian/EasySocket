@@ -8,7 +8,7 @@ import java.util.concurrent.Executor;
 /**
  * Author：Mapogo
  * Date：2020/4/8
- * Note：切换到主线程
+ * Note：切到主线程
  */
 public class MainThreadExecutor implements Executor {
 

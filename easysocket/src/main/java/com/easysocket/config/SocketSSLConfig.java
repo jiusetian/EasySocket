@@ -5,7 +5,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
 /**
- * socket的ssl相关配置
+ * socket的ssl配置
  */
 
 public class SocketSSLConfig {

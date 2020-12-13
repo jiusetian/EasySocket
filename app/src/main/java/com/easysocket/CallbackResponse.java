@@ -5,7 +5,7 @@ import com.easysocket.entity.basemsg.SuperCallbackResponse;
 /**
  * Author：Alex
  * Date：2019/12/7
- * Note：带有回调标识callbackId的响应消息
+ * Note：带有回调标识的响应消息
  */
 public class CallbackResponse extends SuperCallbackResponse {
 

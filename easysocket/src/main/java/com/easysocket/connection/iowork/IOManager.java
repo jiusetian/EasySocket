@@ -23,11 +23,11 @@ public class IOManager implements IIOManager, IOptions {
      */
     private IConnectionManager connectionManager;
     /**
-     * io写
+     * 写
      */
     private IWriter writer;
     /**
-     * io读
+     * 读
      */
     private IReader reader;
 

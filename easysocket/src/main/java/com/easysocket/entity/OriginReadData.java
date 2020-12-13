@@ -8,7 +8,7 @@ import java.nio.charset.Charset;
 /**
  * Author：Alex
  * Date：2019/6/1
- * Note：读取的原始数据
+ * Note：读到的数据
  */
 public class OriginReadData implements Serializable {
 
@@ -38,7 +38,7 @@ public class OriginReadData implements Serializable {
     }
 
     /**
-     * 获取原始数据body的string形式
+     * 获取数据body的string
      * @return
      */
     public String getBodyString(){

@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class SuperConnection implements IConnectionManager {
 
     /**
-     * 连接状态，默认是断开连接的
+     * 连接状态，初始值为断开连接
      */
     protected final AtomicInteger connectionStatus = new AtomicInteger(SocketStatus.SOCKET_DISCONNECTED);
     /**

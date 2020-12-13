@@ -12,19 +12,19 @@ import java.lang.reflect.Type;
  */
 public abstract class SuperCallBack<T> implements IType<T> {
     /**
-     * 随机字符串，识别服务端反馈消息的唯一标识
+     * 随机字符串，识别服务端应答消息的唯一标识
      */
     private String callbackId;
 
     /**
-     * @param callbackId 识别服务端反馈消息的唯一标识
+     * @param callbackId 识别服务端应答消息的唯一标识
      */
     public SuperCallBack(String callbackId) {
         this.callbackId = callbackId;
     }
 
     /**
-     * 获取请求回调ID
+     * 获取回调ID
      *
      * @return
      */
@@ -41,7 +41,7 @@ public abstract class SuperCallBack<T> implements IType<T> {
     public void onSuccess(String s) {
         onCompleted();
         Class<?> clazz = getGenericityClazz();
-        if (clazz.equals(String.class)) { // 泛型是String类型
+        if (clazz.equals(String.class)) { // String类型
             onResponse((T) s);
         } else { // 非String
             Gson gson = new Gson();
