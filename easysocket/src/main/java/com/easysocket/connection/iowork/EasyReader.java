@@ -3,7 +3,8 @@ package com.easysocket.connection.iowork;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.action.IOAction;
 import com.easysocket.entity.OriginReadData;
-import com.easysocket.entity.exception.SocketReadExeption;
+import com.easysocket.entity.exception.ReadRecoverableExeption;
+import com.easysocket.entity.exception.ReadUnrecoverableException;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.io.IMessageProtocol;
@@ -61,7 +62,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
     }
 
     @Override
-    public void read() throws Exception {
+    public void read() throws IOException, ReadRecoverableExeption, ReadUnrecoverableException {
         OriginReadData originalData = new OriginReadData();
         IMessageProtocol messageProtocol = socketOptions.getMessageProtocol();
         // 消息协议为null，则直接读原始消息，不建议这样使用，因为会发生黏包、分包的问题
@@ -76,7 +77,6 @@ public class EasyReader implements IReader<EasySocketOptions> {
         headBuf.order(socketOptions.getReadOrder());
 
         /*1、读 header=====>>>*/
-
         if (remainingBuf != null) { // 有余留
             // flip方法：一般从Buffer读数据前调用，将limit设置为当前position，将position设置为0，在读数据时，limit代表可读数据的有效长度
             remainingBuf.flip();
@@ -103,11 +103,10 @@ public class EasyReader implements IReader<EasySocketOptions> {
         originalData.setHeaderData(headBuf.array());
 
         /*2、读 body=====>>>*/
-        // body长度
         int bodyLength = messageProtocol.getBodyLength(originalData.getHeaderData(), socketOptions.getReadOrder());
         if (bodyLength > 0) {
             if (bodyLength > socketOptions.getMaxResponseDataMb() * 1024 * 1024) {
-                throw new SocketReadExeption("服务器返回的单次数据超过了规定的最大值，可能你的Socket消息协议不对，一般消息格式" +
+                throw new ReadUnrecoverableException("服务器返回的单次数据超过了规定的最大值，可能你的Socket消息协议不对，一般消息格式" +
                         "为：Header+Body，其中Header保存消息长度和类型等，Body保存消息内容，请规范好你的协议");
             }
             // 分配空间
@@ -168,7 +167,7 @@ public class EasyReader implements IReader<EasySocketOptions> {
                 }
             }
         } else if (bodyLength < 0) {
-            throw new SocketReadExeption("数据body的长度不能小于0");
+            throw new ReadUnrecoverableException("数据body的长度不能小于0");
         }
 
         LogUtil.d("Socket收到数据-->" + originalData.getBodyString());
@@ -188,37 +187,46 @@ public class EasyReader implements IReader<EasySocketOptions> {
                 while (!stopThread) {
                     read();
                 }
-            } catch (Exception e) {
-                LogUtil.e("读数据异常");
+            } catch (ReadUnrecoverableException unrecoverableException) {
                 // 读异常
-                e.printStackTrace();
+                unrecoverableException.printStackTrace();
                 // 停止线程
                 stopThread = true;
                 release();
+            } catch (ReadRecoverableExeption readRecoverableExeption) {
+                readRecoverableExeption.printStackTrace();
+                // 重连
+                connectionManager.disconnect(true);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                // 重连
+                connectionManager.disconnect(true);
             }
         }
     };
 
 
-    private void readHeaderFromSteam(ByteBuffer headBuf, int readLength) throws Exception {
+    private void readHeaderFromSteam(ByteBuffer headBuf, int readLength) throws ReadRecoverableExeption, IOException {
         for (int i = 0; i < readLength; i++) {
             byte[] bytes = new byte[1];
             // 从输入流中读数据，无数据时会阻塞
             int value = inputStream.read(bytes);
+            LogUtil.d("读取数据的长度：" + value);
             // -1代表读到了文件的末尾，一般是因为服务器断开了连接
             if (value == -1) {
-                throw new SocketReadExeption("读数据失败，可能是因为socket跟服务器断开了连接");
+                throw new ReadRecoverableExeption("读数据失败，可能是因为socket跟服务器断开了连接");
             }
             headBuf.put(bytes);
         }
     }
 
-    private void readOriginDataFromSteam(OriginReadData readData) throws Exception {
+    private void readOriginDataFromSteam(OriginReadData readData) throws ReadRecoverableExeption, IOException {
         // 用 全局originBuf避免重复创建字节数组
         int len = inputStream.read(originBuf.array());
         // no more data
         if (len == -1) {
-            throw new SocketReadExeption("读数据失败，可能因为socket跟服务器断开了连接");
+            throw new ReadRecoverableExeption("读数据失败，可能因为socket跟服务器断开了连接");
         }
         // bytes复制
         byte[] data = new byte[len];
@@ -231,13 +239,13 @@ public class EasyReader implements IReader<EasySocketOptions> {
         originBuf.clear();
     }
 
-    private void readBodyFromStream(ByteBuffer byteBuffer) throws Exception {
+    private void readBodyFromStream(ByteBuffer byteBuffer) throws ReadRecoverableExeption, IOException {
         // while循环直到byteBuffer装满数据
         while (byteBuffer.hasRemaining()) {
             byte[] bufArray = new byte[socketOptions.getMaxReadBytes()]; // 从服务器单次读取的最大值
             int len = inputStream.read(bufArray);
             if (len == -1) { // no more data
-                throw new SocketReadExeption("读数据失败，可能是因为socket跟服务器断开了连接");
+                throw new ReadRecoverableExeption("读数据失败，可能是因为socket跟服务器断开了连接");
             }
             int remaining = byteBuffer.remaining();
             if (len > remaining) { // 从stream读的数据超过byteBuffer的剩余空间
