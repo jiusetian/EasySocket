@@ -1,4 +1,4 @@
-package com.easysocket.entity.exception;
+package com.easysocket.exception;
 
 /**
  * Author：Alex

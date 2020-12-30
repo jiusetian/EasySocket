@@ -5,8 +5,8 @@ import com.easysocket.connection.heartbeat.HeartManager;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.basemsg.ISender;
 import com.easysocket.entity.basemsg.SuperCallbackSender;
-import com.easysocket.entity.exception.InitialExeption;
-import com.easysocket.entity.exception.NotNullException;
+import com.easysocket.exception.InitialExeption;
+import com.easysocket.exception.NotNullException;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
 

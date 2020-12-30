@@ -5,7 +5,7 @@ import com.easysocket.config.EasySocketOptions;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.basemsg.SuperCallbackSender;
-import com.easysocket.entity.exception.RequestTimeOutException;
+import com.easysocket.exception.RequestTimeOutException;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.SocketActionListener;
 import com.easysocket.utils.LogUtil;

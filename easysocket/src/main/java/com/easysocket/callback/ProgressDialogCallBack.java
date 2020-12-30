@@ -4,7 +4,7 @@ package com.easysocket.callback;
 import android.app.Dialog;
 import android.content.DialogInterface;
 
-import com.easysocket.entity.exception.RequestCancelException;
+import com.easysocket.exception.RequestCancelException;
 import com.easysocket.interfaces.callback.IProgressDialog;
 import com.easysocket.interfaces.callback.ProgressCancelListener;
 
