@@ -1,2 +1,3 @@
 /build
+# 这里主要是为了隐藏作者的一些隐私信息，你运行的时候可删除
 /src/main/res/values/evil.xml

@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
     private void initEasySocket() {
         // socket配置
         EasySocketOptions options = new EasySocketOptions.Builder()
-                // 主机地址，请填写自己的IP地址
+                // 主机地址，请填写自己的IP地址，以getString的方式是为了隐藏作者自己的IP地址
                 .setSocketAddress(new SocketAddress(getResources().getString(R.string.local_ip), 9999))
                 .setCallbackKeyFactory(new CallbackKeyFactoryImpl())
                 // 定义消息协议，方便解决 socket黏包、分包的问题
