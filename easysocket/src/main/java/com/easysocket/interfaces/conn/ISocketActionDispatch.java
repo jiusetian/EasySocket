@@ -13,6 +13,8 @@ public interface ISocketActionDispatch {
      */
     void stopDispatchThread();
 
+    void startDispatchThread();
+
     void dispatchAction(String action);
 
     /**

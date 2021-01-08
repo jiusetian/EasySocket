@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                     EasySocket.getInstance().disconnect(false);
                 } else {
                     EasySocket.getInstance().connect();
+                    //EasySocket.getInstance().subscribeSocketAction(socketActionListener);
                 }
             }
         });
@@ -273,6 +274,6 @@ public class MainActivity extends AppCompatActivity {
         // 初始化
         EasySocket.getInstance()
                 .options(options) // 项目配置
-                .createConnection();// 创建一个socket连接
+                .createConnection(this.getApplicationContext());// 创建一个socket连接
     }
 }

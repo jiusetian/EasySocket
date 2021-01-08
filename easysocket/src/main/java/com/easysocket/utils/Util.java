@@ -1,5 +1,8 @@
 package com.easysocket.utils;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -109,9 +112,16 @@ public class Util {
     }
 
     public static void throwNotNull(Object object,String emsg) throws Exception {
-
             if (object==null){
                 throw new Exception(emsg);
             }
     }
+
+    // 判断是否连接网络
+    public static boolean isNetConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info= cm.getActiveNetworkInfo();
+        return info != null && info.isConnected();
+    }
+
 }

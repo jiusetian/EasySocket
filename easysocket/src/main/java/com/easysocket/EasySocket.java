@@ -1,5 +1,7 @@
 package com.easysocket;
 
+import android.content.Context;
+
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.heartbeat.HeartManager;
 import com.easysocket.entity.SocketAddress;
@@ -31,6 +33,10 @@ public class EasySocket {
      * 连接器
      */
     private IConnectionManager connection;
+    /**
+     * 上下文
+     */
+    private Context context;
 
     /**
      * 单例
@@ -57,6 +63,15 @@ public class EasySocket {
     }
 
     /**
+     * 获取上下文
+     *
+     * @return
+     */
+    public Context getContext() {
+        return context;
+    }
+
+    /**
      * 获取配置参数
      *
      * @return
@@ -70,7 +85,8 @@ public class EasySocket {
      *
      * @return
      */
-    public EasySocket createConnection() {
+    public EasySocket createConnection(Context context) {
+        this.context = context;
         SocketAddress socketAddress = options.getSocketAddress();
         if (options.getSocketAddress() == null) {
             throw new InitialExeption("请在初始化的时候设置SocketAddress");

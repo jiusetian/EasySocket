@@ -55,7 +55,7 @@ public class DefaultReConnection extends AbsReconnection {
             }
             // 是否可连接的
             if (!connectionManager.isConnectViable()) {
-                shutDown();
+                LogUtil.d("当前条件不允许连接");
                 return;
             }
             // 连接

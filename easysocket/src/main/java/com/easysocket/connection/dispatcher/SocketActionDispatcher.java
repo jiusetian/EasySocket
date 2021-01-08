@@ -47,7 +47,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
     /**
      * 事件消费队列
      */
-    private static final LinkedBlockingQueue<ActionBean> actions = new LinkedBlockingQueue();
+    private final LinkedBlockingQueue<ActionBean> socketActions = new LinkedBlockingQueue();
     /**
      * 切换到UI线程
      */
@@ -57,7 +57,6 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
     public SocketActionDispatcher(IConnectionManager connectionManager, SocketAddress socketAddress) {
         this.socketAddress = socketAddress;
         this.connectionManager = connectionManager;
-        startDispatchThread();
     }
 
     public void setSocketAddress(SocketAddress info) {
@@ -74,7 +73,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
     public void dispatchAction(String action, Serializable serializable) {
         // 将接收到的socket行为封装入列
         ActionBean actionBean = new ActionBean(action, serializable, this);
-        actions.offer(actionBean);
+        socketActions.offer(actionBean);
     }
 
     @Override
@@ -103,7 +102,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
             // 循环处理socket的行为信息
             while (!isStop) {
                 try {
-                    ActionBean actionBean = actions.take();
+                    ActionBean actionBean = socketActions.take();
                     if (actionBean != null && actionBean.mDispatcher != null) {
                         SocketActionDispatcher actionDispatcher = actionBean.mDispatcher;
                         List<ISocketActionListener> copyListeners = new ArrayList<>(actionDispatcher.actionListeners);
@@ -172,6 +171,10 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                     @Override
                     public void run() {
                         actionListener.onSocketDisconnect(socketAddress, ((Boolean) content).booleanValue());
+                        // 不需要重连，则释放资源
+                        if (!(Boolean) content) {
+                            stopDispatchThread();
+                        }
                     }
                 });
                 break;
@@ -188,18 +191,20 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
     }
 
     // 开始分发线程
-    private void startDispatchThread() {
-        if (!isStop) {
-            isStop = false;
+    @Override
+    public void startDispatchThread() {
+        isStop = false;
+        if (actionThread == null) {
             actionThread = new DispatchThread();
             actionThread.start();
-
         }
     }
 
     @Override
     public void stopDispatchThread() {
         if (actionThread != null && actionThread.isAlive() && !actionThread.isInterrupted()) {
+            socketActions.clear();
+            //actionListeners.clear();
             isStop = true;
             actionThread.interrupt();
             actionThread = null;

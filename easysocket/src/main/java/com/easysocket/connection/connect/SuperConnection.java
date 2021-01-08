@@ -18,6 +18,7 @@ import com.easysocket.interfaces.config.IConnectionSwitchListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
 import com.easysocket.utils.LogUtil;
+import com.easysocket.utils.Util;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -128,15 +129,23 @@ public abstract class SuperConnection implements IConnectionManager {
         connectionStatus.set(SocketStatus.SOCKET_CONNECTING);
 
         // 心跳管理器
-        if (heartManager == null)
+        if (heartManager == null) {
             heartManager = new HeartManager(this, actionDispatcher);
+        }
 
         // 重连管理器
-        if (reconnection != null)
+        if (reconnection != null) {
             reconnection.detach();
+        }
         reconnection = socketOptions.getReconnectionManager();
-        if (reconnection != null)
+        if (reconnection != null) {
             reconnection.attach(this);
+        }
+
+        // 开启分发消息线程
+        if (actionDispatcher != null) {
+            actionDispatcher.startDispatchThread();
+        }
 
         // 开启连接线程
         if (connExecutor == null || connExecutor.isShutdown()) {
@@ -149,7 +158,7 @@ public abstract class SuperConnection implements IConnectionManager {
 
     @Override
     public synchronized void disconnect(boolean isNeedReconnect) {
-        // 只有在已连接的状态下才能断开连接
+        // 判断当前socket的连接状态
         if (connectionStatus.get() != SocketStatus.SOCKET_CONNECTED) {
             return;
         }
@@ -236,7 +245,7 @@ public abstract class SuperConnection implements IConnectionManager {
     private void openSocketManager() {
         if (callbackResponseDispatcher == null)
             callbackResponseDispatcher = new CallbackResponseDispatcher(this);
-        if (ioManager == null){
+        if (ioManager == null) {
             ioManager = new IOManager(this, actionDispatcher);
         }
         ioManager.startIO();
@@ -270,7 +279,7 @@ public abstract class SuperConnection implements IConnectionManager {
     @Override
     public boolean isConnectViable() {
         // 当前socket是否处于可连接状态
-        return connectionStatus.get() == SocketStatus.SOCKET_DISCONNECTED;
+        return Util.isNetConnected(EasySocket.getInstance().getContext()) && connectionStatus.get() == SocketStatus.SOCKET_DISCONNECTED;
     }
 
     @Override
