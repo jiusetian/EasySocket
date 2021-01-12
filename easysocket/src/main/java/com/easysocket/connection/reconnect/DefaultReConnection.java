@@ -59,6 +59,8 @@ public class DefaultReConnection extends AbsReconnection {
             // 是否可连接的
             if (!connectionManager.isConnectViable()) {
                 LogUtil.d("当前条件不允许连接");
+                // 尝试再次重连
+                handler.postDelayed(RcConnTask, (long) (reconnectTimeDelay * (Math.random() + 0.5)));
                 return;
             }
             // 重连
