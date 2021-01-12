@@ -212,7 +212,6 @@ public class EasyReader implements IReader<EasySocketOptions> {
             byte[] bytes = new byte[1];
             // 从输入流中读数据，无数据时会阻塞
             int value = inputStream.read(bytes);
-            LogUtil.d("读取数据的长度：" + value);
             // -1代表读到了文件的末尾，一般是因为服务器断开了连接
             if (value == -1) {
                 throw new ReadRecoverableExeption("读数据失败，可能是因为socket跟服务器断开了连接");

@@ -183,7 +183,10 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                 mainThreadExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
+                        // response有三种形式
                         actionListener.onSocketResponse(socketAddress, (OriginReadData) content);
+                        actionListener.onSocketResponse(socketAddress, ((OriginReadData) content).getBodyString());
+                        actionListener.onSocketResponse(socketAddress, ((OriginReadData) content).getBodyBytes());
                     }
                 });
                 break;

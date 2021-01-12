@@ -29,7 +29,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class CallbackResponseDispatcher {
     /**
-     * 保存回调监听实例,key为请求回调标识callbackId
+     * 保存发送的每个回调消息的监听实例，key为回调标识callbackId，这样回调消息有反馈的时候，就可以找到并调用
+     * 对应的监听对象
      */
     private Map<String, SuperCallBack> callbacks = new HashMap<>();
     /**
@@ -141,7 +142,7 @@ public class CallbackResponseDispatcher {
 
 
     /**
-     * 添加回调实例
+     * 每发一条回调消息都要在这里添加监听对象
      *
      * @param superCallBack
      */
@@ -178,7 +179,7 @@ public class CallbackResponseDispatcher {
     }
 
     /**
-     * 检查当前callbackID是否已经存在，如果已经存在一个了，那么将更新当前消息的callbackID
+     * 同一个消息发送多次，callbackId是不能一样的，所以这里要先check一下，否则服务端反馈的时候，客户端接收就会乱套
      *
      * @param callbackSender
      * @return
@@ -188,6 +189,7 @@ public class CallbackResponseDispatcher {
         Util.checkNotNull(socketOptions.getCallbakcKeyFactory(), "要想实现EasySocket的回调功能，CallbackIdFactory不能为null，" +
                 "请实现一个CallbackIdFactory并在初始化的时候通过EasySocketOptions的setCallbackIdKeyFactory进行配置");
         String callbackId = callbackSender.getCallbackId();
+        // 同一个消息发送两次以上，callbackId是不能一样的，否则服务端反馈的时候，客户端接收就会乱套
         if (callbacks.containsKey(callbackId)) {
             callbackSender.setCallbackId(callbackSender.generateCallbackId());
         }

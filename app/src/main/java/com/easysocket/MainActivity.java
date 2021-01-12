@@ -13,7 +13,6 @@ import com.easysocket.callback.SimpleCallBack;
 import com.easysocket.config.DefaultMessageProtocol;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.heartbeat.HeartManager;
-import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.interfaces.callback.IProgressDialog;
 import com.easysocket.interfaces.conn.ISocketActionListener;
@@ -175,11 +174,11 @@ public class MainActivity extends AppCompatActivity {
         clientHeartBeat.setFrom("client");
         // 心跳包类型可以是object、String、byte[]，HeartbeatListener用于判断接收的消息是不是服务端心跳
         EasySocket.getInstance().startHeartBeat(clientHeartBeat, new HeartManager.HeartbeatListener() {
+            // 用于判断当前收到的信息是否为服务器心跳，根据自己的实际情况实现
             @Override
-            public boolean isServerHeartbeat(OriginReadData originReadData) {
-                String msg = originReadData.getBodyString();
+            public boolean isServerHeartbeat(String orginReadData) {
                 try {
-                    JSONObject jsonObject = new JSONObject(msg);
+                    JSONObject jsonObject = new JSONObject(orginReadData);
                     if ("heart_beat".equals(jsonObject.getString("msgId"))) {
                         LogUtil.d("---> 收到服务端心跳");
                         return true;
@@ -214,7 +213,6 @@ public class MainActivity extends AppCompatActivity {
          */
         @Override
         public void onSocketConnSuccess(SocketAddress socketAddress) {
-            super.onSocketConnSuccess(socketAddress);
             LogUtil.d("---> 连接成功");
             controlConnect.setText("socket已连接，点击断开连接");
             isConnected = true;
@@ -227,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
          */
         @Override
         public void onSocketConnFail(SocketAddress socketAddress, boolean isNeedReconnect) {
-            super.onSocketConnFail(socketAddress, isNeedReconnect);
             controlConnect.setText("socket连接被断开，点击进行连接");
             isConnected = false;
         }
@@ -239,7 +236,6 @@ public class MainActivity extends AppCompatActivity {
          */
         @Override
         public void onSocketDisconnect(SocketAddress socketAddress, boolean isNeedReconnect) {
-            super.onSocketDisconnect(socketAddress, isNeedReconnect);
             LogUtil.d("---> socket断开连接，是否需要重连：" + isNeedReconnect);
             controlConnect.setText("socket连接被断开，点击进行连接");
             isConnected = false;
@@ -248,12 +244,11 @@ public class MainActivity extends AppCompatActivity {
         /**
          * socket接收的数据
          * @param socketAddress
-         * @param originReadData
+         * @param readData
          */
         @Override
-        public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
-            super.onSocketResponse(socketAddress, originReadData);
-            LogUtil.d("SocketActionListener收到数据-->" + originReadData.getBodyString());
+        public void onSocketResponse(SocketAddress socketAddress, String readData) {
+            LogUtil.d("SocketActionListener收到数据-->" + readData);
         }
     };
 

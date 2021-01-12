@@ -1,17 +1,17 @@
 package com.easysocket.connection.reconnect;
 
-import com.easysocket.entity.SocketAddress;
 import com.easysocket.entity.OriginReadData;
-import com.easysocket.interfaces.conn.ISocketActionListener;
+import com.easysocket.entity.SocketAddress;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.IReconnListener;
+import com.easysocket.interfaces.conn.SocketActionListener;
 
 /**
  * Author：Alex
  * Date：2019/5/31
  * Note：抽象重连器
  */
-public abstract class AbsReconnection implements ISocketActionListener, IReconnListener {
+public abstract class AbsReconnection extends SocketActionListener implements IReconnListener {
     /**
      * 连接管理器
      */

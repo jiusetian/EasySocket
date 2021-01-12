@@ -35,4 +35,18 @@ public interface ISocketActionListener {
      * @param originReadData
      */
     void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData);
+
+    /**
+     * socket数据响应
+     * @param socketAddress
+     * @param readData
+     */
+    void onSocketResponse(SocketAddress socketAddress, String readData);
+
+    /**
+     * socket数据响应
+     * @param socketAddress
+     * @param readData
+     */
+    void onSocketResponse(SocketAddress socketAddress, byte[] readData);
 }

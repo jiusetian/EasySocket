@@ -1,13 +1,11 @@
 package com.easysocket;
 
-import com.easysocket.entity.basemsg.SuperSender;
-
 /**
  * Author：Alex
  * Date：2019/6/6
  * Note：客户端心跳
  */
-public class ClientHeartBeat extends SuperSender {
+public class ClientHeartBeat {
     private String msgId;
     private String from;
 

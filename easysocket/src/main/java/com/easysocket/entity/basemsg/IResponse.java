@@ -5,5 +5,5 @@ package com.easysocket.entity.basemsg;
  * Date：2019/12/8
  * Note：
  */
-public  interface IResponse {
+public interface IResponse {
 }

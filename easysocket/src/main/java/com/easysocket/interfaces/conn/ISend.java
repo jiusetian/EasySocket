@@ -1,7 +1,6 @@
 package com.easysocket.interfaces.conn;
 
 import com.easysocket.entity.basemsg.SuperCallbackSender;
-import com.easysocket.entity.basemsg.ISender;
 
 /**
  * Author：Alex
@@ -21,7 +20,7 @@ public interface ISend {
      * @param sender
      * @return
      */
-    IConnectionManager upObject(ISender sender);
+    IConnectionManager upObject(Object sender);
 
     /**
      * 发送一个有回调的消息

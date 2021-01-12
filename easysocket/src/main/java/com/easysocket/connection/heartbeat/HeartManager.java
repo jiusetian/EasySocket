@@ -4,12 +4,11 @@ import com.easysocket.EasySocket;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.basemsg.ISender;
 import com.easysocket.interfaces.config.IOptions;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.IHeartManager;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
-import com.easysocket.interfaces.conn.ISocketActionListener;
+import com.easysocket.interfaces.conn.SocketActionListener;
 import com.google.gson.Gson;
 
 import java.nio.charset.Charset;
@@ -23,7 +22,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Date：2019/12/8
  * Note：心跳包检测管理器
  */
-public class HeartManager implements IOptions, ISocketActionListener, IHeartManager {
+public class HeartManager extends SocketActionListener implements IOptions, IHeartManager {
+
     /**
      * 连接器
      */
@@ -89,7 +89,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
      * 启动心跳检测
      */
     @Override
-    public void startHeartbeat(ISender clientHeart, HeartbeatListener listener) {
+    public void startHeartbeat(Object clientHeart, HeartbeatListener listener) {
         startHeartbeat(new Gson().toJson(clientHeart).getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())), listener);
     }
 
@@ -169,12 +169,11 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
 
     @Override
     public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
-        if (heartbeatListener != null && heartbeatListener.isServerHeartbeat(originReadData)) {
+        if (heartbeatListener != null && heartbeatListener.isServerHeartbeat(originReadData.getBodyString())) {
             // 收到服务器心跳
             onReceiveHeartBeat();
         }
     }
-
 
     @Override
     public Object setOptions(EasySocketOptions socketOptions) {
@@ -191,7 +190,7 @@ public class HeartManager implements IOptions, ISocketActionListener, IHeartMana
 
     public interface HeartbeatListener {
         // 是否为服务器心跳
-        boolean isServerHeartbeat(OriginReadData originReadData);
+        boolean isServerHeartbeat(String orginReadData);
     }
 
 }

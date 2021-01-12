@@ -11,7 +11,6 @@ import com.easysocket.connection.heartbeat.HeartManager;
 import com.easysocket.connection.iowork.IOManager;
 import com.easysocket.connection.reconnect.AbsReconnection;
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.basemsg.ISender;
 import com.easysocket.entity.basemsg.SuperCallbackSender;
 import com.easysocket.exception.NotNullException;
 import com.easysocket.interfaces.config.IConnectionSwitchListener;
@@ -339,7 +338,7 @@ public abstract class SuperConnection implements IConnectionManager {
     }
 
     @Override
-    public synchronized IConnectionManager upObject(ISender sender) {
+    public synchronized IConnectionManager upObject(Object sender) {
         sendBytes(new Gson().toJson(sender).getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())));
         return this;
     }
@@ -347,6 +346,7 @@ public abstract class SuperConnection implements IConnectionManager {
     @Override
     public synchronized IConnectionManager upCallbackMessage(SuperCallbackSender sender) {
         callbackResponseDispatcher.checkCallbackSender(sender);
+        // 发送消息
         sendBytes(new Gson().toJson(sender).getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())));
         return this;
     }

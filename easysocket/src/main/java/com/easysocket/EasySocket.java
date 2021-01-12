@@ -5,7 +5,6 @@ import android.content.Context;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.heartbeat.HeartManager;
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.entity.basemsg.ISender;
 import com.easysocket.entity.basemsg.SuperCallbackSender;
 import com.easysocket.exception.InitialExeption;
 import com.easysocket.exception.NotNullException;
@@ -155,7 +154,7 @@ public class EasySocket {
      *
      * @param sender
      */
-    public IConnectionManager upObject(ISender sender) {
+    public IConnectionManager upObject(Object sender) {
         getConnection().upObject(sender);
         return connection;
     }
@@ -197,7 +196,7 @@ public class EasySocket {
      * @param clientHeart
      * @return
      */
-    public EasySocket startHeartBeat(ISender clientHeart, HeartManager.HeartbeatListener listener) {
+    public EasySocket startHeartBeat(Object clientHeart, HeartManager.HeartbeatListener listener) {
         getConnection().getHeartManager().startHeartbeat(clientHeart, listener);
         return this;
     }
@@ -267,10 +266,10 @@ public class EasySocket {
      * @param sender
      * @param socketAddress
      */
-    public IConnectionManager upToSpecifyConnection(ISender sender, SocketAddress socketAddress) {
+    public IConnectionManager upToSpecifyConnection(byte[] sender, SocketAddress socketAddress) {
         IConnectionManager connect = getSpecifyConnection(socketAddress);
         if (connect != null) {
-            connect.upObject(sender);
+            connect.upBytes(sender);
         }
         return connect;
     }

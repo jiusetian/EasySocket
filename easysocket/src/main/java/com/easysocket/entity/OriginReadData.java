@@ -29,7 +29,7 @@ public class OriginReadData implements Serializable {
         this.headerData = headerData;
     }
 
-    public byte[] getBodyData() {
+    public byte[] getBodyBytes() {
         return bodyData;
     }
 
@@ -42,6 +42,6 @@ public class OriginReadData implements Serializable {
      * @return
      */
     public String getBodyString(){
-        return new String(getBodyData(), Charset.forName(EasySocket.getInstance().getOptions().getCharsetName()));
+        return new String(getBodyBytes(), Charset.forName(EasySocket.getInstance().getOptions().getCharsetName()));
     }
 }

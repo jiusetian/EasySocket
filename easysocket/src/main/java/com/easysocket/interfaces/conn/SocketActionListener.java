@@ -44,4 +44,14 @@ public abstract class SocketActionListener implements ISocketActionListener{
     public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
 
     }
+
+    @Override
+    public void onSocketResponse(SocketAddress socketAddress, byte[] readData) {
+
+    }
+
+    @Override
+    public void onSocketResponse(SocketAddress socketAddress, String readData) {
+
+    }
 }
