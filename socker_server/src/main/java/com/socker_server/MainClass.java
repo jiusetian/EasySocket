@@ -1,5 +1,6 @@
 package com.socker_server;
 
+import com.socker_server.entity.DefaultMessageProtocol;
 import com.socker_server.iowork.ServerIOManager;
 
 import java.net.ServerSocket;
@@ -40,7 +41,7 @@ public class MainClass {
 
     private void initConfig() {
         // 默认的消息协议
-       // ServerConfig.getInstance().setMessageProtocol(new DefaultMessageProtocol());
+        ServerConfig.getInstance().setMessageProtocol(new DefaultMessageProtocol());
     }
 
     class Service implements Runnable {

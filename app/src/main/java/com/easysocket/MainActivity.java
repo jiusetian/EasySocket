@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.easysocket.callback.ProgressDialogCallBack;
 import com.easysocket.callback.SimpleCallBack;
+import com.easysocket.config.DefaultMessageProtocol;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.heartbeat.HeartManager;
 import com.easysocket.entity.SocketAddress;
@@ -261,8 +262,9 @@ public class MainActivity extends AppCompatActivity {
                 // 主机地址，请填写自己的IP地址，以getString的方式是为了隐藏作者自己的IP地址
                 .setSocketAddress(new SocketAddress(getResources().getString(R.string.local_ip), 9999))
                 .setCallbackKeyFactory(new CallbackKeyFactoryImpl())
-                // 定义消息协议，方便解决 socket黏包、分包的问题
-                //.setReaderProtocol(new DefaultMessageProtocol())
+                // 定义消息协议，方便解决 socket黏包、分包的问题，如果客户端定义了消息协议，那么
+                // 服务端也要对应对应的消息协议，如果这里没有定义消息协议，服务端也不需要定义
+                .setReaderProtocol(new DefaultMessageProtocol())
                 .build();
 
         // 初始化
