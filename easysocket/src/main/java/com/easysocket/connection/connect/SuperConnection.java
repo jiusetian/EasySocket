@@ -163,7 +163,7 @@ public abstract class SuperConnection implements IConnectionManager {
             return;
         }
         // 正在重连中
-        if (reconnection.isReconning()) {
+        if (isNeedReconnect && reconnection.isReconning()) {
             return;
         }
         // 正在断开连接

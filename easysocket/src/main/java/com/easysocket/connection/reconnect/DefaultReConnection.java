@@ -1,12 +1,11 @@
 package com.easysocket.connection.reconnect;
 
+import android.os.Handler;
+import android.os.HandlerThread;
+
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.utils.LogUtil;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Author：Alex
@@ -23,13 +22,17 @@ public class DefaultReConnection extends AbsReconnection {
      */
     private int connectionFailedTimes = 0;
     /**
-     * 重连间隔不能小于10秒
+     * 重连间隔不能小于10秒，为了避免全部客户端socket在同一时间连接服务端，间隔时间需要上下浮动50%
      */
     private long reconnectTimeDelay = 10 * 1000;
     /**
      * 重连线程
      */
-    private ScheduledExecutorService reConnExecutor;
+    private HandlerThread handlerThread;
+    /**
+     * 实现延时任务的 handler
+     */
+    private Handler handler;
 
     public DefaultReConnection() {
     }
@@ -58,7 +61,7 @@ public class DefaultReConnection extends AbsReconnection {
                 LogUtil.d("当前条件不允许连接");
                 return;
             }
-            // 连接
+            // 重连
             connectionManager.connect();
         }
     };
@@ -67,18 +70,22 @@ public class DefaultReConnection extends AbsReconnection {
      * 进行重连
      */
     private void reconnect() {
-        // 如果没有启动重连机制，则启动，否则就让重连机制去处理连接失败的问题
-        if (reConnExecutor == null || reConnExecutor.isShutdown()) {
-            reConnExecutor = Executors.newSingleThreadScheduledExecutor();
-            reConnExecutor.scheduleWithFixedDelay(RcConnTask, 0, reconnectTimeDelay, TimeUnit.MILLISECONDS);
+        if (handlerThread == null) {
+            handlerThread = new HandlerThread("re_conn");
+            handlerThread.start();
+            handler = new Handler(handlerThread.getLooper());
         }
+        LogUtil.d("重连间隔时间-->" + reconnectTimeDelay * (Math.random() + 0.5));
+        handler.postDelayed(RcConnTask, (long) (reconnectTimeDelay * (Math.random() + 0.5)));
     }
+
 
     // 关闭重连线程
     private void shutDown() {
-        if (reConnExecutor != null && !reConnExecutor.isShutdown()) {
-            reConnExecutor.shutdownNow();
-            reConnExecutor = null;
+        if (handlerThread != null && handlerThread.isAlive()) {
+            handlerThread.quit();
+            handlerThread = null;
+            handler = null;
         }
     }
 
@@ -133,6 +140,7 @@ public class DefaultReConnection extends AbsReconnection {
 
     @Override
     public boolean isReconning() {
-        return reConnExecutor != null && !reConnExecutor.isShutdown();
+        return handlerThread != null && handlerThread.isAlive();
     }
+
 }

@@ -274,6 +274,6 @@ public class MainActivity extends AppCompatActivity {
         // 初始化
         EasySocket.getInstance()
                 .options(options) // 项目配置
-                .createConnection(this.getApplicationContext());// 创建一个socket连接
+                .createConnection(this);// 创建一个socket连接
     }
 }
