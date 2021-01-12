@@ -85,33 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             // 有进度条的消息
             case R.id.progress_msg:
-                // 进度条接口
-                IProgressDialog progressDialog = new IProgressDialog() {
-                    @Override
-                    public Dialog getDialog() {
-                        ProgressDialog dialog = new ProgressDialog(MainActivity.this);
-                        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                        dialog.setTitle("正在加载...");
-                        return dialog;
-                    }
-                };
-                CallbackSender sender = new CallbackSender();
-                sender.setFrom("android");
-                sender.setMsgId("delay_msg");
-                EasySocket.getInstance()
-                        .upCallbackMessage(sender)
-                        .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender.getCallbackId()) {
-                            @Override
-                            public void onResponse(String s) {
-                                LogUtil.d("进度条回调消息-->" + s);
-                            }
-
-                            @Override
-                            public void onError(Exception e) {
-                                super.onError(e);
-                                e.printStackTrace();
-                            }
-                        });
+                sendProgressMsg();
                 break;
 
             // 连接或断开连接
@@ -131,6 +105,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
+    private void sendProgressMsg() {
+
+        // 进度条接口
+        IProgressDialog progressDialog = new IProgressDialog() {
+            @Override
+            public Dialog getDialog() {
+                ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+                dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                dialog.setTitle("正在加载...");
+                return dialog;
+            }
+        };
+        CallbackSender sender = new CallbackSender();
+        sender.setFrom("android");
+        sender.setMsgId("delay_msg");
+        EasySocket.getInstance()
+                .upCallbackMessage(sender)
+                .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender.getCallbackId()) {
+                    @Override
+                    public void onResponse(String s) {
+                        LogUtil.d("进度条回调消息-->" + s);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        super.onError(e);
+                        e.printStackTrace();
+                    }
+                });
+    }
+
 
     /**
      * 发送一个有回调的消息
