@@ -1,6 +1,6 @@
  # EasySocket
 
-### README内容将不再更新，请到博客阅读最新的框架说明介绍！
+### README内容将不再更新，请到博客阅读最新的框架说明！
  博客地址：https://blog.csdn.net/liuxingrong666/article/details/91579548
 
 EasySocket的初衷是希望使Socket编程变得更加简单、快捷，因此项目在实现了Socket基本功能的基础上，还实现了TCP层面的请求回调功能。传统的Socket框架客户端发出一个请求信息，然后服务器返回一个应答信息，但是我们无法识别这个应答信息是对应哪个请求的，而EasySocket实现了将每个请求跟应答的一一对接，从而在Socket层面实现了请求回调功能
