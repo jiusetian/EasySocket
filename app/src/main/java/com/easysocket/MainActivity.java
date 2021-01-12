@@ -22,7 +22,7 @@ import com.easysocket.utils.LogUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     // 是否已连接
     private boolean isConnected;
@@ -37,10 +37,22 @@ public class MainActivity extends AppCompatActivity {
 
         controlConnect = findViewById(R.id.control_conn);
 
-        // 创建socket连接
-        findViewById(R.id.create_conn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        View[] views = {controlConnect, findViewById(R.id.create_conn), findViewById(R.id.send_msg)
+                , findViewById(R.id.send_string), findViewById(R.id.start_heart), findViewById(R.id.progress_msg),
+                findViewById(R.id.callback_msg), findViewById(R.id.destroy_conn)};
+        // 点击事件
+        for (View view : views) {
+            view.setOnClickListener(this);
+        }
+    }
+
+    // 点击事件
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            // 创建socket连接
+            case R.id.create_conn:
                 if (isConnected) {
                     Toast.makeText(MainActivity.this, "Socket已连接", Toast.LENGTH_SHORT).show();
                     return;
@@ -49,56 +61,40 @@ public class MainActivity extends AppCompatActivity {
                 initEasySocket();
                 // 监听socket行为
                 EasySocket.getInstance().subscribeSocketAction(socketActionListener);
-            }
-        });
+                break;
 
-        // 发送一个object
-        findViewById(R.id.send_msg).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            // 发送一个object
+            case R.id.send_msg:
                 sendMessage();
-            }
-        });
+                break;
 
-        // 发送一个string
-        findViewById(R.id.send_string).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            // 发送一个string
+            case R.id.send_string:
                 EasySocket.getInstance().upString("how r u doing");
-            }
-        });
+                break;
 
-        // 发送有回调功能的消息
-        findViewById(R.id.callback_msg).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            // 发送有回调功能的消息
+            case R.id.callback_msg:
                 sendCallbackMsg();
-            }
-        });
+                break;
 
-        // 启动心跳检测
-        findViewById(R.id.start_heart).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            // 启动心跳检测
+            case R.id.start_heart:
                 startHeartbeat();
-            }
-        });
+                break;
 
-        // 有进度条的消息
-        findViewById(R.id.progress_msg).setOnClickListener(new View.OnClickListener() {
-            // 进度条接口
-            private IProgressDialog progressDialog = new IProgressDialog() {
-                @Override
-                public Dialog getDialog() {
-                    ProgressDialog dialog = new ProgressDialog(MainActivity.this);
-                    dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    dialog.setTitle("正在加载...");
-                    return dialog;
-                }
-            };
-
-            @Override
-            public void onClick(View v) {
+            // 有进度条的消息
+            case R.id.progress_msg:
+                // 进度条接口
+                IProgressDialog progressDialog = new IProgressDialog() {
+                    @Override
+                    public Dialog getDialog() {
+                        ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+                        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        dialog.setTitle("正在加载...");
+                        return dialog;
+                    }
+                };
                 CallbackSender sender = new CallbackSender();
                 sender.setFrom("android");
                 sender.setMsgId("delay_msg");
@@ -116,31 +112,25 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         });
-            }
-        });
+                break;
 
-        // 连接或断开连接
-        controlConnect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            // 连接或断开连接
+            case R.id.control_conn:
                 if (isConnected) {
                     EasySocket.getInstance().disconnect(false);
                 } else {
                     EasySocket.getInstance().connect();
                     //EasySocket.getInstance().subscribeSocketAction(socketActionListener);
                 }
-            }
-        });
 
-        // 销毁socket连接
-        findViewById(R.id.destroy_conn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                break;
+
+            // 销毁socket连接
+            case R.id.destroy_conn:
                 EasySocket.getInstance().destroyConnection();
-            }
-        });
+                break;
+        }
     }
-
 
     /**
      * 发送一个有回调的消息
