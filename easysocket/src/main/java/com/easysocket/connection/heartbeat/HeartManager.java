@@ -154,7 +154,7 @@ public class HeartManager extends SocketActionListener implements IOptions, IHea
 
     @Override
     public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
-        if (heartbeatListener != null && heartbeatListener.isServerHeartbeat(originReadData.getBodyBytes())) {
+        if (heartbeatListener != null && heartbeatListener.isServerHeartbeat(originReadData)) {
             // 收到服务器心跳
             onReceiveHeartBeat();
         }
@@ -175,7 +175,7 @@ public class HeartManager extends SocketActionListener implements IOptions, IHea
 
     public interface HeartbeatListener {
         // 是否为服务器心跳
-        boolean isServerHeartbeat(byte[] orginReadData);
+        boolean isServerHeartbeat(OriginReadData orginReadData);
     }
 
 }

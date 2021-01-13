@@ -26,8 +26,6 @@ import com.easysocket.utils.LogUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.charset.Charset;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     // 是否已连接
@@ -173,9 +171,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         EasySocket.getInstance().startHeartBeat(clientHeartBeat.pack(), new HeartManager.HeartbeatListener() {
             // 用于判断当前收到的信息是否为服务器心跳，根据自己的实际情况实现
             @Override
-            public boolean isServerHeartbeat(byte[] orginReadData) {
+            public boolean isServerHeartbeat(OriginReadData orginReadData) {
                 try {
-                    String s = new String(orginReadData, Charset.forName(EasySocket.getInstance().getOptions().getCharsetName()));
+                    String s =orginReadData.getBodyString();
                     JSONObject jsonObject = new JSONObject(s);
                     if ("heart_beat".equals(jsonObject.getString("msgId"))) {
                         LogUtil.d("---> 收到服务端心跳");

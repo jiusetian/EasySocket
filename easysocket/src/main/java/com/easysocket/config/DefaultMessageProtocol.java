@@ -8,7 +8,7 @@ import java.nio.ByteOrder;
 /**
  * Author：Alex
  * Date：2019/5/31
- * Note：默认的消息协议，header为4个字节，用于保存消息体 body的长度
+ * Note：默认的消息协议，header为4个字节，保存消息体 body的长度
  */
 public class DefaultMessageProtocol implements IMessageProtocol {
     @Override

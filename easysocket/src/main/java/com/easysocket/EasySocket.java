@@ -152,11 +152,11 @@ public class EasySocket {
     /**
      * 发送byte[]
      *
-     * @param bytes
+     * @param message
      * @return
      */
-    public IConnectionManager upMessage(byte[] bytes) {
-        getConnection().upBytes(bytes);
+    public IConnectionManager upMessage(byte[] message) {
+        getConnection().upBytes(message);
         return connection;
     }
 
