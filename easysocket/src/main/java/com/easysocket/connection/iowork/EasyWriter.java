@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
@@ -91,8 +92,8 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
     @Override
     public void write(byte[] sendBytes) throws IOException {
         if (sendBytes != null) {
-            LogUtil.d("Socket发送数据-->" + new String(sendBytes, Charset.forName("utf-8")));
-
+            LogUtil.d("Socket发送数据String-->" + new String(sendBytes, Charset.forName("utf-8")));
+            System.out.println("Socket发送数据byte[]-->"+Arrays.toString(sendBytes));
             int packageSize = socketOptions.getMaxWriteBytes(); // 每次可以发送的最大数据
             int remainingCount = sendBytes.length;
             ByteBuffer writeBuf = ByteBuffer.allocate(packageSize);
