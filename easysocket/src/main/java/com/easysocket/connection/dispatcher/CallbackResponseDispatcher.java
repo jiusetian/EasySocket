@@ -176,11 +176,11 @@ public class CallbackResponseDispatcher {
     public void checkCallbackSender(SuperCallbackSender callbackSender) {
 
         Utils.checkNotNull(socketOptions.getCallbackIDFactory(), "要想实现EasySocket的回调功能，CallbackIdFactory不能为null，" +
-                "请实现一个CallbackIdFactory并在初始化的时候通过EasySocketOptions的setCallbackIdKeyFactory进行配置");
+                "请实现一个CallbackIdFactory并在初始化的时候通过EasySocketOptions的setCallbackIdFactory进行配置");
         String callbackId = callbackSender.getCallbackId();
         // 同一个消息发送两次以上，callbackId是不能一样的，否则服务端反馈的时候，客户端接收就会乱套
         if (callbacks.containsKey(callbackId)) {
-            callbackSender.setCallbackId(callbackSender.generateCallbackId());
+            callbackSender.generateCallbackId();
         }
     }
 

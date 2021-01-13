@@ -162,7 +162,7 @@ public class EasySocketOptions {
          *
          * @param callbackIDFactory
          */
-        public Builder setCallbackKeyFactory(CallbackIDFactory callbackIDFactory) {
+        public Builder setCallbackIDFactory(CallbackIDFactory callbackIDFactory) {
             socketOptions.callbackIDFactory = callbackIDFactory;
             return this;
         }
