@@ -3,7 +3,7 @@ package com.easysocket.config;
 import com.easysocket.connection.reconnect.AbsReconnection;
 import com.easysocket.connection.reconnect.DefaultReConnection;
 import com.easysocket.entity.SocketAddress;
-import com.easysocket.interfaces.io.IMessageProtocol;
+import com.easysocket.interfaces.config.IMessageProtocol;
 
 import java.nio.ByteOrder;
 
@@ -78,7 +78,7 @@ public class EasySocketOptions {
      * 实现回调功能需要callbackID，而callbackID是保存在发送消息和应答消息中的，此工厂用来获取socket消息中
      * 保存callbackID值的key，比如json格式中的key-value中的key
      */
-    private CallbakcKeyFactory callbakcKeyFactory;
+    private CallbackIDFactory callbackIDFactory;
     /**
      * 请求超时时间，单位毫秒
      */
@@ -160,10 +160,10 @@ public class EasySocketOptions {
         /**
          * 设置请求ack的工厂
          *
-         * @param callbakcKeyFactory
+         * @param callbackIDFactory
          */
-        public Builder setCallbackKeyFactory(CallbakcKeyFactory callbakcKeyFactory) {
-            socketOptions.callbakcKeyFactory = callbakcKeyFactory;
+        public Builder setCallbackKeyFactory(CallbackIDFactory callbackIDFactory) {
+            socketOptions.callbackIDFactory = callbackIDFactory;
             return this;
         }
 
@@ -332,7 +332,7 @@ public class EasySocketOptions {
         options.reconnectionManager = new DefaultReConnection();
         options.easySSLConfig = null;
         options.socketFactory = null;
-        options.callbakcKeyFactory = null;
+        options.callbackIDFactory = null;
         options.requestTimeout = 10 * 1000; // 默认十秒
         options.isOpenRequestTimeout = true; // 默认开启
         options.charsetName = "UTF-8";
@@ -399,8 +399,8 @@ public class EasySocketOptions {
         return isOpenRequestTimeout;
     }
 
-    public CallbakcKeyFactory getCallbakcKeyFactory() {
-        return callbakcKeyFactory;
+    public CallbackIDFactory getCallbackIDFactory() {
+        return callbackIDFactory;
     }
 
     public static void setIsDebug(boolean isDebug) {
@@ -455,8 +455,8 @@ public class EasySocketOptions {
         this.socketFactory = socketFactory;
     }
 
-    public void setCallbakcKeyFactory(CallbakcKeyFactory callbakcKeyFactory) {
-        this.callbakcKeyFactory = callbakcKeyFactory;
+    public void setCallbackIDFactory(CallbackIDFactory callbackIDFactory) {
+        this.callbackIDFactory = callbackIDFactory;
     }
 
     public void setRequestTimeout(long requestTimeout) {

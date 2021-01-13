@@ -41,7 +41,7 @@ public class MainClass {
 
     private void initConfig() {
         // 默认的消息协议
-        ServerConfig.getInstance().setMessageProtocol(new DefaultMessageProtocol());
+         ServerConfig.getInstance().setMessageProtocol(new DefaultMessageProtocol());
     }
 
     class Service implements Runnable {

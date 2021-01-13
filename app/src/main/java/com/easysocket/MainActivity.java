@@ -13,14 +13,20 @@ import com.easysocket.callback.SimpleCallBack;
 import com.easysocket.config.DefaultMessageProtocol;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.connection.heartbeat.HeartManager;
+import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.interfaces.callback.IProgressDialog;
 import com.easysocket.interfaces.conn.ISocketActionListener;
 import com.easysocket.interfaces.conn.SocketActionListener;
+import com.easysocket.message.CallbackSender;
+import com.easysocket.message.ClientHeartBeat;
+import com.easysocket.message.TestMessage;
 import com.easysocket.utils.LogUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.nio.charset.Charset;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -38,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         controlConnect = findViewById(R.id.control_conn);
 
         View[] views = {controlConnect, findViewById(R.id.create_conn), findViewById(R.id.send_msg)
-                , findViewById(R.id.send_string), findViewById(R.id.start_heart), findViewById(R.id.progress_msg),
+                , findViewById(R.id.start_heart), findViewById(R.id.progress_msg),
                 findViewById(R.id.callback_msg), findViewById(R.id.destroy_conn)};
         // 点击事件
         for (View view : views) {
@@ -63,14 +69,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 EasySocket.getInstance().subscribeSocketAction(socketActionListener);
                 break;
 
-            // 发送一个object
+            // 发送一个测试消息
             case R.id.send_msg:
-                sendMessage();
-                break;
-
-            // 发送一个string
-            case R.id.send_string:
-                EasySocket.getInstance().upString("how r u doing");
+                sendTestMessage();
                 break;
 
             // 发送有回调功能的消息
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    // 有进度条的消息
     private void sendProgressMsg() {
 
         // 进度条接口
@@ -123,10 +125,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sender.setMsgId("delay_msg");
         EasySocket.getInstance()
                 .upCallbackMessage(sender)
-                .onCallBack(new ProgressDialogCallBack<String>(progressDialog, true, true, sender.getCallbackId()) {
+                .onCallBack(new ProgressDialogCallBack(progressDialog, true, true, sender.getCallbackId()) {
                     @Override
-                    public void onResponse(String s) {
-                        LogUtil.d("进度条回调消息-->" + s);
+                    public void onResponse(OriginReadData data) {
+                        LogUtil.d("进度条回调消息-->" + data.getBodyString());
                     }
 
                     @Override
@@ -147,11 +149,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sender.setMsgId("callback_msg");
         sender.setFrom("我来自android");
         EasySocket.getInstance().upCallbackMessage(sender)
-                .onCallBack(new SimpleCallBack<CallbackResponse>(sender.getCallbackId()) {
+                .onCallBack(new SimpleCallBack(sender.getCallbackId()) {
                     @Override
-                    public void onResponse(CallbackResponse response) {
-                        LogUtil.d("Socket应答消息-->" + response.toString());
-                        Toast.makeText(MainActivity.this, "应答消息：" + response.toString(), Toast.LENGTH_LONG).show();
+                    public void onResponse(OriginReadData data) {
+                        LogUtil.d("Socket应答消息-->" + data.getBodyString());
+                        Toast.makeText(MainActivity.this, "应答消息：" + data.getBodyString(), Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -168,13 +170,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ClientHeartBeat clientHeartBeat = new ClientHeartBeat();
         clientHeartBeat.setMsgId("heart_beat");
         clientHeartBeat.setFrom("client");
-        // 心跳包类型可以是object、String、byte[]，HeartbeatListener用于判断接收的消息是不是服务端心跳
-        EasySocket.getInstance().startHeartBeat(clientHeartBeat, new HeartManager.HeartbeatListener() {
+        EasySocket.getInstance().startHeartBeat(clientHeartBeat.pack(), new HeartManager.HeartbeatListener() {
             // 用于判断当前收到的信息是否为服务器心跳，根据自己的实际情况实现
             @Override
-            public boolean isServerHeartbeat(String orginReadData) {
+            public boolean isServerHeartbeat(byte[] orginReadData) {
                 try {
-                    JSONObject jsonObject = new JSONObject(orginReadData);
+                    String s = new String(orginReadData, Charset.forName(EasySocket.getInstance().getOptions().getCharsetName()));
+                    JSONObject jsonObject = new JSONObject(s);
                     if ("heart_beat".equals(jsonObject.getString("msgId"))) {
                         LogUtil.d("---> 收到服务端心跳");
                         return true;
@@ -190,12 +192,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * 发送一个的消息，
      */
-    private void sendMessage() {
+    private void sendTestMessage() {
         TestMessage testMessage = new TestMessage();
         testMessage.setMsgId("test_msg");
         testMessage.setFrom("android");
         // 发送
-        EasySocket.getInstance().upObject(testMessage);
+        EasySocket.getInstance().upMessage(testMessage.pack());
     }
 
 
@@ -246,6 +248,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onSocketResponse(SocketAddress socketAddress, String readData) {
             LogUtil.d("SocketActionListener收到数据-->" + readData);
         }
+
+        @Override
+        public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
+            super.onSocketResponse(socketAddress, originReadData);
+            LogUtil.d("SocketActionListener收到数据-->" + originReadData.getBodyString());
+        }
     };
 
 
@@ -257,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         EasySocketOptions options = new EasySocketOptions.Builder()
                 // 主机地址，请填写自己的IP地址，以getString的方式是为了隐藏作者自己的IP地址
                 .setSocketAddress(new SocketAddress(getResources().getString(R.string.local_ip), 9999))
-                .setCallbackKeyFactory(new CallbackKeyFactoryImpl())
+                .setCallbackKeyFactory(new CallbackIDFactoryImpl())
                 // 定义消息协议，方便解决 socket黏包、分包的问题，如果客户端定义了消息协议，那么
                 // 服务端也要对应对应的消息协议，如果这里没有定义消息协议，服务端也不需要定义
                 .setReaderProtocol(new DefaultMessageProtocol())

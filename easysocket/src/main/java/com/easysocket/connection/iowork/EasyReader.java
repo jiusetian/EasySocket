@@ -7,7 +7,7 @@ import com.easysocket.exception.ReadRecoverableExeption;
 import com.easysocket.exception.ReadUnrecoverableException;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
-import com.easysocket.interfaces.io.IMessageProtocol;
+import com.easysocket.interfaces.config.IMessageProtocol;
 import com.easysocket.interfaces.io.IReader;
 import com.easysocket.utils.LogUtil;
 

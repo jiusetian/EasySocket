@@ -1,16 +1,12 @@
 package com.easysocket.callback;
 
 
-import com.easysocket.interfaces.callback.IType;
-import com.easysocket.utils.Util;
-import com.google.gson.Gson;
-
-import java.lang.reflect.Type;
+import com.easysocket.entity.OriginReadData;
 
 /**
  * Created by LXR ON 2018/8/29.
  */
-public abstract class SuperCallBack<T> implements IType<T> {
+public abstract class SuperCallBack {
     /**
      * 随机字符串，识别服务端应答消息的唯一标识
      */
@@ -38,37 +34,11 @@ public abstract class SuperCallBack<T> implements IType<T> {
 
     public abstract void onError(Exception e);
 
-    public void onSuccess(String s) {
+    public void onSuccess(OriginReadData data) {
         onCompleted();
-        Class<?> clazz = getGenericityClazz();
-        if (clazz.equals(String.class)) { // String类型
-            onResponse((T) s);
-        } else { // 非String
-            Gson gson = new Gson();
-            T result = (T) gson.fromJson(s, clazz);
-            onResponse(result);
-        }
+        onResponse(data);
     }
 
-    public abstract void onResponse(T t);
+    public abstract void onResponse(OriginReadData data);
 
-    /**
-     * 获取泛型参数的类型
-     *
-     * @return
-     */
-    @Override
-    public Type getType() {
-        return Util.findGenericityType(getClass());
-    }
-
-    /**
-     * 获取泛型参数的class类型
-     *
-     * @return
-     */
-    @Override
-    public Class<?> getGenericityClazz() {
-        return (Class<?>) getType(); // 转为泛型参数的class对象
-    }
 }

@@ -1,6 +1,7 @@
 package com.easysocket.entity;
 
 import com.easysocket.EasySocket;
+import com.easysocket.utils.Utils;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
@@ -39,9 +40,19 @@ public class OriginReadData implements Serializable {
 
     /**
      * 获取数据body的string
+     *
      * @return
      */
-    public String getBodyString(){
+    public String getBodyString() {
         return new String(getBodyBytes(), Charset.forName(EasySocket.getInstance().getOptions().getCharsetName()));
+    }
+
+    /**
+     * 获取完整的数据，包括包头和包体
+     *
+     * @return
+     */
+    public byte[] getOriginDataBytes() {
+        return Utils.concatBytes(getHeaderData(), getBodyBytes());
     }
 }

@@ -150,32 +150,12 @@ public class EasySocket {
     }
 
     /**
-     * 发送对象
-     *
-     * @param sender
-     */
-    public IConnectionManager upObject(Object sender) {
-        getConnection().upObject(sender);
-        return connection;
-    }
-
-    /**
-     * 发送String
-     *
-     * @param str
-     */
-    public IConnectionManager upString(String str) {
-        getConnection().upString(str);
-        return connection;
-    }
-
-    /**
      * 发送byte[]
      *
      * @param bytes
      * @return
      */
-    public IConnectionManager upBytes(byte[] bytes) {
+    public IConnectionManager upMessage(byte[] bytes) {
         getConnection().upBytes(bytes);
         return connection;
     }
@@ -187,28 +167,6 @@ public class EasySocket {
      */
     public EasySocket subscribeSocketAction(ISocketActionListener socketActionListener) {
         getConnection().subscribeSocketAction(socketActionListener);
-        return this;
-    }
-
-    /**
-     * 开启心跳检测
-     *
-     * @param clientHeart
-     * @return
-     */
-    public EasySocket startHeartBeat(Object clientHeart, HeartManager.HeartbeatListener listener) {
-        getConnection().getHeartManager().startHeartbeat(clientHeart, listener);
-        return this;
-    }
-
-    /**
-     * 开启心跳检测
-     *
-     * @param clientHeart
-     * @return
-     */
-    public EasySocket startHeartBeat(String clientHeart, HeartManager.HeartbeatListener listener) {
-        getConnection().getHeartManager().startHeartbeat(clientHeart, listener);
         return this;
     }
 

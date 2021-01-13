@@ -13,18 +13,6 @@ public interface IHeartManager {
      * 开始心跳
      * @param clientHeart
      */
-    void startHeartbeat(Object clientHeart, HeartManager.HeartbeatListener listener);
-
-    /**
-     * 开始心跳
-     * @param clientHeart
-     */
-    void startHeartbeat(String clientHeart, HeartManager.HeartbeatListener listener);
-
-    /**
-     * 开始心跳
-     * @param clientHeart
-     */
     void startHeartbeat(byte[] clientHeart, HeartManager.HeartbeatListener listener);
 
     /**

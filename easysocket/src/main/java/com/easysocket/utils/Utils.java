@@ -14,7 +14,7 @@ import java.util.Random;
 /**
  * Created by LXR ON 2018/8/30.
  */
-public class Util {
+public class Utils {
 
     /**
      * 获取泛型参数的类型
@@ -98,13 +98,14 @@ public class Util {
 
     /**
      * 非空检查
+     *
      * @param object
      * @param emsg
      * @throws
      */
-    public static void checkNotNull(Object object,String emsg) {
+    public static void checkNotNull(Object object, String emsg) {
         try {
-            if (object==null){
+            if (object == null) {
                 throw new Exception(emsg);
             }
         } catch (Exception e) {
@@ -112,17 +113,37 @@ public class Util {
         }
     }
 
-    public static void throwNotNull(Object object,String emsg) throws Exception {
-            if (object==null){
-                throw new Exception(emsg);
-            }
+    public static void throwNotNull(Object object, String emsg) throws Exception {
+        if (object == null) {
+            throw new Exception(emsg);
+        }
     }
 
     // 判断是否连接网络
     public static boolean isNetConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo info= cm.getActiveNetworkInfo();
+        NetworkInfo info = cm.getActiveNetworkInfo();
         return info != null && info.isConnected();
+    }
+
+    /**
+     * 拼接两个byte[]
+     *
+     * @param
+     * @param
+     * @return
+     */
+    public static byte[] concatBytes(byte[] bt1, byte[] bt2) {
+        if (bt1 == null) {
+            return bt2;
+        }
+        if (bt2 == null) {
+            return bt1;
+        }
+        byte[] bt3 = new byte[bt1.length + bt2.length];
+        System.arraycopy(bt1, 0, bt3, 0, bt1.length);
+        System.arraycopy(bt2, 0, bt3, bt1.length, bt2.length);
+        return bt3;
     }
 
 }

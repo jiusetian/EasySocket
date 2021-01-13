@@ -1,4 +1,4 @@
-package com.easysocket.interfaces.io;
+package com.easysocket.interfaces.config;
 
 import java.nio.ByteOrder;
 
@@ -17,10 +17,4 @@ public interface IMessageProtocol {
      */
     int getBodyLength(byte[] header, ByteOrder byteOrder);
 
-    /**
-     * 根据协议打包消息格式，返回byte数组
-     * @param sender
-     * @return
-     */
-    byte[] pack(byte[] sender);
 }

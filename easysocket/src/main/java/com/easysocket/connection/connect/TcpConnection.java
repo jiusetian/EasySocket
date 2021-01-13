@@ -5,7 +5,7 @@ import com.easysocket.config.SocketSSLConfig;
 import com.easysocket.connection.action.SocketStatus;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.utils.LogUtil;
-import com.easysocket.utils.Util;
+import com.easysocket.utils.Utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,7 +79,7 @@ public class TcpConnection extends SuperConnection {
         SSLSocketFactory factory = config.getCustomSSLFactory();
         if (factory == null) {
             String protocol = "SSL";
-            if (!Util.isStringEmpty(config.getProtocol())) {
+            if (!Utils.isStringEmpty(config.getProtocol())) {
                 protocol = config.getProtocol();
             }
 

@@ -4,6 +4,7 @@ package com.easysocket.callback;
 import android.app.Dialog;
 import android.content.DialogInterface;
 
+import com.easysocket.entity.OriginReadData;
 import com.easysocket.exception.RequestCancelException;
 import com.easysocket.interfaces.callback.IProgressDialog;
 import com.easysocket.interfaces.callback.ProgressCancelListener;
@@ -12,7 +13,7 @@ import com.easysocket.interfaces.callback.ProgressCancelListener;
 /**
  * 自定义带有加载进度框的回调
  */
-public abstract class ProgressDialogCallBack<T> extends SuperCallBack<T> implements ProgressCancelListener {
+public abstract class ProgressDialogCallBack extends SuperCallBack implements ProgressCancelListener {
 
     private IProgressDialog progressDialog;
     private Dialog mDialog;
@@ -99,7 +100,7 @@ public abstract class ProgressDialogCallBack<T> extends SuperCallBack<T> impleme
         dismissProgress();
     }
 
-    public abstract void onResponse(T t);
+    public abstract void onResponse(OriginReadData data);
 
     @Override
     public void onError(Exception e) {

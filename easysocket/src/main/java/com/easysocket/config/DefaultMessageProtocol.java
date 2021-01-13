@@ -1,6 +1,6 @@
 package com.easysocket.config;
 
-import com.easysocket.interfaces.io.IMessageProtocol;
+import com.easysocket.interfaces.config.IMessageProtocol;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -8,7 +8,7 @@ import java.nio.ByteOrder;
 /**
  * Author：Alex
  * Date：2019/5/31
- * Note：默认的消息协议
+ * Note：默认的消息协议，header为4个字节，用于保存消息体 body的长度
  */
 public class DefaultMessageProtocol implements IMessageProtocol {
     @Override
@@ -24,16 +24,5 @@ public class DefaultMessageProtocol implements IMessageProtocol {
         ByteBuffer bb = ByteBuffer.wrap(header);
         bb.order(byteOrder);
         return bb.getInt(); // body的长度以int的形式保存在 header
-    }
-
-    @Override
-    public byte[] pack(byte[] body) {
-        // 消息头的长度
-        int headerLength = getHeaderLength();
-        ByteBuffer bb = ByteBuffer.allocate(headerLength + body.length);
-        bb.order(ByteOrder.BIG_ENDIAN);
-        bb.putInt(body.length); // 保存body的length
-        bb.put(body); // body
-        return bb.array();
     }
 }

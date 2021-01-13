@@ -1,6 +1,5 @@
 package com.easysocket.connection.heartbeat;
 
-import com.easysocket.EasySocket;
 import com.easysocket.config.EasySocketOptions;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
@@ -9,9 +8,7 @@ import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.IHeartManager;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.conn.SocketActionListener;
-import com.google.gson.Gson;
 
-import java.nio.charset.Charset;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -85,14 +82,6 @@ public class HeartManager extends SocketActionListener implements IOptions, IHea
     };
 
 
-    /**
-     * 启动心跳检测
-     */
-    @Override
-    public void startHeartbeat(Object clientHeart, HeartbeatListener listener) {
-        startHeartbeat(new Gson().toJson(clientHeart).getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())), listener);
-    }
-
     @Override
     public void startHeartbeat(byte[] clientHeart, HeartbeatListener listener) {
         this.clientHeart = clientHeart;
@@ -101,10 +90,6 @@ public class HeartManager extends SocketActionListener implements IOptions, IHea
         openThread();
     }
 
-    @Override
-    public void startHeartbeat(String clientHeart, HeartbeatListener listener) {
-        startHeartbeat(clientHeart.getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())), listener);
-    }
 
     // 启动心跳线程
     private void openThread() {
@@ -169,7 +154,7 @@ public class HeartManager extends SocketActionListener implements IOptions, IHea
 
     @Override
     public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
-        if (heartbeatListener != null && heartbeatListener.isServerHeartbeat(originReadData.getBodyString())) {
+        if (heartbeatListener != null && heartbeatListener.isServerHeartbeat(originReadData.getBodyBytes())) {
             // 收到服务器心跳
             onReceiveHeartBeat();
         }
@@ -190,7 +175,7 @@ public class HeartManager extends SocketActionListener implements IOptions, IHea
 
     public interface HeartbeatListener {
         // 是否为服务器心跳
-        boolean isServerHeartbeat(String orginReadData);
+        boolean isServerHeartbeat(byte[] orginReadData);
     }
 
 }

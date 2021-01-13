@@ -1,11 +1,11 @@
-package com.easysocket;
+package com.easysocket.message;
 
 /**
  * Author：Alex
  * Date：2019/6/6
  * Note：客户端心跳
  */
-public class ClientHeartBeat {
+public class ClientHeartBeat extends AbsMessage {
     private String msgId;
     private String from;
 

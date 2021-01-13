@@ -9,10 +9,7 @@ import com.easysocket.exception.RequestTimeOutException;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.SocketActionListener;
 import com.easysocket.utils.LogUtil;
-import com.easysocket.utils.Util;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.easysocket.utils.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,7 +86,7 @@ public class CallbackResponseDispatcher {
                         e.printStackTrace();
                     }
                     // 继续循环
-                    if (timeoutExecutor!=null&&!timeoutExecutor.isShutdown()) {
+                    if (timeoutExecutor != null && !timeoutExecutor.isShutdown()) {
                         run();
                     }
                 }
@@ -116,28 +113,20 @@ public class CallbackResponseDispatcher {
         @Override
         public void onSocketResponse(SocketAddress socketAddress, OriginReadData originReadData) {
             if (callbacks.size() == 0) return;
-            if (socketOptions.getCallbakcKeyFactory() == null) return;
-
-            try {
-                String callbackIdKey = socketOptions.getCallbakcKeyFactory().getCallbackKey();
-                JSONObject data = new JSONObject(originReadData.getBodyString());
-                // 是否为回调消息
-                if (data.has(callbackIdKey)){
-                    String callbackId = data.getString(callbackIdKey);
-                    // 获取signer对应的callback
-                    SuperCallBack callBack = callbacks.get(callbackId);
-                    if (callBack != null) {
-                        // 回调
-                        callBack.onSuccess(originReadData.getBodyString());
-                        callbacks.remove(callbackId); // 移除完成任务的callback
-                        LogUtil.d("移除的callbackId-->" + callbackId );
-                    }
+            if (socketOptions.getCallbackIDFactory() == null) return;
+            // 获取回调ID
+            String callbackID = socketOptions.getCallbackIDFactory().getCallbackID(originReadData);
+            if (callbackID != null) {
+                // 获取callbackID对应的callback
+                SuperCallBack callBack = callbacks.get(callbackID);
+                if (callBack != null) {
+                    // 回调
+                    callBack.onSuccess(originReadData);
+                    callbacks.remove(callbackID); // 移除完成任务的callback
+                    LogUtil.d("移除的callbackId-->" + callbackID);
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
-
     };
 
 
@@ -186,7 +175,7 @@ public class CallbackResponseDispatcher {
      */
     public void checkCallbackSender(SuperCallbackSender callbackSender) {
 
-        Util.checkNotNull(socketOptions.getCallbakcKeyFactory(), "要想实现EasySocket的回调功能，CallbackIdFactory不能为null，" +
+        Utils.checkNotNull(socketOptions.getCallbackIDFactory(), "要想实现EasySocket的回调功能，CallbackIdFactory不能为null，" +
                 "请实现一个CallbackIdFactory并在初始化的时候通过EasySocketOptions的setCallbackIdKeyFactory进行配置");
         String callbackId = callbackSender.getCallbackId();
         // 同一个消息发送两次以上，callbackId是不能一样的，否则服务端反馈的时候，客户端接收就会乱套

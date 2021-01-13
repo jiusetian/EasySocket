@@ -1,12 +1,15 @@
 package com.easysocket.connection.dispatcher;
 
+import com.easysocket.EasySocket;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.entity.SocketAddress;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
 import com.easysocket.interfaces.conn.ISocketActionListener;
+import com.easysocket.utils.Utils;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -185,8 +188,9 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                     public void run() {
                         // response有三种形式
                         actionListener.onSocketResponse(socketAddress, (OriginReadData) content);
-                        actionListener.onSocketResponse(socketAddress, ((OriginReadData) content).getBodyString());
-                        actionListener.onSocketResponse(socketAddress, ((OriginReadData) content).getBodyBytes());
+                        byte[] data = Utils.concatBytes(((OriginReadData) content).getHeaderData(), ((OriginReadData) content).getBodyBytes());
+                        actionListener.onSocketResponse(socketAddress, new String(data, Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())));
+                        actionListener.onSocketResponse(socketAddress, data);
                     }
                 });
                 break;

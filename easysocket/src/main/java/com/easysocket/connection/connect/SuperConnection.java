@@ -17,11 +17,9 @@ import com.easysocket.interfaces.config.IConnectionSwitchListener;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionListener;
 import com.easysocket.utils.LogUtil;
-import com.easysocket.utils.Util;
-import com.google.gson.Gson;
+import com.easysocket.utils.Utils;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -278,7 +276,7 @@ public abstract class SuperConnection implements IConnectionManager {
     @Override
     public boolean isConnectViable() {
         // 当前socket是否处于可连接状态
-        return Util.isNetConnected(EasySocket.getInstance().getContext()) && connectionStatus.get() == SocketStatus.SOCKET_DISCONNECTED;
+        return Utils.isNetConnected(EasySocket.getInstance().getContext()) && connectionStatus.get() == SocketStatus.SOCKET_DISCONNECTED;
     }
 
     @Override
@@ -310,12 +308,7 @@ public abstract class SuperConnection implements IConnectionManager {
         if (ioManager == null || connectionStatus.get() != SocketStatus.SOCKET_CONNECTED) {
             return this;
         }
-        byte[] sender = bytes;
-        // 如果有消息协议，则打包
-        if (socketOptions.getMessageProtocol() != null) {
-            sender = socketOptions.getMessageProtocol().pack(bytes);
-        }
-        ioManager.sendBytes(sender);
+        ioManager.sendBytes(bytes);
         return this;
     }
 
@@ -332,22 +325,10 @@ public abstract class SuperConnection implements IConnectionManager {
     }
 
     @Override
-    public synchronized IConnectionManager upString(String sender) {
-        sendBytes(sender.getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())));
-        return this;
-    }
-
-    @Override
-    public synchronized IConnectionManager upObject(Object sender) {
-        sendBytes(new Gson().toJson(sender).getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())));
-        return this;
-    }
-
-    @Override
     public synchronized IConnectionManager upCallbackMessage(SuperCallbackSender sender) {
         callbackResponseDispatcher.checkCallbackSender(sender);
-        // 发送消息
-        sendBytes(new Gson().toJson(sender).getBytes(Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())));
+        // 发送
+        sendBytes(sender.pack());
         return this;
     }
 
