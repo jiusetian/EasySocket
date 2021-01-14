@@ -5,15 +5,16 @@ import com.easysocket.connection.action.IOAction;
 import com.easysocket.entity.OriginReadData;
 import com.easysocket.exception.ReadRecoverableExeption;
 import com.easysocket.exception.ReadUnrecoverableException;
+import com.easysocket.interfaces.config.IMessageProtocol;
 import com.easysocket.interfaces.conn.IConnectionManager;
 import com.easysocket.interfaces.conn.ISocketActionDispatch;
-import com.easysocket.interfaces.config.IMessageProtocol;
 import com.easysocket.interfaces.io.IReader;
 import com.easysocket.utils.LogUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * Author：Alex

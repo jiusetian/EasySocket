@@ -62,7 +62,6 @@ public class ServerWriter implements IWriter {
             while (socket.isConnected() && !isShutdown && !socket.isClosed()) {
                 try {
                     byte[] sender = packetsToSend.take();
-                    System.out.println("send message");
                     write(sender);
                 } catch (InterruptedException e) {
                     //取数据异常

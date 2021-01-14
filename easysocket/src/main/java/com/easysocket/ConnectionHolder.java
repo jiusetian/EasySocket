@@ -46,7 +46,7 @@ public class ConnectionHolder {
     }
 
     /**
-     * 获取指定SocketAddress的连接
+     * 获取指定SocketAddress的连接，参数配置使用默认的
      *
      * @param address
      * @return
@@ -72,7 +72,7 @@ public class ConnectionHolder {
      * @return
      */
     public IConnectionManager getConnection(SocketAddress address, EasySocketOptions socketOptions) {
-        return getConnection(createKey(address));
+        return getConnection(createKey(address),socketOptions);
     }
 
     public IConnectionManager getConnection(String address, EasySocketOptions socketOptions) {

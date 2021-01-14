@@ -75,7 +75,6 @@ public class MainClass {
 
         @Override
         public void run() {
-            System.out.println("运行io");
             serverIoManager = new ServerIOManager(socket);
             serverIoManager.startIO();
         }
