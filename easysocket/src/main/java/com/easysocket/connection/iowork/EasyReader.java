@@ -14,7 +14,6 @@ import com.easysocket.utils.LogUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 /**
  * Author：Alex

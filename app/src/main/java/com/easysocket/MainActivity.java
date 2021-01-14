@@ -32,9 +32,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isConnected;
     // 连接或断开按钮
     private Button controlConnect;
-    // 是否已连接
+    // 是否已连接【9998端口】
     private boolean isConnected9998;
-    // 连接或断开按钮
+    // 连接或断开按钮【9998端口】
     private Button controlConnect9998;
     // 9998端口的地址
     private String ADDRESS_9998;
@@ -326,11 +326,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onSocketDisconnect(SocketAddress socketAddress, boolean isNeedReconnect) {
             LogUtil.d(socketAddress.getPort() + "端口" + "---> socket断开连接，是否需要重连：" + isNeedReconnect);
-            controlConnect.setText(socketAddress.getPort() + "端口" + "socket连接被断开，点击进行连接");
             if (socketAddress.getPort() == 9998) {
                 isConnected9998 = false;
+                controlConnect9998.setText(socketAddress.getPort() + "端口" + "socket连接被断开，点击进行连接");
             } else {
                 isConnected = false;
+                controlConnect.setText(socketAddress.getPort() + "端口" + "socket连接被断开，点击进行连接");
             }
 
         }

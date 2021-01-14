@@ -156,7 +156,7 @@ public abstract class SuperConnection implements IConnectionManager {
     @Override
     public synchronized void disconnect(boolean isNeedReconnect) {
         // 判断当前socket的连接状态
-        if (connectionStatus.get() != SocketStatus.SOCKET_CONNECTED) {
+        if (connectionStatus.get() == SocketStatus.SOCKET_DISCONNECTED) {
             return;
         }
         // 正在重连中
