@@ -38,51 +38,62 @@ public class ConnectionHolder {
      * @param socketAddress
      */
     public void removeConnection(SocketAddress socketAddress) {
-        mConnectionManagerMap.remove(createKey(socketAddress));
+        removeConnection(createKey(socketAddress));
+    }
+
+    public void removeConnection(String socketAddress) {
+        mConnectionManagerMap.remove(socketAddress);
     }
 
     /**
      * 获取指定SocketAddress的连接
      *
-     * @param info
+     * @param address
      * @return
      */
-    public IConnectionManager getConnection(SocketAddress info) {
+    public IConnectionManager getConnection(SocketAddress address) {
+        return getConnection(createKey(address));
+    }
 
-        IConnectionManager manager = mConnectionManagerMap.get(createKey(info));
+    public IConnectionManager getConnection(String address) {
+        IConnectionManager manager = mConnectionManagerMap.get(address);
         if (manager == null) {
-            return getConnection(info, EasySocketOptions.getDefaultOptions());
+            return getConnection(address, EasySocketOptions.getDefaultOptions());
         } else {
-            return getConnection(info, manager.getOptions());
+            return getConnection(address, manager.getOptions());
         }
     }
 
     /**
      * 获取指定SocketAddress的连接
      *
-     * @param info
+     * @param address
      * @param socketOptions
      * @return
      */
-    public IConnectionManager getConnection(SocketAddress info, EasySocketOptions socketOptions) {
-        IConnectionManager manager = mConnectionManagerMap.get(createKey(info));
+    public IConnectionManager getConnection(SocketAddress address, EasySocketOptions socketOptions) {
+        return getConnection(createKey(address));
+    }
+
+    public IConnectionManager getConnection(String address, EasySocketOptions socketOptions) {
+        IConnectionManager manager = mConnectionManagerMap.get(address);
         if (manager != null) { // 有缓存
             manager.setOptions(socketOptions);
             return manager;
         } else {
-            return createNewManagerAndCache(info, socketOptions);
+            return createNewManagerAndCache(address, socketOptions);
         }
     }
 
     /**
      * 创建新的连接并缓存
      *
-     * @param info
+     * @param address
      * @param socketOptions
      * @return
      */
-    private IConnectionManager createNewManagerAndCache(SocketAddress info, EasySocketOptions socketOptions) {
-        SuperConnection manager = new TcpConnection(info); // 创建连接管理器
+    private IConnectionManager createNewManagerAndCache(SocketAddress address, EasySocketOptions socketOptions) {
+        SuperConnection manager = new TcpConnection(address); // 创建连接管理器
         manager.setOptions(socketOptions); // 设置参数
         // 连接主机的切换监听
         manager.setOnConnectionSwitchListener(new IConnectionSwitchListener() {
@@ -100,9 +111,13 @@ public class ConnectionHolder {
         });
 
         synchronized (mConnectionManagerMap) {
-            mConnectionManagerMap.put(createKey(info), manager);
+            mConnectionManagerMap.put(createKey(address), manager);
         }
         return manager;
+    }
+
+    private IConnectionManager createNewManagerAndCache(String address, EasySocketOptions socketOptions) {
+        return createNewManagerAndCache(createSocketAddress(address), socketOptions);
     }
 
     /**
@@ -111,6 +126,11 @@ public class ConnectionHolder {
      */
     private String createKey(SocketAddress socketAddress) {
         return socketAddress.getIp() + ":" + socketAddress.getPort();
+    }
+
+    private SocketAddress createSocketAddress(String address) {
+        String[] s = address.split(":");
+        return new SocketAddress(s[0], Integer.parseInt(s[1]));
     }
 
 }

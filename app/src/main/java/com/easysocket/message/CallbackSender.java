@@ -37,7 +37,7 @@ public class CallbackSender extends SuperCallbackSender {
     public byte[] pack() {
         byte[] body = new Gson().toJson(this).getBytes();
         // 如果没有设置消息协议，则直接发送消息
-        if (EasySocket.getInstance().getOptions().getMessageProtocol() == null) {
+        if (EasySocket.getInstance().getDefOptions().getMessageProtocol() == null) {
             return body;
         }
         ByteBuffer bb = ByteBuffer.allocate(body.length + 4);

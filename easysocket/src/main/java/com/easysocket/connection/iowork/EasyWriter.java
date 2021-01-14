@@ -93,7 +93,7 @@ public class EasyWriter implements IWriter<EasySocketOptions> {
     public void write(byte[] sendBytes) throws IOException {
         if (sendBytes != null) {
             LogUtil.d("Socket发送数据String-->" + new String(sendBytes, Charset.forName("utf-8")));
-            System.out.println("Socket发送数据byte[]-->"+Arrays.toString(sendBytes));
+            LogUtil.d("Socket发送数据byte[]-->" + Arrays.toString(sendBytes));
             int packageSize = socketOptions.getMaxWriteBytes(); // 每次可以发送的最大数据
             int remainingCount = sendBytes.length;
             ByteBuffer writeBuf = ByteBuffer.allocate(packageSize);

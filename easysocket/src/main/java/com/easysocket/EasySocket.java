@@ -25,13 +25,13 @@ public class EasySocket {
     // 单例
     private volatile static EasySocket singleton = null;
     /**
-     * 连接参数
+     * 默认的连接参数
      */
-    private EasySocketOptions options;
+    private EasySocketOptions defOptions;
     /**
-     * 连接器
+     * 默认的连接
      */
-    private IConnectionManager connection;
+    private IConnectionManager defConnection;
     /**
      * 上下文
      */
@@ -54,14 +54,6 @@ public class EasySocket {
     }
 
     /**
-     * 设置连接参数
-     */
-    public EasySocket options(EasySocketOptions socketOptions) {
-        options = socketOptions;
-        return this;
-    }
-
-    /**
      * 获取上下文
      *
      * @return
@@ -71,20 +63,23 @@ public class EasySocket {
     }
 
     /**
-     * 获取配置参数
+     * 获取默认的配置参数
      *
      * @return
      */
-    public EasySocketOptions getOptions() {
-        return options == null ? EasySocketOptions.getDefaultOptions() : options;
+    public EasySocketOptions getDefOptions() {
+        return defOptions == null ? EasySocketOptions.getDefaultOptions() : defOptions;
     }
 
     /**
-     * 创建连接
+     * 创建socket连接，此连接为默认的连接，如果你的项目只有一个Socket连接，可以用这个方法，
+     * 在方法不指定连接地址的情况下，默认作用的都是这个连接，
+     * 比如：{@link EasySocket#upMessage(byte[])}，{@link EasySocket#connect()} 等
      *
      * @return
      */
-    public EasySocket createConnection(Context context) {
+    public EasySocket createConnection(EasySocketOptions options, Context context) {
+        this.defOptions = options;
         this.context = context;
         SocketAddress socketAddress = options.getSocketAddress();
         if (options.getSocketAddress() == null) {
@@ -94,24 +89,46 @@ public class EasySocket {
         if (options.getBackupAddress() != null) {
             socketAddress.setBackupAddress(options.getBackupAddress());
         }
-        if (connection == null) {
-            connection = connectionHolder.getConnection(socketAddress,
+        if (defConnection == null) {
+            defConnection = connectionHolder.getConnection(socketAddress,
                     options == null ? EasySocketOptions.getDefaultOptions() : options);
         }
         // 执行连接
-        connection.connect();
+        defConnection.connect();
         return this;
     }
 
     /**
-     * 连接socket
+     * 连接socket，作用于默认连接
      *
      * @return
      */
     public EasySocket connect() {
-        getConnection().connect();
+        getDefconnection().connect();
         return this;
     }
+
+    /**
+     * @param address socket地址，包括ip和端口
+     * @return
+     */
+    public EasySocket connect(String address) {
+        getConnection(address).connect();
+        return this;
+    }
+
+
+    /**
+     * 关闭连接，作用于默认连接
+     *
+     * @param isNeedReconnect 是否需要重连
+     * @return
+     */
+    public EasySocket disconnect(boolean isNeedReconnect) {
+        getDefconnection().disconnect(isNeedReconnect);
+        return this;
+    }
+
 
     /**
      * 关闭连接
@@ -119,23 +136,48 @@ public class EasySocket {
      * @param isNeedReconnect 是否需要重连
      * @return
      */
-    public EasySocket disconnect(boolean isNeedReconnect) {
-        getConnection().disconnect(isNeedReconnect);
+    public EasySocket disconnect(String address, boolean isNeedReconnect) {
+        getConnection(address).disconnect(isNeedReconnect);
         return this;
     }
+
+    /**
+     * 销毁连接对象，作用于默认连接
+     *
+     * @return
+     */
+    public EasySocket destroyConnection() {
+        // 断开连接
+        getDefconnection().disconnect(false);
+        // 移除连接
+        connectionHolder.removeConnection(defOptions.getSocketAddress());
+        defConnection = null;
+        return this;
+    }
+
 
     /**
      * 销毁连接对象
      *
      * @return
      */
-    public EasySocket destroyConnection() {
+    public EasySocket destroyConnection(String address) {
         // 断开连接
-        getConnection().disconnect(false);
+        getConnection(address).disconnect(false);
         // 移除连接
-        connectionHolder.removeConnection(options.getSocketAddress());
-        connection = null;
+        connectionHolder.removeConnection(address);
         return this;
+    }
+
+    /**
+     * 发送有回调的消息，作用于默认连接
+     *
+     * @param sender
+     * @return
+     */
+    public IConnectionManager upCallbackMessage(SuperCallbackSender sender) {
+        getDefconnection().upCallbackMessage(sender);
+        return defConnection;
     }
 
     /**
@@ -144,10 +186,10 @@ public class EasySocket {
      * @param sender
      * @return
      */
-    public IConnectionManager upCallbackMessage(SuperCallbackSender sender) {
-        getConnection().upCallbackMessage(sender);
-        return connection;
+    public IConnectionManager upCallbackMessage(SuperCallbackSender sender, String address) {
+        return getConnection(address).upCallbackMessage(sender);
     }
+
 
     /**
      * 发送byte[]
@@ -155,18 +197,50 @@ public class EasySocket {
      * @param message
      * @return
      */
-    public IConnectionManager upMessage(byte[] message) {
-        getConnection().upBytes(message);
-        return connection;
+    public IConnectionManager upMessage(byte[] message, String address) {
+        return getConnection(address).upBytes(message);
     }
+
+    /**
+     * 发送byte[]，作用于默认连接
+     *
+     * @param message
+     * @return
+     */
+    public IConnectionManager upMessage(byte[] message) {
+        return getDefconnection().upBytes(message);
+    }
+
+
+    /**
+     * 注册监听socket行为，作用于默认连接
+     *
+     * @param socketActionListener
+     */
+    public EasySocket subscribeSocketAction(ISocketActionListener socketActionListener) {
+        getDefconnection().subscribeSocketAction(socketActionListener);
+        return this;
+    }
+
 
     /**
      * 注册监听socket行为
      *
      * @param socketActionListener
      */
-    public EasySocket subscribeSocketAction(ISocketActionListener socketActionListener) {
-        getConnection().subscribeSocketAction(socketActionListener);
+    public EasySocket subscribeSocketAction(ISocketActionListener socketActionListener, String address) {
+        getConnection(address).subscribeSocketAction(socketActionListener);
+        return this;
+    }
+
+    /**
+     * 开启心跳检测，作用于默认连接
+     *
+     * @param clientHeart
+     * @return
+     */
+    public EasySocket startHeartBeat(byte[] clientHeart, HeartManager.HeartbeatListener listener) {
+        getDefconnection().getHeartManager().startHeartbeat(clientHeart, listener);
         return this;
     }
 
@@ -176,8 +250,8 @@ public class EasySocket {
      * @param clientHeart
      * @return
      */
-    public EasySocket startHeartBeat(byte[] clientHeart, HeartManager.HeartbeatListener listener) {
-        getConnection().getHeartManager().startHeartbeat(clientHeart, listener);
+    public EasySocket startHeartBeat(byte[] clientHeart, String address, HeartManager.HeartbeatListener listener) {
+        getConnection(address).getHeartManager().startHeartbeat(clientHeart, listener);
         return this;
     }
 
@@ -187,23 +261,39 @@ public class EasySocket {
      *
      * @return
      */
-    public IConnectionManager getConnection() {
-        if (connection == null) {
-            throw new NotNullException("请先创建socket连接");
+    public IConnectionManager getDefconnection() {
+        if (defConnection == null) {
+            throw new NotNullException("你还没有创建：" + defOptions.getSocketAddress().getIp() + ":" + defOptions.getSocketAddress().getPort()
+                    + "的Socket的连接，请使用com.easysocket.EasySocket.connect()方法创建一个默认的连接");
         }
-        return connection;
+        return defConnection;
     }
 
     /**
-     * 创建指定的连接
+     * 获取连接
      *
-     * @param socketAddress
+     * @return
+     */
+    public IConnectionManager getConnection(String address) {
+        IConnectionManager connectionManager = connectionHolder.getConnection(address);
+        if (connectionManager == null) {
+            throw new NotNullException("请先创建：" + address + "的Socket连接");
+        }
+        return connectionManager;
+    }
+
+    /**
+     * 创建指定的socket连接，如果你的项目有多个socket连接，可以用这个方法创建连接，后面你要操作某个连接的时候就要使用带有socket地址的方法
+     * 比如：{@link EasySocket#upMessage(byte[], java.lang.String)}，{@link EasySocket#connect(String)} 等
+     *
      * @param socketOptions
      * @return
      */
-    public IConnectionManager buildSpecifyConnection(SocketAddress socketAddress, EasySocketOptions socketOptions) {
-        IConnectionManager connectionManager = connectionHolder.getConnection(socketAddress, socketOptions == null
+    public IConnectionManager createSpecifyConnection(EasySocketOptions socketOptions, Context context) {
+        this.context = context;
+        IConnectionManager connectionManager = connectionHolder.getConnection(socketOptions.getSocketAddress(), socketOptions == null
                 ? EasySocketOptions.getDefaultOptions() : socketOptions);
+
         connectionManager.connect();
         return connectionManager;
     }
@@ -214,7 +304,7 @@ public class EasySocket {
      * @param socketAddress
      * @return
      */
-    public IConnectionManager getSpecifyConnection(SocketAddress socketAddress) {
+    public IConnectionManager getSpecifyConnection(String socketAddress) {
         return connectionHolder.getConnection(socketAddress);
     }
 
@@ -224,7 +314,7 @@ public class EasySocket {
      * @param sender
      * @param socketAddress
      */
-    public IConnectionManager upToSpecifyConnection(byte[] sender, SocketAddress socketAddress) {
+    public IConnectionManager upToSpecifyConnection(byte[] sender, String socketAddress) {
         IConnectionManager connect = getSpecifyConnection(socketAddress);
         if (connect != null) {
             connect.upBytes(sender);

@@ -6,7 +6,7 @@ import com.easysocket.EasySocket;
 
 public class LogUtil {
     public static final String LOGTAG = "easysocket";
-    public static boolean debugEnabled = EasySocket.getInstance().getOptions().isDebug();
+    public static boolean debugEnabled = EasySocket.getInstance().getDefOptions().isDebug();
 
     public LogUtil() {
     }

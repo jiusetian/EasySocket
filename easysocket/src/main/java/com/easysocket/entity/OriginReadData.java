@@ -44,7 +44,7 @@ public class OriginReadData implements Serializable {
      * @return
      */
     public String getBodyString() {
-        return new String(getBodyBytes(), Charset.forName(EasySocket.getInstance().getOptions().getCharsetName()));
+        return new String(getBodyBytes(), Charset.forName(EasySocket.getInstance().getDefOptions().getCharsetName()));
     }
 
     /**

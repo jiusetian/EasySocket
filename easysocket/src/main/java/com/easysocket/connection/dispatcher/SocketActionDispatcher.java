@@ -189,7 +189,7 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                         // response有三种形式
                         actionListener.onSocketResponse(socketAddress, (OriginReadData) content);
                         byte[] data = Utils.concatBytes(((OriginReadData) content).getHeaderData(), ((OriginReadData) content).getBodyBytes());
-                        actionListener.onSocketResponse(socketAddress, new String(data, Charset.forName(EasySocket.getInstance().getOptions().getCharsetName())));
+                        actionListener.onSocketResponse(socketAddress, new String(data, Charset.forName(EasySocket.getInstance().getDefOptions().getCharsetName())));
                         actionListener.onSocketResponse(socketAddress, data);
                     }
                 });
