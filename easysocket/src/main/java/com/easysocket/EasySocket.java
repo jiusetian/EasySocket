@@ -73,8 +73,8 @@ public class EasySocket {
 
     /**
      * 创建socket连接，此连接为默认的连接，如果你的项目只有一个Socket连接，可以用这个方法，
-     * 在方法不指定连接地址的情况下，默认作用的都是这个连接，
-     * 比如：{@link EasySocket#upMessage(byte[])}，{@link EasySocket#connect()} 等
+     * 在方法不指定连接地址的情况下，默认使用都是这个连接，
+     * 比如： upMessage(byte[] message)、 connect()等
      *
      * @return
      */
@@ -283,8 +283,9 @@ public class EasySocket {
     }
 
     /**
-     * 创建指定的socket连接，如果你的项目有多个socket连接，可以用这个方法创建连接，后面你要操作某个连接的时候就要使用带有socket地址的方法
-     * 比如：{@link EasySocket#upMessage(byte[], java.lang.String)}，{@link EasySocket#connect(String)} 等
+     * 创建指定的socket连接，如果你的项目有多个socket连接，可以用这个方法创建更多的连接，
+     * 当你使用带有socket地址为参数的方法的时候，作用的就是对应的连接
+     * 比如：connect(String address)、 upMessage(byte[] message, String address)等
      *
      * @param socketOptions
      * @return
