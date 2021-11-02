@@ -245,7 +245,7 @@ public abstract class SuperConnection implements IConnectionManager {
         if (ioManager == null) {
             ioManager = new IOManager(this, actionDispatcher);
         }
-        ioManager.startIO();
+        //ioManager.startIO();
 
         // 启动相关线程
         callbackResponseDispatcher.engineThread();
