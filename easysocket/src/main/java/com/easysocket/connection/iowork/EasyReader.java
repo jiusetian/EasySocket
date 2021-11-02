@@ -211,7 +211,10 @@ public class EasyReader implements IReader<EasySocketOptions> {
         for (int i = 0; i < readLength; i++) {
             byte[] bytes = new byte[1];
             // 从输入流中读数据，无数据时会阻塞
-            int value = inputStream.read(bytes);
+            int value = -1;
+            if (inputStream != null) {
+                value = inputStream.read(bytes);
+            }
             // -1代表读到了文件的末尾，一般是因为服务器断开了连接
             if (value == -1) {
                 throw new ReadRecoverableExeption("读数据失败，可能是因为socket跟服务器断开了连接");
@@ -222,7 +225,11 @@ public class EasyReader implements IReader<EasySocketOptions> {
 
     private void readOriginDataFromSteam(OriginReadData readData) throws ReadRecoverableExeption, IOException {
         // 用 全局originBuf避免重复创建字节数组
-        int len = inputStream.read(originBuf.array());
+        int len = -1;
+
+        if (inputStream != null && originBuf != null) {
+            len = inputStream.read(originBuf.array());
+        }
         // no more data
         if (len == -1) {
             throw new ReadRecoverableExeption("读数据失败，可能因为socket跟服务器断开了连接");
@@ -242,7 +249,11 @@ public class EasyReader implements IReader<EasySocketOptions> {
         // while循环直到byteBuffer装满数据
         while (byteBuffer.hasRemaining()) {
             byte[] bufArray = new byte[socketOptions.getMaxReadBytes()]; // 从服务器单次读取的最大值
-            int len = inputStream.read(bufArray);
+            int len = -1;
+            if (inputStream != null) {
+                len = inputStream.read(bufArray);
+            }
+
             if (len == -1) { // no more data
                 throw new ReadRecoverableExeption("读数据失败，可能是因为socket跟服务器断开了连接");
             }

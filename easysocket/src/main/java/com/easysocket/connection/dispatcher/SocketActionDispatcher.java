@@ -153,7 +153,9 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                 mainThreadExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        actionListener.onSocketConnSuccess(socketAddress);
+                        if (actionListener != null) {
+                            actionListener.onSocketConnSuccess(socketAddress);
+                        }
                     }
                 });
 
@@ -163,7 +165,9 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
                 mainThreadExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        actionListener.onSocketConnFail(socketAddress, ((Boolean) content).booleanValue());
+                        if (actionListener != null) {
+                            actionListener.onSocketConnFail(socketAddress, ((Boolean) content).booleanValue());
+                        }
                     }
                 });
 
@@ -171,28 +175,33 @@ public class SocketActionDispatcher implements ISocketActionDispatch {
 
             case ACTION_DISCONNECTION: // 连接断开
                 mainThreadExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        actionListener.onSocketDisconnect(socketAddress, ((Boolean) content).booleanValue());
-                        // 不需要重连，则释放资源
-                        if (!(Boolean) content) {
-                            stopDispatchThread();
-                        }
-                    }
-                });
+                           @Override
+                           public void run() {
+
+                               if (actionListener != null) {
+                                   actionListener.onSocketDisconnect(socketAddress, ((Boolean) content).booleanValue());
+                               }
+                               // 不需要重连，则释放资源
+                               if (!(Boolean) content) {
+                                   stopDispatchThread();
+                               }
+                           }
+                       });
                 break;
 
             case ACTION_READ_COMPLETE: // 读取数据完成
                 mainThreadExecutor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        // response有三种形式
-                        actionListener.onSocketResponse(socketAddress, (OriginReadData) content);
-                        byte[] data = Utils.concatBytes(((OriginReadData) content).getHeaderData(), ((OriginReadData) content).getBodyBytes());
-                        actionListener.onSocketResponse(socketAddress, new String(data, Charset.forName(EasySocket.getInstance().getDefOptions().getCharsetName())));
-                        actionListener.onSocketResponse(socketAddress, data);
-                    }
-                });
+                       @Override
+                       public void run() {
+                           if (actionListener != null) {
+                               // response有三种形式
+                               actionListener.onSocketResponse(socketAddress, (OriginReadData) content);
+                               byte[] data = Utils.concatBytes(((OriginReadData) content).getHeaderData(), ((OriginReadData) content).getBodyBytes());
+                               actionListener.onSocketResponse(socketAddress, new String(data, Charset.forName(EasySocket.getInstance().getDefOptions().getCharsetName())));
+                               actionListener.onSocketResponse(socketAddress, data);
+                           }
+                       }
+                   });
                 break;
         }
     }

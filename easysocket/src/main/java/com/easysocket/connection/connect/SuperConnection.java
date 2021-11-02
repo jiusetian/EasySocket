@@ -203,9 +203,9 @@ public abstract class SuperConnection implements IConnectionManager {
                 LogUtil.d("---> 关闭socket连接");
                 connectionStatus.set(SocketStatus.SOCKET_DISCONNECTED);
                 actionDispatcher.dispatchAction(SocketAction.ACTION_DISCONNECTION, new Boolean(isNeedReconnect));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 // 断开连接发生异常
-                e.printStackTrace();
+                e.printStackTrace();//处理断开，nullPointerException导致的异常
             }
         }
     }
