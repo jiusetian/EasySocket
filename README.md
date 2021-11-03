@@ -58,14 +58,23 @@ allprojects {
             //socket配置
             EasySocketOptions options = new EasySocketOptions.Builder()
                     .setSocketAddress(new SocketAddress("192.168.3.9", 9999)) //主机地址
+		    .setCharsetName("gbk")//设置socket的编码格式
                     // 强烈建议定义一个消息协议，方便解决 socket黏包、分包的问题
                     // .setReaderProtocol(new DefaultMessageProtocol()) // 默认的消息协议
                     .build();
      
-            //初始化EasySocket
-            EasySocket.getInstance()
-                    .options(options) //项目配置
-                    .buildConnection();//创建一个socket连接
+        /**
+         * 创建指定的socket连接，如果你的项目有多个socket连接，可以用这个方法创建连接，后面你要操作某个连接的时候就要使用带有socket地址的方法
+         * 比如：{@link EasySocket#upMessage(byte[], java.lang.String)}，{@link EasySocket#connect(String)} 等
+         *
+         * @param socketOptions
+         * @return
+         */
+            EasySocket.getInstance().createSpecifyConnection(options, mContext);//创建一个socket连接
+            //监听socket相关行为
+            EasySocket.getInstance().subscribeSocketAction(socketActionListener);
+
+	   EasySocket.getInstance().subscribeSocketAction(socketActionListener, "192.168.3.9:9999");//192.168.3.131 需要连接的ip和端口
         }
 
 这里主要设置了IP和端口，其他的配置参数都使用了默认值，然后创建一个Socket连接
@@ -122,10 +131,6 @@ allprojects {
         }
     };
 
-注册监听
-
-            //监听socket相关行为
-            EasySocket.getInstance().subscribeSocketAction(socketActionListener);
 
 
 3、发送Socket消息
@@ -140,7 +145,7 @@ allprojects {
         testMsg.setMsgId("test_msg");
         testMsg.setFrom("android");
         //发送
-        EasySocket.getInstance().upObject(testMsg);
+        EasySocket.getInstance().upObject(testMsg,"192.168.3.9:9999");
     }
 
 执行结果如下：
